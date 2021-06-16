@@ -17,7 +17,8 @@ export const withSocket = (app) => {
     console.log("Connected", socket.nsp.name);
     socketMappings[socket.nsp.name.split("-")[1]] = socket;
 
-    socket.on("messaging", (data) => {
+    socket.on("messaging", async (data) => {
+      triggerPushMsg(data?.message_to, data?.message_body)
       socketMappings[data?.message_to]?.emit("messaging", data);
     });
 
@@ -25,17 +26,16 @@ export const withSocket = (app) => {
       axios
         .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
         .then((res) => {
-          
           res.data.participants?.forEach(participant => {
-            console.log(!!socketMappings[participant.elsemployees_empid], participant.elsemployees_empid)
+            triggerPushMsg(participant.elsemployees_empid, data?.message_body)
             socketMappings[participant.elsemployees_empid]?.emit("messaging", data);
           })
         })
         .catch((err) => console.log(err));
     });
 
-    socket.on("groupMember", (data) => {
-      socketMappings[data?.user_id]?.emit("groupMember", data);
+    socket.on("typing", (data) => {
+      socketMappings[data?.user_id]?.emit("typing", data);
     });
 
     socket.on("seen", (data) => {

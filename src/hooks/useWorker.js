@@ -1,6 +1,11 @@
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const useWorker = () => {
+  const data = useSelector((state) => {
+    return state;
+});
+
   const urlB64ToUint8Array = (base64String) => {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
@@ -15,7 +20,9 @@ const useWorker = () => {
     }
     return outputArray;
   };
-  const initWorker = async () => {
+
+
+  const initWorker = async (user_id) => {
     if (!("Notification" in window)) {
       throw console.log("This browser does not support desktop notification");
     }
@@ -36,27 +43,36 @@ const useWorker = () => {
     if (!("serviceWorker" in navigator)) {
       throw console.log("serviceWorker is not supported");
     }
-
-    navigator.serviceWorker
-      .getRegistration()
-      .then(async (reg) => {
-        
-        reg.pushManager
-          .subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlB64ToUint8Array(
-              "BCGDIfnAeJn_Pkpz9nFdOjbLNDsGE15JKZbVwNMlJquDYx5DtmVyJWuRXBDUmB2qhakY43zrEOrc5VgL_7VFcvY"
-            ),
+      try {
+        const reg = await navigator.serviceWorker.getRegistration() || await navigator.serviceWorker.register(`/service-worker?user_id=${data.Auth.data?.elsemployees_empid}`);
+        const sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlB64ToUint8Array(
+            "BCGDIfnAeJn_Pkpz9nFdOjbLNDsGE15JKZbVwNMlJquDYx5DtmVyJWuRXBDUmB2qhakY43zrEOrc5VgL_7VFcvY"
+          ),
+        });
+        fetch("/worker/save-subs", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            subscription: sub,
+            user_id
           })
-          .then((sub) => {
-            console.log(JSON.stringify(sub.toJSON()));
-          }).catch(e => console.log(e));
-      })
-      .catch((e) => console.log(e));
+        })
+       
+      }catch(e) {
+         console.log(e)
+      }
+
+    
   };
   useEffect(() => {
-    initWorker();
-  }, []);
+    if(data.Auth?.data?.elsemployees_empid) {
+      initWorker(data.Auth.data?.elsemployees_empid);
+    }
+  }, [data.Auth]);
 };
 
 // const connectBeam = async (interest = "hello") => {

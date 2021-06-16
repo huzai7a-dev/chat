@@ -3,9 +3,26 @@ import axios from "axios";
 import multer from "multer";
 import env from '../env.json';
 import fs from 'fs';
-import { sendNotification } from "./webpush";
+import { saveSubscription, sendNotification, triggerPushMsg } from "./webpush";
 
 const router = express.Router();
+
+const isValidSaveRequest = (req, res) => {
+  // Check the request body has at least an endpoint.
+  if (!req.body || !req.body.subscription) {
+    // Not a valid subscription.
+    res.status(400);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({
+      error: {
+        id: 'no-endpoint',
+        message: 'Subscription must have an endpoint.'
+      }
+    }));
+    return false;
+  }
+  return true;
+};
 
 router.use("/api/*", multer().any(), (req, res, next) => {
   const axiosRoute = {
@@ -57,10 +74,18 @@ router.use("/bizzportal/*", (req, res, next) => {
     });
 });
 
-router.use('/service_worker', async (req, res, next) => {
-  // return res.sendFile();
-  // return res.sendFile(`${process.cwd()}\\src\\service_worker.js`)
-  sendNotification("Sent")
+router.use('/service-worker', async (req, res, next) => {
+  return res.sendFile(`${process.cwd()}\\src\\service_worker.js`)
+})
+
+router.post('/worker/save-subs', async (req, res) => {
+  if(!req.body.user_id || !req.body.subscription) {
+    return 
+  }
+  
+  await saveSubscription(req.body.user_id, req.body.subscription);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify({ data: { success: true } }));
 })
 
 export default router;
