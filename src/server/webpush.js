@@ -25,14 +25,16 @@ export const getSubscriptionByUser = (user_id) =>
         if (error) {
           reject(error);
         }
-        const subscription = {
-          endpoint: results[0].endpoint,
-          expirationTime: results[0].expirationTime,
+
+        const subscription = results.length > 0 ? {
+          endpoint: results[0]?.endpoint,
+          expirationTime: results[0]?.expirationTime,
           keys: {
-            p256dh: results[0].p256dh,
-            auth: results[0].auth,
+            p256dh: results[0]?.p256dh,
+            auth: results[0]?.auth,
           },
-        };
+        }: null;
+
         resolve(subscription);
       }
     );
@@ -54,21 +56,23 @@ export const saveSubscription = (user_id, subscription) =>
     );
   });
 
-export const triggerPushMsg = async (user_id, dataToSend = "Lol") => {
+export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification") => {
   const subscription = await getSubscriptionByUser(user_id);
-  
-  return webpush.sendNotification(subscription, dataToSend).catch((err) => {
-    if (err.statusCode === 404 || err.statusCode === 410) {
-      console.log(
-        "Subscription has expired or is no longer valid: ",
-        subscription,
-        err
-      );
-      subscription?.unsubscribe();
-    } else {
-      throw err;
-    }
-  });
+  if(subscription) {
+    return webpush.sendNotification(subscription, dataToSend).catch((err) => {
+      if (err.statusCode === 404 || err.statusCode === 410) {
+        console.log(
+          "Subscription has expired or is no longer valid: ",
+          subscription,
+          err
+        );
+        subscription?.unsubscribe();
+      } else {
+        throw err;
+      }
+    });
+  }
+  return null;
 };
 
 export const sendNotification = (payload) => {

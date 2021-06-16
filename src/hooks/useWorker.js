@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 const useWorker = () => {
   const data = useSelector((state) => {
     return state;
-});
+  });
 
   const urlB64ToUint8Array = (base64String) => {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -20,7 +20,6 @@ const useWorker = () => {
     }
     return outputArray;
   };
-
 
   const initWorker = async (user_id) => {
     if (!("Notification" in window)) {
@@ -43,33 +42,45 @@ const useWorker = () => {
     if (!("serviceWorker" in navigator)) {
       throw console.log("serviceWorker is not supported");
     }
-      try {
-        const reg = await navigator.serviceWorker.getRegistration() || await navigator.serviceWorker.register(`/service-worker?user_id=${data.Auth.data?.elsemployees_empid}`);
-        const sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({
+    try {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) {
+          if (
+            !registration.active.scriptURL.includes("/service-worker?user_id")
+          ) {
+            registration.unregister();
+          }
+        }
+      });
+      const reg =
+        (await navigator.serviceWorker.getRegistration()) ||
+        (await navigator.serviceWorker.register(
+          `/service-worker?user_id=${data.Auth.data?.elsemployees_empid}`
+        ));
+      const sub =
+        (await reg.pushManager.getSubscription()) ||
+        (await reg.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlB64ToUint8Array(
             "BCGDIfnAeJn_Pkpz9nFdOjbLNDsGE15JKZbVwNMlJquDYx5DtmVyJWuRXBDUmB2qhakY43zrEOrc5VgL_7VFcvY"
           ),
-        });
-        fetch("/worker/save-subs", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            subscription: sub,
-            user_id
-          })
-        })
-       
-      }catch(e) {
-         console.log(e)
-      }
-
-    
+        }));
+      fetch("/worker/save-subs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subscription: sub,
+          user_id,
+        }),
+      });
+    } catch (e) {
+      console.log(e);
+    }
   };
   useEffect(() => {
-    if(data.Auth?.data?.elsemployees_empid) {
+    if (data.Auth?.data?.elsemployees_empid) {
       initWorker(data.Auth.data?.elsemployees_empid);
     }
   }, [data.Auth]);
