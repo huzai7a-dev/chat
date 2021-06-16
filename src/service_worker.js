@@ -23,6 +23,13 @@ self.addEventListener("activate", () => {
 })
 
 self.addEventListener("push", (event) => {
-  const promiseChain = self.registration.showNotification(event.data.text());
+  const notification = event.data.json();
+
+  const promiseChain = self.registration.showNotification(notification.title, {
+    body: notification.text,
+    icon: '/public/favicon.png',
+    vibrate: [200, 100, 200, 100, 200, 100, 200]
+   });
+   
   event.waitUntil(promiseChain);
 });
