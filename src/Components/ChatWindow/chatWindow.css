@@ -1,0 +1,9 @@
+:root {
+  --grayColor: #eeeeee;
+}
+.chat__window {
+  width: 350px;
+  height: 100vh;
+  background: var(--grayColor);
+  border-right: 1px solid #e0e0e0;
+}

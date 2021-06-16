@@ -1,0 +1,25 @@
+:root {
+  --grayColor: #f0f4f8;
+}
+
+.container {
+  height: 65vh;
+  background: var(--grayColor);
+}
+.chatUserContainer {
+  height: 100%;
+}
+.groupList,
+.chatUserList,
+.searchedUser {
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.chatUserContainer .MuiTab-root {
+  min-height: 35px;
+  line-height: 0px;
+}
+.MuiTabs-scroller {
+  height: 100%;
+}

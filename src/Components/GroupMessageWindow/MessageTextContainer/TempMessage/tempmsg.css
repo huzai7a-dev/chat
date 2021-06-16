@@ -1,0 +1,21 @@
+.userMessage__tempTime {
+  text-align: right;
+  color: #aeaeae;
+  font-size: 0.8rem;
+}
+
+.message_attachment {
+  width: 200px;
+  height: 200px;
+}
+.attachment {
+  min-width: 200px;
+  max-width: 300px;
+  height: auto;
+}
+.loading {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transform: translateX(100%);
+}

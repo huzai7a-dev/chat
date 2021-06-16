@@ -1,0 +1,51 @@
+.groupName {
+  background: #eeee;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+.groupName__header {
+  margin: 30px 0px 20px 0px;
+  font-size: .8rem;
+}
+.groupName__header h1 {
+  font-weight: 400;
+}
+.groupNameModel__imageContainer {
+  margin: 5px 0px 25px 0px;
+}
+.groupNameModel__imageContainer .groupProfile {
+  height: 70px;
+  width: 70px;
+}
+.groupNameModel__nameContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.groupNameModel__nameContainer .groupNameInputField {
+  width: 80%;
+  padding: 10px;
+}
+.groupNameModel__nextIconContainer {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+}
+.groupNameModel__prevIconContainer {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+}
+.groupNameModel__nextIconContainer .nextBtn {
+  background-image: linear-gradient(to right, #0069c0, #6ec6ff);
+  color: #fff;
+}
+
+input[type="file"] {
+  display: none;
+}

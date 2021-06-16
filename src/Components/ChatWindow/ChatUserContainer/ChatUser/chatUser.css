@@ -1,0 +1,65 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed:ital,wght@1,300&display=swap");
+.chatUser {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 6px;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+  width: 100%;
+}
+.chatUser:hover {
+  background: #e0e0e0;
+}
+.chatUser__picture {
+  margin-right: 10px;
+}
+.chatUser__details {
+  width: 100%;
+  height: 50px;
+}
+.chatUser__details h3 {
+  font-size: 15px;
+  color: rgb(37, 36, 35);
+  font-family: "SF Regular", "Segoe System UI Regular", "Segoe UI Regular",
+    sans-serif;
+}
+
+.chatUser__details p {
+  font-size: 15px;
+  font-family: "SF Regular", "Segoe System UI Regular", "Segoe UI Regular",
+    sans-serif;
+  color: rgb(138, 141, 145);
+  font-weight: 400;
+  overflow-x: hidden;
+  width: 80%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 !important;
+}
+.unseenMsg {
+  position: absolute;
+  right: 10%;
+  bottom: 10%;
+}
+.loginStatus {
+  width: 10px;
+  height: 10px;
+  background: #76d275;
+  border-radius: 50%;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  transform: translate(50%, -50%);
+}
+.pictureContainer {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e0e0e0;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #3f51b5;
+}

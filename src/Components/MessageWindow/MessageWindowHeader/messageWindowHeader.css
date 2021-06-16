@@ -1,0 +1,26 @@
+.MessageWindowHeader {
+  height: 10vh;
+  padding: 0px 20px;
+  color: #252423;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border-bottom: 1px solid #e0e0e0;
+}
+.userStatus {
+  display: flex;
+  align-items: center;
+}
+.userStatus {
+  font-size: 0.7rem;
+  font-weight: bolder;
+  margin-top: 2px;
+}
+.onlineStatus {
+  width: 10px;
+  height: 10px;
+  background: #76d275;
+  border-radius: 50%;
+  margin-right: 5px;
+}

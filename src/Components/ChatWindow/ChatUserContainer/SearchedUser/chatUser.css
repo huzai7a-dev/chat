@@ -1,0 +1,22 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed:ital,wght@1,300&display=swap");
+.chatUser {
+  display: flex;
+  margin: 15px 0px;
+  padding: 6px;
+  font-family: "Open Sans", sans-serif;
+  cursor: pointer;
+}
+.chatUser:hover {
+  background: #e0e0e0;
+}
+.chatUser__picture {
+  margin-right: 10px;
+}
+.chatUser__details h3 {
+  font-size: 1rem;
+}
+
+.chatUser__details p {
+  font-size: 0.8rem;
+  color: black;
+}

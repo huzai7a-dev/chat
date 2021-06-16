@@ -1,0 +1,108 @@
+.inputAttachContainer {
+  position: fixed;
+  bottom: 0;
+  width: calc(100% - 340px);
+}
+.messageInput {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  bottom: 10px;
+}
+.inputContainer {
+  display: flex;
+  align-items: center;
+}
+.inputField__container {
+  width: 90%;
+}
+.qoutMsg__container {
+  border-radius: 30px;
+  background: #eeee;
+  width: 90%;
+  margin-left: 50px;
+  padding: 5px 0px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  position: relative;
+}
+.qcMsg {
+  margin-left: 50px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  font-size: small;
+  overflow-x: hidden;
+  width: 80%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 !important;
+}
+.qcName {
+  margin-left: 50px;
+  margin-right: 50px;
+  padding-bottom: 5px;
+  color: #aeaeae;
+  font-size: small;
+  border-bottom: 1px solid #000;
+}
+.qoutMsg__container .MuiIconButton-root {
+  position: absolute;
+  top: 0;
+  right: 1%;
+}
+.inputField {
+  max-height: 100px;
+  border: none;
+  outline: none;
+  resize: none;
+  margin: 10px 50px;
+  font-family: "Open Sans", sans-serif;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-bottom: 10px;
+  line-height: 1.8;
+  overflow-y: auto;
+  cursor: text;
+}
+
+.attachMedia {
+  position: relative;
+}
+.attachDocument {
+  width: 150px;
+  height: 150px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  position: relative;
+}
+.cutIcon {
+  position: absolute;
+  top: 5%;
+  right: 5%;
+  cursor: pointer;
+  z-index: 10;
+}
+.attachmentPreview {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 70%;
+  overflow-y: scroll;
+}
+div:empty:before {
+  content: attr(data-placeholder);
+  color: gray;
+}
+
+.inputContainer .MuiButton-root {
+  background-image: linear-gradient(to right, #0069c0, #6ec6ff);
+  width: 40px !important;
+  color: #fff;
+  height: 40px;
+  border-radius: 50%;
+}
+.emoji-picker-react .emoji-scroll-wrapper {
+  overflow-x: hidden;
+}
