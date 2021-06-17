@@ -1,9 +1,9 @@
 import express from "express";
 import axios from "axios";
 import multer from "multer";
-import env from '../env.json';
-import fs from 'fs';
-import { saveSubscription, sendNotification, triggerPushMsg } from "./webpush";
+import env from "../env.json";
+import { saveSubscription } from "./webpush";
+import { getFormData } from "./db";
 
 const router = express.Router();
 
@@ -12,31 +12,51 @@ const isValidSaveRequest = (req, res) => {
   if (!req.body || !req.body.subscription) {
     // Not a valid subscription.
     res.status(400);
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({
-      error: {
-        id: 'no-endpoint',
-        message: 'Subscription must have an endpoint.'
-      }
-    }));
+    res.setHeader("Content-Type", "application/json");
+    res.send(
+      JSON.stringify({
+        error: {
+          id: "no-endpoint",
+          message: "Subscription must have an endpoint.",
+        },
+      })
+    );
     return false;
   }
   return true;
 };
 
 router.use("/api/*", multer().any(), (req, res, next) => {
+  const contentType = req.get("content-type") || "application/json";
+
+  const body = {};
+  Object.keys(req.body).forEach((k) => (body[k] = req.body[k]));
+
   const axiosRoute = {
     params: req.params,
-    // headers: req.headers,
+    headers: { "Content-Type": contentType },
     url: `${env.url}${req.originalUrl.replace("/api", "")}`,
     method: req.method,
-    data: req.body,
   };
+
+  if (contentType?.includes("form")) {
+    axiosRoute.headers["Content-Type"] = "application/json";
+    const data = Object.assign({}, body, { message_attachment: req.files });
+
+    const formData = getFormData(data)
+    axiosRoute.headers = formData.getHeaders();
+    axiosRoute.data = formData;
+  } else {
+    axiosRoute.data = body;
+  }
 
   axios(axiosRoute)
     .then((r) => {
-      // console.log(r.data);
-      return res.status(r.status).json(r.data);
+      Object.keys(r.headers).forEach((k) => {
+        res.setHeader(k, r.headers[k]);
+      });
+      
+      return res.status(r.status).send(r.data);
     })
     .catch((e) => {
       const { response } = e;
@@ -74,18 +94,18 @@ router.use("/bizzportal/*", (req, res, next) => {
     });
 });
 
-router.use('/service-worker', async (req, res, next) => {
-  return res.sendFile(`${process.cwd()}\\src\\service_worker.js`)
-})
+router.use("/service-worker", async (req, res, next) => {
+  return res.sendFile(`${process.cwd()}\\src\\service_worker.js`);
+});
 
-router.post('/worker/save-subs', async (req, res) => {
-  if(!req.body.user_id || !req.body.subscription) {
-    return 
+router.post("/worker/save-subs", async (req, res) => {
+  if (!req.body.user_id || !req.body.subscription) {
+    return;
   }
-  
+
   await saveSubscription(req.body.user_id, req.body.subscription);
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader("Content-Type", "application/json");
   res.send(JSON.stringify({ data: { success: true } }));
-})
+});
 
 export default router;
