@@ -27,8 +27,7 @@ const appendArray = (formData, key, arrValue) => {
     }
 
     if(value.hasOwnProperty('buffer')) {
-      // return formData.append(`${key}[${index}]`, value, value.originalname);
-      return formData.append(`${key}[${index}]`, Readable.from(value.buffer.toString()), value.originalname)
+      return formData.append(`${key}[${index}]`, value.buffer, {filename: value.originalname})
     }
 
     if(value !== null && typeof value === typeof {}) {
@@ -51,8 +50,7 @@ const appendObject = (formData, mainKey, obj) => {
     }
 
     if(value.hasOwnProperty('buffer')) {
-      // return formData.append(`${mainKey}[${key}]`, value, value.originalname);
-      return formData.append(`${key}[${index}]`, Readable.from(value.buffer.toString()), value.originalname)
+      return formData.append(`${key}[${index}]`, value.buffer,{filename: value.originalname})
     }
 
     if(value !== null && typeof value === typeof {}) {
@@ -78,7 +76,7 @@ export const getFormData = (obj = {}) => {
 
       if(obj[key]?.hasOwnProperty('buffer')) {
         // formData.append(`${key}[${index}]`, Readable.from(value.buffer.toString()), value.originalname)
-        formData.append(key, Readable.from(obj[key].buffer.toString()), obj[key].originalname);
+        formData.append(key, obj[key].buffer, {filename: obj[key].originalname});
         continue;
       }
 
