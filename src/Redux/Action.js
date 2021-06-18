@@ -181,3 +181,12 @@ export function seen(seen) {
     });
   };
 }
+
+export function groupMemberInfo(groupMemberInfo) {
+  return function (dispatch) {
+    dispatch({
+      type: "groupMemberInfo",
+      payload: groupMemberInfo,
+    });
+  };
+}

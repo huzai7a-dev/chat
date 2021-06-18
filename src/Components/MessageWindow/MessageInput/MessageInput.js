@@ -132,6 +132,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       attachment: attachment.map((attach) => { return attach }),
       message_id: Date.now(),
       fullTime: moment().format('Y-MM-D, h:mm:ss'),
+      messageOn:"user"
     };
     
     const formData = new FormData();
@@ -165,7 +166,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       .then((res) => {
         const socket = getSocket();
         socket.emit("messaging", paramData);
-        
         axios
           .post("/api/bwccrm/fetchMessage", {
             from_id: data.Auth.data?.elsemployees_empid,

@@ -133,6 +133,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       message_quoteid: data?.quote ? data?.quote.message_id : "null",
       message_quotebody: data?.quote ? data?.quote.groupmessage_body : "null",
       message_quoteuser: data?.quote ? data?.quote.from_username : "null",
+      messageOn:"group"
     };
     const formData = new FormData();
     formData.append("user_id", data.Auth.data?.elsemployees_empid);

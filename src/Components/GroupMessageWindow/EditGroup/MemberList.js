@@ -13,8 +13,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { modelState, nameToMember, updateGroup } from "../../../Redux/Action";
-import usePusher from "../../../hooks/usePusher";
-
+import { getSocket } from "../../../socket";
 function MemberList() {
   const data = useSelector((state) => {
     return state;
@@ -23,8 +22,7 @@ function MemberList() {
   const [memberList, setMemberList] = useState([]);
   const [groupMember, setGroupMember] = useState("");
   const history = useHistory();
-  // real time notify when user add or remove from group
-
+  
   useEffect(() => {
     axios
       .post("/api/bwccrm/getContactsTotal", {
@@ -100,7 +98,8 @@ function MemberList() {
                   user_id: data.Auth.data?.elsemployees_empid,
                   group_id: data.groupChat.group_id,
                   member_id: member?.elsemployees_empid,
-                  member_name:member?.elsemployees_name
+                  member_name: member?.elsemployees_name,
+                  event:"added"
                 }
                 const formData = new FormData();
                 formData.append('user_id', data.Auth.data?.elsemployees_empid)
@@ -110,18 +109,30 @@ function MemberList() {
                   .then(res => {
                     setMembersId(res.data.updatedmembers.split(","))
                     const socket = getSocket();
-                    socket.emit("groupMember", addParamData);
+                    socket.emit("group-member", addParamData);
                   })
                   .catch(err => console.log(err))
               }
 
               const removeMember = () => {
+                const removeParamData = {
+                  user_id: data.Auth.data?.elsemployees_empid,
+                  group_id: data.groupChat.group_id,
+                  member_id: member?.elsemployees_empid,
+                  member_name: member?.elsemployees_name,
+                  event:"removed"
+                }
+                
                 const formData = new FormData();
                 formData.append('user_id', data.Auth.data?.elsemployees_empid)
                 formData.append('group_id', data.groupChat.group_id);
                 formData.append('member_id', member?.elsemployees_empid)
                 axios.post('/api/bwccrm/removemember', formData)
-                  .then(res => setMembersId(res.data.updatedmembers.split(",")))
+                  .then(res => {
+                    setMembersId(res.data.updatedmembers.split(","))
+                    const socket = getSocket();
+                    socket.emit("group-member", removeParamData);
+                  })
                   .catch(err => console.log(err))
               }
               return (

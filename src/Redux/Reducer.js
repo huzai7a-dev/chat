@@ -1,6 +1,6 @@
 const initstate = {
   user: null,
-  chat: null,
+  chat: {},
   Auth: null,
   groupChat: null,
   UserSearch: [],
@@ -11,12 +11,14 @@ const initstate = {
   sendMsg: [],
   userMsgs: [],
   groupMsgs: [],
-  typedMsg:[],
-  quote:null,
-  modelState:false,
-  participantModel:false,
+  typedMsg: [],
+  quote: null,
+  modelState: false,
+  participantModel: false,
   nameToMember: false,
-  seen:false
+  seen: false,
+  groupMemberInfo: {},
+  isMemberChanged: false
 };
 export default function Reducer(state = initstate, action) {
   switch (action.type) {
@@ -47,15 +49,17 @@ export default function Reducer(state = initstate, action) {
     case "typedMsg":
       return { ...state, typedMsg: action.payload };
     case "quote":
-        return { ...state, quote: action.payload };
+      return { ...state, quote: action.payload };
     case "modelState":
-        return { ...state, modelState: action.payload };
+      return { ...state, modelState: action.payload };
     case "participantModel":
-        return { ...state, participantModel: action.payload };
-        case "nameToMember":
-          return { ...state, nameToMember: action.payload };
-          case "seen":
-            return { ...state, seen: action.payload };
+      return { ...state, participantModel: action.payload };
+    case "nameToMember":
+      return { ...state, nameToMember: action.payload };
+    case "seen":
+      return { ...state, seen: action.payload };
+    case "groupMemberInfo":
+      return { ...state, groupMemberInfo: action.payload };
     default:
       return state;
   }

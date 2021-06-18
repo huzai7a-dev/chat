@@ -35,6 +35,16 @@ export const withSocket = (app) => {
         .catch((err) => console.log(err));
     });
 
+    socket.on("group-member", (data) => {
+      axios
+        .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
+        .then((res) => {
+          res.data.participants?.forEach(participant => {
+            socketMappings[participant.elsemployees_empid]?.emit("group-member", data);
+          })
+        })
+        .catch((err) => console.log(err));
+    });
     socket.on("typing", (data) => {
       socketMappings[data?.user_id]?.emit("typing", data);
     });
@@ -42,7 +52,9 @@ export const withSocket = (app) => {
     socket.on("seen", (data) => {
       socketMappings[data?.message_to]?.emit("seen", data);
     });
-
+    socket.on("isWindowOpen", (data) => {
+      socketMappings[data?.message_to]?.emit("isWindowOpen", data);
+    });
     socket.on("disconnect", (socket) => {
       console.log("disconnected", socket);
     });
