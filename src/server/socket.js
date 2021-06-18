@@ -19,7 +19,11 @@ export const withSocket = (app) => {
     socketMappings[socket.nsp.name.split("-")[1]] = socket;
 
     socket.on("messaging", async (data) => {
-      triggerPushMsg(data?.message_to, data?.message_body)
+      const notification = {
+        title: data?.message_originalname,
+        text: data?.message_body,
+      }
+      triggerPushMsg(data?.message_to, notification)
       socketMappings[data?.message_to]?.emit("messaging", data);
     });
 
@@ -28,7 +32,11 @@ export const withSocket = (app) => {
         .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
         .then((res) => {
           res.data.participants?.forEach(participant => {
-            triggerPushMsg(participant.elsemployees_empid, data?.message_body)
+            const notification = {
+              title: participant.elsemployees_name,
+              text: data?.message_body,
+            }
+            triggerPushMsg(participant.elsemployees_empid, notification)
             socketMappings[participant.elsemployees_empid]?.emit("messaging", data);
           })
         })

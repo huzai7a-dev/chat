@@ -59,7 +59,7 @@ export const saveSubscription = (user_id, subscription) =>
 export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification") => {
   const subscription = await getSubscriptionByUser(user_id);
   if(subscription) {
-    return webpush.sendNotification(subscription, dataToSend).catch((err) => {
+    return webpush.sendNotification(subscription, typeof dataToSend == typeof "" ? dataToSend : JSON.stringify(dataToSend)).catch((err) => {
       if (err.statusCode === 404 || err.statusCode === 410) {
         console.log(
           "Subscription has expired or is no longer valid: ",
