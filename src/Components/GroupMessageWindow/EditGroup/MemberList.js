@@ -12,17 +12,17 @@ import AddIcon from "@material-ui/icons/Add";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { modelState, nameToMember, updateGroup } from "../../../Redux/Action";
+import { groupMemberInfo, modelState, nameToMember, updateGroup } from "../../../Redux/Action";
 import { getSocket } from "../../../socket";
 function MemberList() {
   const data = useSelector((state) => {
     return state;
   });
-  const [membersId, setMembersId] = useState(data.groupChat.memberid.split(","))
+  const [membersId, setMembersId] = useState(data.groupChat?.memberid?.split(","))
   const [memberList, setMemberList] = useState([]);
   const [groupMember, setGroupMember] = useState("");
   const history = useHistory();
-  
+  const dispatch = useDispatch();
   useEffect(() => {
     axios
       .post("/api/bwccrm/getContactsTotal", {
@@ -36,7 +36,7 @@ function MemberList() {
         console.log(err);
       });
   }, []);
-  const dispatch = useDispatch();
+  
   const closeGroup = () => {
     axios
       .post("/api/bwccrm/getUserGroups", {
@@ -96,14 +96,14 @@ function MemberList() {
               const addMember = () => {
                 const addParamData = {
                   user_id: data.Auth.data?.elsemployees_empid,
-                  group_id: data.groupChat.group_id,
+                  group_id: data.groupChat?.group_id,
                   member_id: member?.elsemployees_empid,
                   member_name: member?.elsemployees_name,
                   event:"added"
                 }
                 const formData = new FormData();
                 formData.append('user_id', data.Auth.data?.elsemployees_empid)
-                formData.append('group_id', data.groupChat.group_id);
+                formData.append('group_id', data.groupChat?.group_id);
                 formData.append('member_id', member?.elsemployees_empid)
                 axios.post('/api/bwccrm/addmember', formData)
                   .then(res => {
@@ -117,7 +117,7 @@ function MemberList() {
               const removeMember = () => {
                 const removeParamData = {
                   user_id: data.Auth.data?.elsemployees_empid,
-                  group_id: data.groupChat.group_id,
+                  group_id: data.groupChat?.group_id,
                   member_id: member?.elsemployees_empid,
                   member_name: member?.elsemployees_name,
                   event:"removed"
@@ -125,7 +125,7 @@ function MemberList() {
                 
                 const formData = new FormData();
                 formData.append('user_id', data.Auth.data?.elsemployees_empid)
-                formData.append('group_id', data.groupChat.group_id);
+                formData.append('group_id', data.groupChat?.group_id);
                 formData.append('member_id', member?.elsemployees_empid)
                 axios.post('/api/bwccrm/removemember', formData)
                   .then(res => {

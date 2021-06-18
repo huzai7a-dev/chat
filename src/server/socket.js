@@ -44,6 +44,7 @@ export const withSocket = (app) => {
     });
 
     socket.on("group-member", (data) => {
+      socketMappings[data.member_id]?.emit("group-member", data);
       axios
         .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
         .then((res) => {

@@ -12,8 +12,8 @@ function GroupInfo() {
         return state;
     });
     const dispatch = useDispatch();
-    const image = data.groupChat.group_image;
-    const [name, setName] = useState(data.groupChat.group_name);
+    const image = data.groupChat?.group_image;
+    const [name, setName] = useState(data.groupChat?.group_name);
     const [editable, setEditable] = useState(false);
     const [groupPicture, setGroupPicture] = useState(`/api/bwccrm/storage/app/public/chat_attachments/${image}`);
     const [selectedImage, setSelectedImage] = useState();
@@ -26,7 +26,7 @@ function GroupInfo() {
         setEditable(false);
         inputEl.current.blur();
     }
-    const nameChanged = data.groupChat.group_name !== name;
+    const nameChanged = data.groupChat?.group_name !== name;
     const imgChanged = `/api/bwccrm/storage/app/public/chat_attachments/${image}` !== groupPicture;
     const handleImageChange = (e) => {
         if (e.target.files[0]) {
@@ -45,7 +45,7 @@ function GroupInfo() {
             const formData = new FormData();
             formData.append("user_id", data.Auth.data?.elsemployees_empid);
             formData.append("loginuser_id", data.Auth.data?.elsemployees_empid);
-            formData.append("group_id", data.groupChat.group_id);
+            formData.append("group_id", data.groupChat?.group_id);
             formData.append("group_name", name);
             formData.append("group_image", selectedImage);
             axios

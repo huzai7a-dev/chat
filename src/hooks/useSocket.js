@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  groupChat,
   groupMemberInfo,
   groupMsgs,
   seen,
@@ -24,7 +25,7 @@ const useSocket = () => {
   useEffect(() => {
     if (socket) {
       socket.on("messaging", (resData) => {
-        console.log(data.chat?.elsemployees_empid);
+        
         const userMessage = {
           message_body: resData.message_body,
           message_from: resData.user_id,
@@ -144,6 +145,20 @@ const useSocket = () => {
     if (socket) {
       socket.on("group-member", (res) => {
         dispatch(groupMemberInfo(res));
+        axios
+          .post("/api/bwccrm/getUserGroups", {
+            loginuser_id: data.Auth.data.elsemployees_empid,
+            user_id: data.Auth.data.elsemployees_empid,
+          })
+          .then((res) => {
+            dispatch(updateGroup(res.data));
+            for (let i = 0; i < res.data; i++) {
+              if(res.data[i]?.group_id == data.groupChat?.group_id){
+                return 
+              }
+            }
+            dispatch(groupChat(null))
+          })
       });
       return () => {
         socket.off('group-member')

@@ -13,11 +13,11 @@ function MessageWindowHeader() {
     return state;
   });
   const dispatch = useDispatch();
-  const memberLength = data.groupChat.memberid.split(",").length;
+  const memberLength = data.groupChat?.memberid?.split(",").length;
   return (
     <div className="MessageWindowHeader">
       <div className="userName">
-        <h2>{data.groupChat.group_name}</h2>
+        <h2>{data.groupChat?.group_name}</h2>
         <p onClick={() => dispatch(participantModel(true))}>{memberLength} participants</p>
       </div>
       <div className="groupEdit">

@@ -126,7 +126,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       from_userpicture: data.Auth.data.elsemployees_image,
       user_id: data.Auth.data?.elsemployees_empid,
       loginuser_id: data.Auth.data?.elsemployees_empid,
-      group_id: data.groupChat.group_id,
+      group_id: data.groupChat?.group_id,
       message_body: message,
       message_id: Date.now(),
       fullTime: moment().format('Y-MM-D, h:mm:ss'),
@@ -138,7 +138,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     const formData = new FormData();
     formData.append("user_id", data.Auth.data?.elsemployees_empid);
     formData.append("loginuser_id", data.Auth.data?.elsemployees_empid);
-    formData.append("group_id", data.groupChat.group_id);
+    formData.append("group_id", data.groupChat?.group_id);
     formData.append("message_body", message);
     formData.append(
       "message_quoteid",
@@ -175,7 +175,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
         dispatch(updateGroup(res[1].data));
         axios
           .post("/api/bwccrm/fetchMessageGroup", {
-            group_id: data.groupChat.group_id,
+            group_id: data.groupChat?.group_id,
             user_id: data.Auth.data?.elsemployees_empid,
           })
           .then((res) => {

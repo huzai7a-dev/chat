@@ -14,19 +14,19 @@ function MessageTextContainer() {
   });
 
   const dispatch = useDispatch();
-  const img = data.groupChat.group_image;
+  const img = data.groupChat?.group_image;
   const messageContainer = createRef();
   const [alertMessage, setalertMessage] = useState(false);
   useEffect(() => {
     axios
       .post("/api/bwccrm/fetchMessageGroup", {
-        group_id: data.groupChat.group_id,
+        group_id: data.groupChat?.group_id,
         user_id: data.Auth.data?.elsemployees_empid,
       })
       .then((res) => {
         dispatch(groupMsgs(res.data.messages));
       });
-  }, [data.groupChat.group_id]);
+  }, [data.groupChat?.group_id]);
   const MemberAlert = () => {
     return (
       <Alert
@@ -70,7 +70,7 @@ function MessageTextContainer() {
             style={{ width: "120px", height: "120px" }}
             src={`/api/bwccrm/storage/app/public/chat_attachments/${img}`}
           />
-          <h2>Welcome To {`${data.groupChat.group_name}'s`} Group</h2>
+          <h2>Welcome To {`${data.groupChat?.group_name}'s`} Group</h2>
         </div>
       ) : (
         <div>
