@@ -34,9 +34,10 @@ router.use("/api/*", multer().any(), (req, res, next) => {
 
   const axiosRoute = {
     params: req.params,
-    headers: { "Content-Type": contentType },
+    headers: req.originalUrl.includes('/public/') ? undefined : { "Content-Type": contentType },
     url: `${env.url}${req.originalUrl.replace("/api", "")}`,
     method: req.method,
+    responseType: req.originalUrl.includes('/public/') ? "arraybuffer" : "json",
   };
 
   if (contentType?.includes("form")) {
@@ -52,9 +53,13 @@ router.use("/api/*", multer().any(), (req, res, next) => {
 
   axios(axiosRoute)
     .then((r) => {
-      Object.keys(r.headers).forEach((k) => {
-        res.setHeader(k, r.headers[k]);
-      });
+      for (let key in r.headers) {
+        res.setHeader(key, r.headers[key]);
+      }
+
+      if(req.originalUrl.includes('/public/')) {
+        return res.end(r.data);
+      }
       
       return res.status(r.status).send(r.data);
     })
@@ -87,7 +92,7 @@ router.use("/bizzportal/*", (req, res, next) => {
     .catch((e) => {
       const { response } = e;
       if (response) {
-        return res.status(response.status).send(response.data, "binary");
+        return res.status(response.status).send(response.data);
       } else {
         return res.status(500).send("Server not Responding");
       }
