@@ -108,7 +108,7 @@ function MemberList() {
                 axios.post('/api/bwccrm/addmember', formData)
                   .then(res => {
                     setMembersId(res.data.updatedmembers.split(","))
-                    const socket = getSocket();
+                    const socket = getSocket(data.Auth.data?.elsemployees_empid);
                     socket.emit("group-member", addParamData);
                   })
                   .catch(err => console.log(err))
@@ -130,7 +130,7 @@ function MemberList() {
                 axios.post('/api/bwccrm/removemember', formData)
                   .then(res => {
                     setMembersId(res.data.updatedmembers.split(","))
-                    const socket = getSocket();
+                    const socket = getSocket(data.Auth.data?.elsemployees_empid);
                     socket.emit("group-member", removeParamData);
                   })
                   .catch(err => console.log(err))

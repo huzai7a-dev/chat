@@ -157,7 +157,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     return axios
       .post("/api/bwccrm/sendMessage", formData)
       .then((res) => {
-        const socket = getSocket();
+        const socket = getSocket(data.Auth.data?.elsemployees_empid);
         socket.emit("messaging", paramData);
         axios
           .post("/api/bwccrm/fetchMessage", {

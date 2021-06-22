@@ -166,7 +166,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
         }),
       ])
       .then((res) => {
-        const socket = getSocket();
+        const socket = getSocket(data.Auth.data?.elsemployees_empid);
         socket.emit("group-messaging", paramData);
         dispatch(sendMsg(res[0].data));
         dispatch(updateGroup(res[1].data));

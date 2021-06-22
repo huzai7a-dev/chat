@@ -30,7 +30,7 @@ function ChatUser(props) {
   const switchToConve = () => {
     dispatch(Userid(props.users));
     if (props.users.unseen == 1) {
-      const socket = getSocket();
+      const socket = getSocket(data.Auth.data?.elsemployees_empid);
       socket.emit("seen", paramData);
     }
     axios
@@ -39,7 +39,7 @@ function ChatUser(props) {
         loginuser_id: data.Auth.data?.elsemployees_empid,
       })
       .then((res) => {
-        const socket = getSocket();
+        const socket = getSocket(data.Auth.data?.elsemployees_empid);
         socket.emit("seen", paramData);
         axios
           .post("/api/bwccrm/getContactsUser", {

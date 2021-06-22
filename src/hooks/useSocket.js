@@ -17,15 +17,14 @@ const useSocket = () => {
     return state;
   });
   const dispatch = useDispatch();
-  const [socket, setSocket] = useState();
+
   useEffect(() => {
-    setSocket(init(data.Auth?.data.elsemployees_empid));
+    init(data.Auth?.data.elsemployees_empid);
   }, [data.Auth]);
 
   useEffect(() => {
-    if (socket) {
+    const socket = getSocket(data.Auth?.data.elsemployees_empid)
       socket.on("messaging", (resData) => {
-        
         const userMessage = {
           message_body: resData.message_body,
           message_from: resData.user_id,
@@ -49,7 +48,7 @@ const useSocket = () => {
             const paramData = {
               message_to:resData.user_id
              }
-             const socket = getSocket();
+             const socket = getSocket(data.Auth.data?.elsemployees_empid);
              socket.emit("isWindowOpen",paramData)
           })
           } 
@@ -100,11 +99,10 @@ const useSocket = () => {
       return () => {
         socket.off('messaging')
       }
-    }
-  }, [data.userMsgs, data.groupMsgs, data.chat, data.groupChat]);
+  }, [data.userMsgs, data.groupMsgs, data.chat, data.groupChat,data.Auth]);
 
   useEffect(() => {
-    if (socket) {
+    const socket = getSocket(data.Auth?.data.elsemployees_empid)
       socket.on("seen", (res) => {
         dispatch(seen(res));
         axios
@@ -120,11 +118,10 @@ const useSocket = () => {
       return () => {
         socket.off('seen')
       }
-    }
-  }, [data.chat]);
+  }, [data.chat,data.Auth]);
 
   useEffect(() => {
-    if (socket) {
+    const socket = getSocket(data.Auth?.data.elsemployees_empid)
       socket.on("isWindowOpen", (res) => {
         axios
         .post("/api/bwccrm/fetchMessage", {
@@ -139,11 +136,11 @@ const useSocket = () => {
       return () => {
         socket.off('isWindowOpen')
       }
-    }
+    
   });
 
   useEffect(() => {
-    if (socket) {
+    const socket = getSocket(data.Auth?.data.elsemployees_empid)
       socket.on("group-member", (res) => {
         dispatch(groupMemberInfo(res));
         axios
@@ -164,9 +161,7 @@ const useSocket = () => {
       return () => {
         socket.off('group-member')
       }
-    }
+    
   });
-  
-  return socket;
 };
 export default useSocket;
