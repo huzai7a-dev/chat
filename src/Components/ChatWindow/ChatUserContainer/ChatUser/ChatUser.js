@@ -73,7 +73,7 @@ function ChatUser(props) {
         <p>
           {props.users.last_msg.message_body
             ? props.users.last_msg.message_body
-            : "Attchment"}
+            : "Attachment"}
         </p>
       </div>
       <div className="unseenMsg">

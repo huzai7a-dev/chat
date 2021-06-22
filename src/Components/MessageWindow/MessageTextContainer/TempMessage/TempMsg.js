@@ -8,7 +8,7 @@ function TempMsg(props) {
   
   const time = moment().format('Y-MM-D, h:mm:ss')
   const attach = props.msg.tempAttachment;
-  const AttchmentPreview = useMemo(() => {
+  const AttachmentPreview = useMemo(() => {
     return attach.map((item, id) => {
       const type = item.type.split("/")[0];
       if (type === "image") {
@@ -45,7 +45,7 @@ function TempMsg(props) {
           <p>{time}</p>
         </div>
         <div className="attachment" style={{ display: "flex", flexWrap: "wrap" }}>
-          {attach ? AttchmentPreview : ""}
+          {attach ? AttachmentPreview : ""}
         </div>
         {props.msg.tempText ? (
           <div className="recieverMessage__text">{props.msg.tempText}</div>

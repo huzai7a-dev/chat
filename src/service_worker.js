@@ -27,8 +27,7 @@ self.addEventListener("push", (event) => {
 
   const promiseChain = self.registration.showNotification(notification.title, {
     body: notification.text,
-    icon: '/BizzWorldLogo.png',
-    // image: '/BizzWorldLogo.png',
+    icon: notification.image ? `/bizzportal/public/img/${notification.image}`: '/BizzWorldLogo.png',
     // actions: [{
     //   action: "Open Chat",
     //   title: "BizzChat",
@@ -39,4 +38,21 @@ self.addEventListener("push", (event) => {
    });
    
   event.waitUntil(promiseChain);
+});
+
+self.addEventListener('notificationclick', function(event) {
+  console.log('On notification click: ', event.notification);
+  event.notification.close();
+
+  event.waitUntil(clients.matchAll({
+    type: "window"
+  }).then(function(clientList) {
+    for (var i = 0; i < clientList.length; i++) {
+      var client = clientList[i];
+      if (client.url == '/' && 'focus' in client)
+        return client.focus();
+    }
+    if (clients.openWindow)
+      return clients.openWindow('/');
+  }));
 });

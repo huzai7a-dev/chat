@@ -42,8 +42,8 @@
   left: 0%;
 }
 .groupNameModel__nextIconContainer .nextBtn {
-  background-image: linear-gradient(to right, #0069c0, #6ec6ff);
-  color: #fff;
+  background-color:  #d8ecf7;
+  color: #000;
 }
 
 input[type="file"] {

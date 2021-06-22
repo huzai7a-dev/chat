@@ -22,6 +22,7 @@ export const withSocket = (app) => {
       const notification = {
         title: data?.message_originalname,
         text: data?.message_body,
+        image: data?.from_userpicture,
       }
       triggerPushMsg(data?.message_to, notification)
       socketMappings[data?.message_to]?.emit("messaging", data);
@@ -33,11 +34,15 @@ export const withSocket = (app) => {
         .then((res) => {
           res.data.participants?.forEach(participant => {
             const notification = {
-              title: participant.elsemployees_name,
+              title: `${data?.from_username} in ${data?.group_name}`,
               text: data?.message_body,
+              image: data?.from_userpicture,
             }
-            triggerPushMsg(participant.elsemployees_empid, notification)
-            socketMappings[participant.elsemployees_empid]?.emit("messaging", data);
+
+            if(participant.elsemployees_empid != data.user_id) {
+              triggerPushMsg(participant.elsemployees_empid, notification)
+              socketMappings[participant.elsemployees_empid]?.emit("messaging", data);
+            }
           })
         })
         .catch((err) => console.log(err));

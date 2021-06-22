@@ -97,9 +97,9 @@ div:empty:before {
 }
 
 .inputContainer .MuiButton-root {
-  background-image: linear-gradient(to right, #0069c0, #6ec6ff);
+  background-color:  #d8ecf7;
   width: 40px !important;
-  color: #fff;
+  color: #000;
   height: 40px;
   border-radius: 50%;
 }

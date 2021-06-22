@@ -6,6 +6,6 @@ export const init = (empId = 0) => {
     return socket;
 }
 
-export const getSocket = () => {
-    return !socket ? init() : socket;
+export const getSocket = (empId = 0) => {
+    return !socket ? init(empId) : socket;
 }

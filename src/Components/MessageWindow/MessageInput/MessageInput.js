@@ -43,7 +43,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     setMessage(`${message}${emojiObject.emoji}`);
     textInput.current.innerText = `${message}${emojiObject.emoji}`;
   };
-  const AttchmentPreview = useMemo(() => {
+  const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
       const type = item.type.split("/")[0];
       if (type === "image") {
@@ -126,14 +126,16 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       message_to: data.chat?.elsemployees_empid,
       message_body: message,
       from_userpicture:data.Auth.data.elsemployees_image,
-      message_quoteid:  data?.quote ? data?.quote.from_userid : "null",
-      message_quotebody: data?.quote ? data?.quote.message_body : "null",
-      message_quoteuser: data?.quote ? data?.quote.from_username : "null",
+      message_quoteid:  data.quote?.message_id || null,
+      message_quotebody: data.quote?.message_body || null,
+      message_quoteuser: data.quote?.from_username || null,
       attachment: attachment.map((attach) => { return attach }),
       message_id: Date.now(),
       fullTime: moment().format('Y-MM-D, h:mm:ss'),
       messageOn:"user"
     };
+
+    console.log(paramData);
     
     const formData = new FormData();
     formData.append("user_id", data.Auth.data?.elsemployees_empid);
@@ -141,16 +143,13 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     formData.append("message_to", data.chat?.elsemployees_empid);
     formData.append("message_body", message);
     formData.append(
-      "message_quoteid",
-      data?.quote ? data?.quote.from_userid : null
+      "message_quoteid", data.quote?.message_id || null
     );
     formData.append(
-      "message_quotebody",
-      data?.quote ? data?.quote.message_body : null
+      "message_quotebody", data.quote?.message_body || null
     );
     formData.append(
-      "message_quoteuser",
-      data?.quote ? data?.quote.from_username : null
+      "message_quoteuser", data.quote?.from_username || null
     );
     attachment.forEach((element) => {
       formData.append("message_attachment[]", element);
@@ -205,7 +204,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       style={attachment.length ? attachStyle : null}
     >
       <div className="attachmentPreview">
-        {attachment ? AttchmentPreview : null}
+        {attachment ? AttachmentPreview : null}
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
@@ -215,7 +214,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
                 <div>
                   <p className="qcMsg">
                     {data.quote.attachment
-                      ? "Attchment"
+                      ? "Attachment"
                       : data.quote.message_body}
                   </p>
                   <p className="qcName">{data.quote.from_username}</p>

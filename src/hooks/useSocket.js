@@ -34,11 +34,12 @@ const useSocket = () => {
           from_username: resData.message_originalname,
           message_id: resData.message_id,
           message_quotebody: resData.message_quotebody,
-          message_quoteid: resData.message_quotebody,
-          message_quoteuser: resData.message_quotebody,
+          message_quoteid: resData.message_quoteid,
+          message_quoteuser: resData.message_quoteuser,
           fullTime: resData.fullTime,
           // message_attachment:resData.attachment
         };
+        
         if (resData.user_id == data.chat?.elsemployees_empid) {
           axios
           .post("/api/bwccrm/makeSeen", {

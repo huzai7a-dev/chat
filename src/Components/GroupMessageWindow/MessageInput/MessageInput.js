@@ -39,7 +39,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     setAttachment([...attachment]);
   };
   // function to generate Image preview & multiple attachment
-  const AttchmentPreview = useMemo(() => {
+  const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
       const type = item.type.split("/")[0];
       if (type === "image") {
@@ -127,12 +127,13 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       user_id: data.Auth.data?.elsemployees_empid,
       loginuser_id: data.Auth.data?.elsemployees_empid,
       group_id: data.groupChat?.group_id,
+      group_name: data.groupChat?.group_name,
       message_body: message,
       message_id: Date.now(),
       fullTime: moment().format('Y-MM-D, h:mm:ss'),
-      message_quoteid: data?.quote ? data?.quote.message_id : "null",
-      message_quotebody: data?.quote ? data?.quote.groupmessage_body : "null",
-      message_quoteuser: data?.quote ? data?.quote.from_username : "null",
+      message_quoteid: data.quote ? data.quote?.message_id : null,
+      message_quotebody: data.quote ? data.quote?.groupmessage_body : null,
+      message_quoteuser: data.quote ? data.quote?.from_username : null,
       messageOn:"group"
     };
     const formData = new FormData();
@@ -141,8 +142,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     formData.append("group_id", data.groupChat?.group_id);
     formData.append("message_body", message);
     formData.append(
-      "message_quoteid",
-      data?.quote ? data?.quote.message_id : null
+      "message_quoteid", data.quote?.message_id || null
     );
     formData.append(
       "message_quotebody",
@@ -170,6 +170,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       ])
       .then((res) => {
         const socket = getSocket();
+        console.log(paramData);
         socket.emit("group-messaging", paramData);
         dispatch(sendMsg(res[0].data));
         dispatch(updateGroup(res[1].data));
@@ -198,7 +199,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       style={attachment.length ? attachStyle : null}
     >
       <div className="attachmentPreview">
-        {attachment ? AttchmentPreview : null}
+        {attachment ? AttachmentPreview : null}
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">

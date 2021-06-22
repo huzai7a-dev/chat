@@ -83,8 +83,8 @@ function MainWindow() {
       <ChatWindow />
       <Switch>
         <Route path="/" component={Welcome} exact />
-        <Route path="/user" component={MessageWindow} exact />
-        <Route path="/group" component={GroupMessageWindow} exact />
+        <Route path="/user" component={MessageWindow} />
+        <Route path="/group" component={GroupMessageWindow} />
       </Switch>
     </div>
   );

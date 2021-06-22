@@ -81,10 +81,11 @@ function UserMessage({ chatgroup }) {
 
   // function to get quote data
   const quoteData = () => {
+
     const quoteMsg = {
       from_username: chatgroup.from_username,
       message_id: chatgroup.message_id,
-      groupmessage_body: chatgroup.groupmessage_body,
+      groupmessage_body: chatgroup.groupmessage_attachment || chatgroup.groupmessage_body,
       attachment: chatgroup.groupmessage_attachment,
     };
     dispatch(quote(quoteMsg));
@@ -162,7 +163,7 @@ function UserMessage({ chatgroup }) {
         )}
         {chatgroup.groupmessage_body ? (
           <div className="recieverQoutMsg__container">
-            {chatgroup.groupmessage_quotebody !== "null" ? (
+            {chatgroup.groupmessage_quotebody && chatgroup.groupmessage_quotebody !== "null" ? (
               <a className="sendQuotedMsg" href={"#"+chatgroup.groupmessage_quoteid}>
                 <p className="qName">{chatgroup.groupmessage_quoteuser}</p>
                 <p className="qMsg">{chatgroup.groupmessage_quotebody}</p>

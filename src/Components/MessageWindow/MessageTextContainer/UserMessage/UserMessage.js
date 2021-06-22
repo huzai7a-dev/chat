@@ -21,7 +21,6 @@ function UserMessage(props) {
   const [openModel, setOpenModel] = useState(false);
   const [media, setMedia] = useState("");
   const [option, setOption] = useState(false);
-  const [donwloadLink, setDonwloadLink] = useState("")
 
   //function to render sent attachment
   const RenderSendAttachment = () => {
@@ -85,9 +84,10 @@ function UserMessage(props) {
   };
   // function to collect data for quote mesgs
   const quoteData = () => {
+
     const quoteMsg = {
       from_username: props.sender.from_username,
-      message_body: props.sender.message_body,
+      message_body: props.sender.message_attachment || props.sender.message_body,
       message_id: props.sender.message_id,
       attachment: props.sender.message_attachment,
     };
@@ -209,7 +209,7 @@ function UserMessage(props) {
               {props.sender.message_body }
             </div>
             <div style={{position:"absolute", right:"0", fontSize:".2rem"}}>
-            {props.sender.seen > 0 && props.sender.message_from == admin ? (<DoneAllIcon fontSize="small" />) : null} 
+            {props.sender.seen > 0 && props.sender.message_from == admin ? (<DoneAllIcon fontSize="small" color="primary" />) : null} 
             </div>
           </div>
         ) : (

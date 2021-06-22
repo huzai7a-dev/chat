@@ -10,8 +10,8 @@ import { IconButton } from "@material-ui/core";
 function Login() {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [Email, setEmail] = useState("huzaifa89@bizzworld.com");
-  const [Password, setPassword] = useState("bizzworld@2");
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
   const [open, setOpen] = useState(true);
