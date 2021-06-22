@@ -5,9 +5,8 @@ import UserMessage from "./UserMessage/UserMessage";
 import TempMsg from "./TempMessage/TempMsg";
 import axios from "axios";
 import { Avatar } from "@material-ui/core";
-import moment from "moment";
 import { userMsgs } from "../../../Redux/Action";
-import sorting from '../../filter';
+
 function MessageTextContainer() {
   const RedData = useSelector((state) => {
     return state;

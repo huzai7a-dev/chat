@@ -11,7 +11,6 @@ import {
   groupMsgs,
   quote,
   sendMsg,
-  typedMsg,
   updateGroup,
 } from "../../../Redux/Action";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -112,14 +111,12 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     // function to generate id for temp message
     const tempMsgId = nanoid();
     dispatch(
-      typedMsg([
-        ...data.typedMsg,
+      addTypedMsg(
         {
           tempText: message,
           tempAttachment: attachment,
           id: tempMsgId,
-        },
-      ])
+        })
     );
     const paramData = {
       from_username: data.Auth.data.elsemployees_name,
@@ -170,7 +167,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       ])
       .then((res) => {
         const socket = getSocket();
-        console.log(paramData);
         socket.emit("group-messaging", paramData);
         dispatch(sendMsg(res[0].data));
         dispatch(updateGroup(res[1].data));
@@ -181,8 +177,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
           })
           .then((res) => {
             dispatch(groupMsgs(res.data.messages));
-            data.typedMsg.shift();
-            dispatch(typedMsg(data.typedMsg));
+            dispatch(removeFromTypedMessage(tempMsgId))
           });
       })
       .catch((err) => {

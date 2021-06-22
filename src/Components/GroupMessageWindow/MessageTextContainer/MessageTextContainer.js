@@ -6,7 +6,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { groupMemberInfo, groupMsgs } from "../../../Redux/Action";
 import { Avatar } from "@material-ui/core";
 import TempMsg from "./TempMessage/TempMsg";
-import sorting from "../../filter";
 import Alert from "@material-ui/lab/Alert";
 function MessageTextContainer() {
   const data = useSelector((state) => {

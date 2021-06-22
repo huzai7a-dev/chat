@@ -1,5 +1,5 @@
 import { Avatar, Button } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import "./userMessage.css";
 import { useDispatch, useSelector } from "react-redux";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -9,6 +9,7 @@ import { quote } from "../../../../Redux/Action";
 import Modal from "react-modal";
 import axios from "axios";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 function UserMessage(props) {
   const data = useSelector((state) => {
     return state;
@@ -21,6 +22,12 @@ function UserMessage(props) {
   const [openModel, setOpenModel] = useState(false);
   const [media, setMedia] = useState("");
   const [option, setOption] = useState(false);
+  const menuDiv = useRef();
+  const onClickOutside = useCallback(e => {
+    setOption(false)
+  }, [])
+
+  useOutsideAlerter(menuDiv,onClickOutside);
 
   //function to render sent attachment
   const RenderSendAttachment = () => {
@@ -144,6 +151,7 @@ function UserMessage(props) {
 
           <div
             className="msgOption"
+            ref={menuDiv}
             onClick={() => {
               setOption(!option);
             }}

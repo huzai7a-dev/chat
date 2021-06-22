@@ -60,6 +60,24 @@ export default function Reducer(state = initstate, action) {
       return { ...state, seen: action.payload };
     case "groupMemberInfo":
       return { ...state, groupMemberInfo: action.payload };
+    case "DELETE_TYPED_MESSAGE":
+      const i = state.typedMsg?.findIndex(m => m.id == action.messageId);
+
+      if(i >= 0 ) {
+        state.typedMsg.splice(state.typedMsg, 1)
+      }
+
+      return state = {
+        ...state,
+        typedMsg: Object.assign([], state.typedMsg),
+      }
+
+    case "ADD_TYPED_MESSAGE":
+      const typedMsg = [...state.typedMsg, action.message]
+      return state = {
+        ...state,
+        typedMsg: Object.assign([], state.typedMsg),
+      }
     default:
       return state;
   }

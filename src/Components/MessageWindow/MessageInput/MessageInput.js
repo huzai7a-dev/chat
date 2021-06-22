@@ -7,7 +7,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { Button, IconButton } from "@material-ui/core";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { quote } from "../../../Redux/Action";
+import { addTypedMsg, quote, removeFromTypedMessage } from "../../../Redux/Action";
 import { nanoid } from "nanoid";
 import moment from "moment";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
@@ -17,7 +17,6 @@ import {
   upDateUser,
   sendMsg,
   userMsgs,
-  typedMsg,
 } from "../../../Redux/Action";
 import { getSocket } from "../../../socket";
 import { isMoment } from "moment";
@@ -110,14 +109,11 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     // function to generate id for temp message
     const tempMsgId = nanoid();
     dispatch(
-      typedMsg([
-        ...data.typedMsg,
-        {
+      addTypedMsg({
           tempText: message,
           tempAttachment: attachment,
           id: tempMsgId,
-        },
-      ])
+        })
     );
     
     const paramData = {
@@ -134,8 +130,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       fullTime: moment().format('Y-MM-D, h:mm:ss'),
       messageOn:"user"
     };
-
-    console.log(paramData);
     
     const formData = new FormData();
     formData.append("user_id", data.Auth.data?.elsemployees_empid);
@@ -184,8 +178,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
                 console.log(err);
               });
             dispatch(userMsgs(res.data.messages));
-            data.typedMsg.shift();
-            dispatch(typedMsg(data.typedMsg));
+            dispatch(removeFromTypedMessage(tempMsgId))
           });
         dispatch(sendMsg(res.data));
       })

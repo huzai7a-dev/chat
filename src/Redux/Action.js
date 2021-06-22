@@ -128,6 +128,20 @@ export function typedMsg(message) {
   };
 }
 
+export const addTypedMsg = (message) => {
+  return  {
+    type: "ADD_TYPED_MESSAGE",
+    message
+  };
+}
+
+export const removeFromTypedMessage = (messageId) => {
+  return {
+    type: "DELETE_TYPED_MESSAGE",
+    messageId
+  }
+}
+
 export function pending(PendingMessage) {
   return function (dispatch) {
     dispatch({

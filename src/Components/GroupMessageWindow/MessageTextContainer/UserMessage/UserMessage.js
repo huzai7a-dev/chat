@@ -1,5 +1,5 @@
 import { Avatar, Button } from "@material-ui/core";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import "./userMessage.css";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "react-modal";
@@ -7,6 +7,8 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CancelIcon from "@material-ui/icons/Cancel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { quote } from "../../../../Redux/Action";
+import {useOutsideAlerter} from '../../../../hooks/useOutsideClick';
+
 function UserMessage({ chatgroup }) {
   const data = useSelector((state) => {
     return state;
@@ -16,6 +18,14 @@ function UserMessage({ chatgroup }) {
   const [option, setOption] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const attachments = chatgroup.groupmessage_attachment;
+  const menuDiv = useRef();
+
+  const onClickOutside = useCallback(e => {
+    setOption(false)
+  }, [])
+
+  useOutsideAlerter(menuDiv,onClickOutside);
+
   const RenderSendAttachment = () => {
     return attachments.split(",").map((attachment, id) => {
       const splitAttachment = attachment.split(".");
@@ -100,6 +110,7 @@ function UserMessage({ chatgroup }) {
       anchor.click()
     })
   }
+
   return (
     <div id={chatgroup.message_id} className={user !== admin ? "senderMessage " : "userMessage"}>
       <div className="userMessage__picture">
@@ -125,6 +136,7 @@ function UserMessage({ chatgroup }) {
           </div>
 
           <div
+            ref={menuDiv}
             className="msgOption"
             onClick={() => {
               setOption(!option);
