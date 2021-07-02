@@ -8,7 +8,7 @@
   cursor: pointer;
 }
 .chatUser:hover {
-  background: #e0e0e0;
+  background: #d8ecf7;
 }
 .chatUser__picture {
   margin-right: 10px;

@@ -20,6 +20,12 @@
   min-height: 35px;
   line-height: 0px;
 }
+.chatUserContainer .MuiTabs-indicator {
+  background-color: #d8ecf7;
+}
+.chatUserContainer .Mui-selected {
+  background-color: #d8ecf7;
+}
 .MuiTabs-scroller {
   height: 100%;
 }

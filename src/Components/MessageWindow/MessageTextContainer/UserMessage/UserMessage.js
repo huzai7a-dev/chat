@@ -77,7 +77,7 @@ function UserMessage(props) {
             <div className="file">
               <FileCopyIcon />
               <h4>{props.sender.message_originalname}</h4>
-              <Button color={"primary"}>Download</Button>
+              <Button onClick={() => downloadAttachment(attachments)} color={"primary"}>Download</Button>
             </div>
           </div>
         );

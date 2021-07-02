@@ -73,7 +73,7 @@ function UserMessage({ chatgroup }) {
             <div className="file">
               <FileCopyIcon />
               <h4>{chatgroup.groupmessage_originalname}</h4>
-              <Button color={"primary"}>Download</Button>
+              <Button onClick={() => downloadAttachment(attachments)} color={"primary"}>Download</Button>
             </div>
           </div>
         );
@@ -149,7 +149,7 @@ function UserMessage({ chatgroup }) {
             >
               <div className="options">
                 <p onClick={quoteData}>Quote</p>
-                {chatgroup.groupmessage_attachment ? (<p onClick={()=> downloadAttachment(chatgroup.groupmessage_attachment)}>Donwload</p>): null}
+                {chatgroup.groupmessage_attachment ? (<p onClick={()=> downloadAttachment(chatgroup.groupmessage_attachment)}>Download</p>): null}
               </div>
             </div>
           ) : (

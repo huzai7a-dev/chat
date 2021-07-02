@@ -12,6 +12,8 @@ import {
   quote,
   sendMsg,
   updateGroup,
+  addTypedMsg,
+  removeFromTypedMessage
 } from "../../../Redux/Action";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
