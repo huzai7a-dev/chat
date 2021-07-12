@@ -98,7 +98,10 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
   }, [attachment]);
   // send messg on enter
   const SendMessageOnEnter = (e) => {
-    if (e.key === "Enter") {
+    if(e.keyCode == 13 && e.shiftKey) {
+      setMessage(`${message}\n`)
+    }
+    if (e.keyCode == 13 && !e.shiftKey) {
       e.preventDefault();
       if (message.length > 0 || attachment.length > 0) {
         SendMessage();
@@ -241,6 +244,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
                 }}
                 data-placeholder={"Type a Message"}
                 contentEditable
+                style={{ whiteSpace: 'pre-wrap' }}
               />
               <IconButton
                 onClick={() => {
