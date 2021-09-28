@@ -1,11 +1,4 @@
 const initstate = {
-  user: null,
-  chat: {},
-  Auth: null,
-  groupChat: null,
-  UserSearch: [],
-  searchData: null,
-  upDateUser: [],
   upDateMessage: [],
   updateGroup: [],
   sendMsg: [],
@@ -22,20 +15,6 @@ const initstate = {
 };
 export default function Reducer(state = initstate, action) {
   switch (action.type) {
-    case "Login":
-      return { ...state, user: action.payload };
-    case "chatting":
-      return { ...state, chat: action.payload };
-    case "Auth":
-      return { ...state, Auth: action.payload };
-    case "groupChat":
-      return { ...state, groupChat: action.payload };
-    case "UserSearch":
-      return { ...state, UserSearch: action.payload };
-    case "searchData":
-      return { ...state, searchData: action.payload };
-    case "upDateUser":
-      return { ...state, upDateUser: action.payload };
     case "upDateMessage":
       return { ...state, upDateMessage: action.payload };
     case "updateGroup":
@@ -60,24 +39,24 @@ export default function Reducer(state = initstate, action) {
       return { ...state, seen: action.payload };
     case "groupMemberInfo":
       return { ...state, groupMemberInfo: action.payload };
-    case "DELETE_TYPED_MESSAGE":
-      const i = state.typedMsg?.findIndex(m => m.id == action.messageId);
+    // case "DELETE_TYPED_MESSAGE":
+    //   const i = state.typedMsg?.findIndex(m => m.id == action.messageId);
 
-      if(i >= 0 ) {
-        state.typedMsg.splice(state.typedMsg, 1)
-      }
+    //   if(i >= 0 ) {
+    //     state.typedMsg.splice(state.typedMsg, 1)
+    //   }
 
-      return state = {
-        ...state,
-        typedMsg: Object.assign([], state.typedMsg),
-      }
+    //   return state = {
+    //     ...state,
+    //     typedMsg: Object.assign([], state.typedMsg),
+    //   }
 
-    case "ADD_TYPED_MESSAGE":
-      const typedMsg = [...state.typedMsg, action.message]
-      return state = {
-        ...state,
-        typedMsg: Object.assign([], state.typedMsg),
-      }
+    // case "ADD_TYPED_MESSAGE":
+    //   const typedMsg = [...state.typedMsg, action.message]
+    //   return state = {
+    //     ...state,
+    //     typedMsg: Object.assign([], state.typedMsg),
+    //   }
     default:
       return state;
   }

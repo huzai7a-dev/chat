@@ -2,8 +2,11 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const useWorker = () => {
-  const data = useSelector((state) => {
-    return state;
+  
+  const { auth_user } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {}
+    }
   });
 
   const urlB64ToUint8Array = (base64String) => {
@@ -55,7 +58,7 @@ const useWorker = () => {
       const reg =
         (await navigator.serviceWorker.getRegistration()) ||
         (await navigator.serviceWorker.register(
-          `/service-worker?user_id=${data.Auth.data?.elsemployees_empid}`
+          `/service-worker?user_id=${auth_user?.elsemployees_empid}`
         ));
       const sub =
         (await reg.pushManager.getSubscription()) ||
@@ -80,10 +83,10 @@ const useWorker = () => {
     }
   };
   useEffect(() => {
-    if (data.Auth?.data?.elsemployees_empid) {
-      initWorker(data.Auth.data?.elsemployees_empid);
+    if (auth_user?.elsemployees_empid) {
+      initWorker(auth_user?.elsemployees_empid);
     }
-  }, [data.Auth]);
+  }, [auth_user]);
 };
 
 // const connectBeam = async (interest = "hello") => {

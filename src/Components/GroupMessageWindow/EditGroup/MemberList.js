@@ -12,13 +12,20 @@ import AddIcon from "@material-ui/icons/Add";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { groupMemberInfo, modelState, nameToMember, updateGroup } from "../../../Redux/Action";
+
 import { getSocket } from "../../../socket";
+import { setEditGroupModelState, setEditGroupNameToMemberModelState} from "../../../Redux/actions/app";
+import { setUserGroups } from "../../../Redux/actions/chat";
 function MemberList() {
-  const data = useSelector((state) => {
-    return state;
+  
+  const { auth_user, active_group,isNightMode } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+      active_group: store.chat.active_group || {},
+      isNightMode:store.app.mode || false
+    }
   });
-  const [membersId, setMembersId] = useState(data.groupChat?.memberid?.split(","))
+  const [membersId, setMembersId] = useState(active_group?.memberid?.split(","))
   const [memberList, setMemberList] = useState([]);
   const [groupMember, setGroupMember] = useState("");
   const history = useHistory();
@@ -27,7 +34,7 @@ function MemberList() {
     axios
       .post("/api/bwccrm/getContactsTotal", {
         campaign_id: 1,
-        user_id: data.Auth.data?.elsemployees_empid,
+        user_id: auth_user?.elsemployees_empid,
       })
       .then((res) => {
         setMemberList(res.data.contacts);
@@ -40,14 +47,14 @@ function MemberList() {
   const closeGroup = () => {
     axios
       .post("/api/bwccrm/getUserGroups", {
-        loginuser_id: data.Auth.data?.elsemployees_empid,
-        user_id: data.Auth.data?.elsemployees_empid,
+        loginuser_id: auth_user?.elsemployees_empid,
+        user_id: auth_user?.elsemployees_empid,
       })
       .then((res) => {
         history.push("/");
-        dispatch(updateGroup(res.data));
-        dispatch(nameToMember(false))
-        dispatch(modelState(false))
+        dispatch(setUserGroups(res.data));
+        dispatch(setEditGroupNameToMemberModelState(false))
+        dispatch(setEditGroupModelState(false))
       })
       .catch((err) => {
         console.warn("group error", err);
@@ -68,10 +75,10 @@ function MemberList() {
   return (
     <div style={{ height: "80%" }}>
       <div className="editGroupTop">
-        <IconButton onClick={() => dispatch(nameToMember(false))}>
-          <ArrowBackIcon />
+        <IconButton onClick={() => dispatch(setEditGroupNameToMemberModelState(false))}>
+          <ArrowBackIcon style={{color:isNightMode ? "#fff": "#000"}} />
         </IconButton>
-        <Button onClick={closeGroup}>Done</Button>
+        <Button onClick={closeGroup} style={{color:isNightMode ? "#fff": "#000"}}>Done</Button>
       </div>
       <div className="searchMember">
         <Input
@@ -95,20 +102,20 @@ function MemberList() {
 
               const addMember = () => {
                 const addParamData = {
-                  user_id: data.Auth.data?.elsemployees_empid,
-                  group_id: data.groupChat?.group_id,
+                  user_id: auth_user?.elsemployees_empid,
+                  group_id: active_group?.group_id,
                   member_id: member?.elsemployees_empid,
                   member_name: member?.elsemployees_name,
                   event:"added"
                 }
                 const formData = new FormData();
-                formData.append('user_id', data.Auth.data?.elsemployees_empid)
-                formData.append('group_id', data.groupChat?.group_id);
+                formData.append('user_id', auth_user?.elsemployees_empid)
+                formData.append('group_id', active_group?.group_id);
                 formData.append('member_id', member?.elsemployees_empid)
                 axios.post('/api/bwccrm/addmember', formData)
                   .then(res => {
                     setMembersId(res.data.updatedmembers.split(","))
-                    const socket = getSocket(data.Auth.data?.elsemployees_empid);
+                    const socket = getSocket(auth_user?.elsemployees_empid);
                     socket.emit("group-member", addParamData);
                   })
                   .catch(err => console.log(err))
@@ -116,21 +123,21 @@ function MemberList() {
 
               const removeMember = () => {
                 const removeParamData = {
-                  user_id: data.Auth.data?.elsemployees_empid,
-                  group_id: data.groupChat?.group_id,
+                  user_id: auth_user?.elsemployees_empid,
+                  group_id: active_group?.group_id,
                   member_id: member?.elsemployees_empid,
                   member_name: member?.elsemployees_name,
                   event:"removed"
                 }
                 
                 const formData = new FormData();
-                formData.append('user_id', data.Auth.data?.elsemployees_empid)
-                formData.append('group_id', data.groupChat?.group_id);
+                formData.append('user_id', auth_user?.elsemployees_empid)
+                formData.append('group_id', active_group?.group_id);
                 formData.append('member_id', member?.elsemployees_empid)
                 axios.post('/api/bwccrm/removemember', formData)
                   .then(res => {
                     setMembersId(res.data.updatedmembers.split(","))
-                    const socket = getSocket(data.Auth.data?.elsemployees_empid);
+                    const socket = getSocket(auth_user?.elsemployees_empid);
                     socket.emit("group-member", removeParamData);
                   })
                   .catch(err => console.log(err))
@@ -141,15 +148,15 @@ function MemberList() {
                     <Avatar src={`/bizzportal/public/img/${image}`} />
                   </div>
                   <div className="memberName">
-                    <h3>{member?.elsemployees_name}</h3>
+                    <h3 style={{color:isNightMode ? "#fff": "#000"}}>{member?.elsemployees_name}</h3>
                   </div>
                   {isMemberAdded ? (
                     <IconButton onClick={removeMember}>
-                      <DeleteIcon />
+                      <DeleteIcon style={{color:isNightMode ? "#fff": "#eee"}}/>
                     </IconButton>
                   ) : (
                     <IconButton onClick={addMember}>
-                      <AddIcon />
+                      <AddIcon  style={{color:isNightMode ? "#fff": "#eee"}}/>
                     </IconButton>
                   )}
                 </div>

@@ -6,18 +6,21 @@ import {
   Checkbox,
   Avatar,
   CircularProgress,
+  Typography,
 } from "@material-ui/core";
 import "./groupListContainer.css";
 import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
 import { updateGroup } from "../../../../Redux/Action";
+import { DARKMAIN } from "../../../../Theme/colorConstant";
 function GroupMemebers({ members, userId, setUserId, isChecked }) {
   const [selectMember, setSelectMember] = useState(false);
   const image = members?.elsemployees_image;
-  const { user_id } = useSelector((state) => {
+  const { user_id,isNightMode } = useSelector((state) => {
     return {
-      user_id: state.Auth.data?.elsemployees_empid,
+      user_id: state.auth.auth_user?.elsemployees_empid,
+      isNightMode:state.app.mode || false
     };
   });
   return (
@@ -37,7 +40,7 @@ function GroupMemebers({ members, userId, setUserId, isChecked }) {
           <Avatar src={`/bizzportal/public/img/${image}`} />
         </div>
         <div className="memberName">
-          <h3>{members?.elsemployees_name}</h3>
+          <Typography variant="h6" style={{color: isNightMode ? "#fff": "#000"}}>{members?.elsemployees_name}</Typography>
         </div>
       </div>
       <div className="groupMemberCheck">
@@ -59,15 +62,21 @@ function GroupListContainer({
   const [groupMember, setGroupMember] = useState("");
   const [memberList, setMemberList] = useState([]);
   const dispatch = useDispatch();
-  const data = useSelector((state) => {
-    return state;
+
+  const { auth_user,isNightMode } = useSelector((store) => {
+    return {
+      auth_user: store?.auth.auth_user || {},
+      isNightMode:store.app.mode || false,
+    }
   });
-  const [userId, setUserId] = useState([data.Auth.data?.elsemployees_empid]);
+
+  
+  const [userId, setUserId] = useState([auth_user?.elsemployees_empid]);
   useEffect(() => {
     axios
       .post("/api/bwccrm/getContactsTotal", {
         campaign_id: 1,
-        user_id: data.Auth.data?.elsemployees_empid,
+        user_id: auth_user?.elsemployees_empid,
       })
       .then((res) => {
         setMemberList(res.data.contacts);
@@ -79,8 +88,8 @@ function GroupListContainer({
 
   const HandleGroup = () => {
     const formData = new FormData();
-    formData.append("loginuser_id", data.Auth.data.elsemployees_empid);
-    formData.append("user_id", data.Auth.data.elsemployees_empid);
+    formData.append("loginuser_id", auth_user?.elsemployees_empid);
+    formData.append("user_id", auth_user?.elsemployees_empid);
     formData.append("group_name", passGroupName);
     formData.append("group_image", passGroupPicture);
     userId.forEach((user) => {
@@ -91,8 +100,8 @@ function GroupListContainer({
       .then((res) => {
         axios
           .post("/api/bwccrm/getUserGroups", {
-            loginuser_id: data.Auth.data.elsemployees_empid,
-            user_id: data.Auth.data.elsemployees_empid,
+            loginuser_id: auth_user?.elsemployees_empid,
+            user_id: auth_user?.elsemployees_empid,
           })
           .then((res) => {
             dispatch(updateGroup(res.data));
@@ -100,11 +109,9 @@ function GroupListContainer({
           .catch((err) => {
             console.warn("group error", err);
           });
-        alert(res.data.message);
       })
       .catch((err) => {
         console.log(err);
-        alert(err);
       });
   };
   const filterMember = (members) => {
@@ -112,6 +119,7 @@ function GroupListContainer({
   };
   return (
     <div
+      style={{background : isNightMode ? DARKMAIN : "#eeee"}}
       className="groupListContainer"
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -127,21 +135,23 @@ function GroupListContainer({
             setgroupModelListContaier(false);
           }}
         >
-          <ArrowBackIcon />
+          <ArrowBackIcon style={{color: isNightMode && "#267396"}} />
         </Button>
-        <h1>Create New Group</h1>
+        <Typography variant="h6" color={isNightMode ? "primary" : "textSecondary"}>Create New Group</Typography>
         <Button
           onClick={() => {
             setGroupModelName(false);
             setgroupModelListContaier(false);
             HandleGroup();
           }}
+          style={{color: isNightMode && "#267396"}}
         >
           Done
         </Button>
       </div>
       <div className="groupListContainer__search">
         <Input
+          style={{color: isNightMode ? "#fff": "#000"}}
           placeholder="Search People"
           onChange={(e) => {
             setGroupMember(e.target.value);
@@ -150,7 +160,7 @@ function GroupListContainer({
         />
       </div>
       {memberList.length > 0 ? (
-        <div className="groupListContainer__memberList">
+        <div className="groupListContainer__memberList" style={{background : isNightMode ? DARKMAIN : "#eeee"}}>
           {memberList.filter(filterMember).map((members) => (
             <GroupMemebers
               members={members}

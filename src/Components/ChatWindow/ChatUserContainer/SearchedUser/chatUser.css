@@ -3,11 +3,10 @@
   display: flex;
   margin: 15px 0px;
   padding: 6px;
-  font-family: "Open Sans", sans-serif;
   cursor: pointer;
 }
 .chatUser:hover {
-  background: #e0e0e0;
+  background: #f1f1f1;
 }
 .chatUser__picture {
   margin-right: 10px;

@@ -1,21 +1,23 @@
 import React from "react";
 import "./messageWindowHeader.css";
 import { useSelector } from "react-redux";
-
+import { IconButton } from "@material-ui/core";
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 function MessageWindowHeader() {
-  const data = useSelector((state) => {
-    return state;
+  
+  const { active_user,isNightMode } = useSelector((store) => {
+    return {
+      active_user: store.chat.active_user || {},
+      isNightMode:store.app.mode || false
+    }
   });
 
   return (
     <div className="MessageWindowHeader">
       <div className="userName">
-        <h2>{data.chat?.elsemployees_name}</h2>
+        <h2 style={{color: isNightMode ? "#fff": "#000"}}>{active_user?.elsemployees_name}</h2>
       </div>
-      {/* <div className="userStatus">
-        <div className={data.chat.user_loginstatus ? "onlineStatus" : ""}></div>
-        <p>{data.chat.user_loginstatus}</p>
-      </div> */}
+      
     </div>
   );
 }

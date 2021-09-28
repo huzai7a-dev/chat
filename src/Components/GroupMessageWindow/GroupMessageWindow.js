@@ -1,4 +1,4 @@
-import React, { createRef, useEffect, useState } from "react";
+import React, { createRef, useState } from "react";
 import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageWindowHeader from "./MessageWindowHeader/MessageWindowHeader";
 import MessageInput from "./MessageInput/MessageInput";

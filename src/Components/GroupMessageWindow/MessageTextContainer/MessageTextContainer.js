@@ -3,29 +3,40 @@ import "./MessageTextContainer.css";
 import UserMessage from "./UserMessage/UserMessage";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import { groupMemberInfo, groupMsgs } from "../../../Redux/Action";
+
 import { Avatar } from "@material-ui/core";
-import TempMsg from "./TempMessage/TempMsg";
+
 import Alert from "@material-ui/lab/Alert";
+import { getGroupMessages } from "../../../api/message";
+import { setGroupMemInfo } from "../../../Redux/actions/chat";
+import _ from "lodash";
+import moment from "moment";
+import Typography from '@material-ui/core/Typography';
+import { DARKLIGHT } from "../../../Theme/colorConstant";
 function MessageTextContainer() {
-  const data = useSelector((state) => {
-    return state;
+  const { auth_user, active_group, groupMessages,groupMemInfo,isNightMode} = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+      active_group: store.chat.active_group || {},
+      groupMessages: store.message.groupMessages || {},
+      groupMemInfo: store.chat.groupMemInfo || {},
+      isNightMode:store.app.mode || false,
+    };
   });
 
   const dispatch = useDispatch();
-  const img = data.groupChat?.group_image;
+  const img = active_group?.group_image;
   const messageContainer = createRef();
-  const [alertMessage, setalertMessage] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(false);
   useEffect(() => {
-    axios
-      .post("/api/bwccrm/fetchMessageGroup", {
-        group_id: data.groupChat?.group_id,
-        user_id: data.Auth.data?.elsemployees_empid,
-      })
-      .then((res) => {
-        dispatch(groupMsgs(res.data.messages));
-      });
-  }, [data.groupChat?.group_id]);
+    const params = {
+      data: {
+        group_id: active_group?.group_id,
+        user_id: auth_user?.elsemployees_empid,
+      },
+    };
+    dispatch(getGroupMessages(params));
+  }, [active_group]);
   const MemberAlert = () => {
     return (
       <Alert
@@ -36,20 +47,21 @@ function MessageTextContainer() {
           textAlign: "center",
         }}
       >
-        {data.groupMemberInfo.member_name} has been {data.groupMemberInfo.event}
+        {groupMemInfo.member_name} has been {groupMemInfo.event}
       </Alert>
     );
   };
   useEffect(() => {
-    const hasObj = Object.keys(data.groupMemberInfo).length;
-    if (hasObj > 0) {
-      setalertMessage(true);
+    // const hasObj = Object.keys(groupMemInfo).length;
+  
+    if (groupMemInfo.event) {
+      setAlertMessage(true);
       setTimeout(function () {
-        setalertMessage(false);
-        dispatch(groupMemberInfo({}));
+        setAlertMessage(false);
+        dispatch(setGroupMemInfo({}));
       }, 3000);
     }
-  }, [data.groupMemberInfo]);
+  }, [groupMemInfo]);
   //function to always scroll on bottom
   const scrollToBottom = () => {
     const scroll =
@@ -59,30 +71,76 @@ function MessageTextContainer() {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [data.groupMsgs, data.typedMsg]);
+  }, [groupMessages]);
+  // if there is not message 
+
+
+  
+
+      const Messages = () => {
+        const groupedByMessages = _.chain(groupMessages)
+      // Group the elements of Array based on `date` property
+      .groupBy((m) => {
+        return moment(m.fullTime).calendar({
+        sameDay: '[Today]',
+        nextDay: '[Tomorrow]',
+        nextWeek: 'dddd',
+        lastDay: '[Yesterday]',
+        lastWeek: 'dddd',
+        sameElse: 'DD/MM/YYYY'
+    });
+    })
+      // `key` is group's name (date), `value` is the array of objects
+      .map((value, key) => ({ day: key, messages: value }))
+      .value()
+        return (
+          <>
+            {
+              groupedByMessages?.map((groupedByMessage,id)=>(
+                <div key={id}>
+                  <div className="dividerContainer">
+                  <div className="divider" style={{background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)"}}/>
+                      <Typography variant="body2" align="center" color={isNightMode ? "primary": "textSecondary"} style={{padding:"0px 5px"}}>{groupedByMessage?.day}</Typography>
+                  <div className="divider" style={{background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)"}}/>
+                  </div>
+                  {
+                    groupedByMessage?.messages.map((message)=>(
+                      <UserMessage chatgroup={message} key={message.groupmessage_id} />
+                    ))
+                  }
+                </div>
+              ))
+            }
+          </>
+        )
+    }
+
+
+
+  const NoChat = () => {
+    return (
+      <div className="noChat">
+        {img ? (
+          <Avatar
+            style={{ width: "60px", height: "60px" }}
+            src={`/api/bwccrm/storage/app/public/chat_attachments/${img}`}
+          />
+        ) : (
+          <Avatar style={{ width: "60px", height: "60px" }}>{active_group.group_name?.toUpperCase()[0]}</Avatar>
+        )}
+        <Typography color={isNightMode ? "primary": "textSecondary"}>Welcome To {`${active_group?.group_name}'s`} Group</Typography>
+      </div>
+    )
+  }
+  
   return (
     <div className="messageTextContainer" ref={messageContainer}>
       {alertMessage ? MemberAlert() : null}
-      {data.groupMsgs.length === 0 ? (
-        <div className="noChat">
-          <Avatar
-            style={{ width: "120px", height: "120px" }}
-            src={`/api/bwccrm/storage/app/public/chat_attachments/${img}`}
-          />
-          <h2>Welcome To {`${data.groupChat?.group_name}'s`} Group</h2>
-        </div>
+      {groupMessages.length === 0 ? (
+        <NoChat />
       ) : (
         <div>
-          {data.groupMsgs.map((item) => {
-            return <UserMessage chatgroup={item} key={item.message_id} />;
-          })}
-          <div>
-            {data.typedMsg.length !== 0
-              ? data.typedMsg.map((typedMsgs) => {
-                  return <TempMsg msg={typedMsgs} key={typedMsgs.id} />;
-                })
-              : ""}
-          </div>
+          <Messages />
         </div>
       )}
     </div>

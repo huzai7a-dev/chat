@@ -26,7 +26,7 @@ export const getSubscriptionByUser = (user_id) =>
           reject(error);
         }
 
-        const subscription = results.length > 0 ? {
+        const subscription = results?.length > 0 ? {
           endpoint: results[0]?.endpoint,
           expirationTime: results[0]?.expirationTime,
           keys: {

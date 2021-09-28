@@ -32,7 +32,7 @@ server
   .disable("x-powered-by")
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .use(express.json())
-  .use(express.urlencoded())
+  .use(express.urlencoded({ extended: true }))
   .use(proxyRoutes)
   .get("/*", (req, res) => {
     const context = {};
@@ -47,8 +47,8 @@ server
     } else {
       res.status(200).send(
         `
-    <!DOCTYPE html>
-<html lang="en">
+  <!DOCTYPE html>
+  <html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.png" />

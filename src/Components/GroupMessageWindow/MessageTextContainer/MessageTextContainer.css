@@ -2,12 +2,9 @@
   position: relative;
   width: 100%;
   height: 80vh;
-  background: #fff;
   border-top: 1px solid #d5d9de;
-  overflow-y: scroll;
-  padding: 10px 40px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+  padding: 15px 25px;
 }
 .noChat h2 {
   font-weight: 400;

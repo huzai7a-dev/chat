@@ -1,68 +1,68 @@
-import { Avatar } from "@material-ui/core";
+import { Avatar, makeStyles,Badge } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-
 import "./chatUser.css";
-import { groupChat, quote, updateGroup, Userid } from "../../../../Redux/Action";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
-import { useState } from "react";
+import { setActiveGroup, } from "../../../../Redux/actions/chat";
+import { getUserGroups, seenGroupMessage} from "../../../../api/chat";
+import { DARKLIGHT, DARKMAIN } from "../../../../Theme/colorConstant";
+
+const useStyles = makeStyles({
+  group:{
+    background:"#267396",
+  }
+})
 function ChatGroup({ groups }) {
-  const [seen, setSeen] = useState(false);
+  const classes = useStyles();
   const history = useHistory();
   const image = groups.group_image;
   const dispatch = useDispatch();
-  const data = useSelector((state) => {
-    return state;
+  const { auth_user,active_group,isNightMode } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+      active_group: store.chat.active_group || {},
+      isNightMode:store.app.mode || false
+    }
   });
-
-
-  // const LetterPicture = () => {
-  //   const fLetter = groups.group_name.split(" ")[0].charAt(0);
-  //   const sLetter = groups.group_name.split(" ")[1].charAt(0);
-  //   return (
-  //     <div className="pictureContainer">
-  //       <h2 className="picture">{fLetter + sLetter}</h2>
-  //     </div>
-  //   )
-  // }
+  const active = active_group.group_id == groups.group_id;
+  const switchToGroupChat = () => {
+    dispatch(setActiveGroup(groups))
+    history.push(`/group/${groups.group_name}`)
+    const seenParams = {
+      data:{
+        group_id:groups.group_id,
+        user_id:auth_user?.elsemployees_empid
+      }
+    }
+    dispatch(seenGroupMessage(seenParams))
+    .then((res)=>{
+      const params = {
+        data: {
+          loginuser_id: auth_user?.elsemployees_empid,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      };
+      dispatch(getUserGroups(params));
+    })
+    
+  }
+  const background = isNightMode ? DARKMAIN : "#fff";
+  const activeBackground = isNightMode ?  DARKLIGHT : "#d8ecf7";
+  const heading = isNightMode ? "#fff" : "#252423";
   return (
     <div
       className="chatUser"
-      onClick={() => {
-        dispatch(groupChat(groups));
-        axios
-          .post("/api/bwccrm/makeSeen", {
-            user_id: groups.group_id,
-            loginuser_id: data.Auth.data.user_id,
-          })
-          .then((res) => {
-            axios
-              .post("/api/bwccrm/getUserGroups", {
-                loginuser_id: data.Auth.data.elsemployees_empid,
-                user_id: data.Auth.data.elsemployees_empid,
-              })
-              .then((res) => {
-                dispatch(updateGroup(res.data));
-              })
-              .catch((err) => {
-                console.warn("group error", err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        history.push("/group");
-        setSeen(true);
-        dispatch(quote(null))
-      }}
+      style={{background: active ? activeBackground : background}}
+      onClick={switchToGroupChat}
     >
       <div className="chatUser__picture">
-        {/* {image ? (<Avatar src={`/api/bwccrm/storage/app/public/chat_attachments/${image}`} />) : <LetterPicture />} */}
-        <Avatar src={`/api/bwccrm/storage/app/public/chat_attachments/${image}`} />
+        {image ? (<Avatar src={`/api/bwccrm/storage/app/public/chat_attachments/${image}`} />) : (<Avatar className={classes.group}>{groups.group_name.toUpperCase()[0]}</Avatar>)}
       </div>
       <div className="chatUser__details">
-        <h3>{groups.group_name}</h3>
-        <p>{groups.lastmessage ? (groups.lastmessage) : "Attachment"}</p>
+        <h3 style={{color:groups.groupunseenmesg > 0 ? "#267396" :heading }}>{groups.group_name}</h3>
+        <p style={{fontWeight: groups.groupunseenmesg > 0 && "900"}}>{groups.lastmessage ? (groups.lastmessage) : "Attachment"}</p>
+      </div>
+      <div className="unseenMsg">
+        <Badge badgeContent={groups.groupunseenmesg} color="primary"></Badge>
       </div>
     </div>
   );

@@ -62,7 +62,9 @@ export const withSocket = (app) => {
     socket.on("typing", (data) => {
       socketMappings[data?.user_id]?.emit("typing", data);
     });
-
+    socket.on("leaveTyping", (data) => {
+      socketMappings[data?.user_id]?.emit("leaveTyping", data);
+    });
     socket.on("seen", (data) => {
       socketMappings[data?.message_to]?.emit("seen", data);
     });

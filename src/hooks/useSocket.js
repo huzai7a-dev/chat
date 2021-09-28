@@ -1,167 +1,219 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  groupChat,
-  groupMemberInfo,
-  groupMsgs,
-  seen,
-  updateGroup,
-  upDateUser,
-  userMsgs,
-} from "../Redux/Action";
+
 import { nanoid } from "nanoid";
 import axios from "axios";
+import { setActiveGroup, setContactUsers, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
+import { getContactsUser, getUserGroups, seenMessage } from "../api/chat";
+import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
+import { setSeen } from "../Redux/actions/app";
+import { getUserMessages } from "../api/message";
+import { useHistory } from "react-router";
 const useSocket = () => {
-  const data = useSelector((state) => {
-    return state;
+  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId } = useSelector((store) => {
+    return {
+      auth_user: store.auth?.auth_user || {},
+      active_user: store.chat?.active_user || {},
+      active_group: store.chat?.active_group || {},
+      messages:store.message?.userMessages || [],
+      groupMessages:store.message?.groupMessages || {},
+      oldMessageGroupId:store.chat.newMessage || []
+    }
   });
   const dispatch = useDispatch();
+  const history = useHistory();
+  useEffect(() => {
+    init(auth_user.elsemployees_empid);
+  }, [auth_user]);
 
   useEffect(() => {
-    init(data.Auth?.data.elsemployees_empid);
-  }, [data.Auth]);
-
-  useEffect(() => {
-    const socket = getSocket(data.Auth?.data.elsemployees_empid)
-      socket.on("messaging", (resData) => {
+    const socket = getSocket(auth_user.elsemployees_empid)
+      socket.on("messaging", (data) => {
+        console.log(data)
         const userMessage = {
-          message_body: resData.message_body,
-          message_from: resData.user_id,
-          from_userpicture: resData.from_userpicture,
-          message_to: resData.message_to,
-          from_username: resData.message_originalname,
-          message_id: resData.message_id,
-          message_quotebody: resData.message_quotebody,
-          message_quoteid: resData.message_quoteid,
-          message_quoteuser: resData.message_quoteuser,
-          fullTime: resData.fullTime,
-          // message_attachment:resData.attachment
+          message_body: data.message_body,
+          message_from: data.user_id,
+          from_userpicture: data.from_userpicture,
+          message_to: data.message_to,
+          from_username: data.message_originalname,
+          message_id: data.message_id,
+          message_quotebody: data.message_quotebody,
+          message_quoteid: data.message_quoteid,
+          message_quoteuser: data.message_quoteuser,
+          fullTime: data.fullTime,
+          message_attachment:data.message_attachment || null
         };
-        
-        if (resData.user_id == data.chat?.elsemployees_empid) {
-          axios
-          .post("/api/bwccrm/makeSeen", {
-            user_id: resData.user_id,
-            loginuser_id: data.Auth.data?.elsemployees_empid,
-          }).then((res) => {
+        if (data.user_id == active_user?.elsemployees_empid) {
+          const seenParams = {
+            data:{
+              user_id: data.user_id,
+              loginuser_id: auth_user?.elsemployees_empid
+            }
+          }
+          dispatch(seenMessage(seenParams))
+          .then((res) => {
             const paramData = {
-              message_to:resData.user_id
+              message_to:data.user_id
              }
-             const socket = getSocket(data.Auth.data?.elsemployees_empid);
+             const socket = getSocket(auth_user?.elsemployees_empid);
              socket.emit("isWindowOpen",paramData)
           })
           } 
+          else {
+            const params = {
+              data: {
+                loginuser_id: auth_user.elsemployees_empid,
+                user_id: auth_user.elsemployees_empid,
+              }
+            };
+             dispatch(getContactsUser(params));
+          }
         const groupMessage = {
-          groupmessage_body: resData.message_body,
-          from_userpicture: resData.from_userpicture,
-          message_from: resData.loginuser_id,
-          from_username: resData.from_username,
-          message_id: resData.message_id,
-          group_id: resData.group_id,
-          groupmessage_quotebody: resData.message_quotebody,
-          groupmessage_quoteid: resData.message_quoteid,
-          groupmessage_quoteuser: resData.message_quoteuser,
-          fullTime: resData.fullTime,
+          groupmessage_body: data.message_body,
+          from_userpicture: data.from_userpicture,
+          message_from: data.loginuser_id,
+          from_username: data.from_username,
+          message_id: data.message_id,
+          group_id: data.group_id,
+          groupmessage_quotebody: data.message_quotebody,
+          groupmessage_quoteid: data.message_quoteid,
+          groupmessage_quoteuser: data.message_quoteuser,
+          fullTime: data.fullTime,
+          groupmessage_attachment:data.groupmessage_attachment
         };
-
-        if (userMessage.message_from === data.chat?.elsemployees_empid) {
-          dispatch(userMsgs([...data.userMsgs, userMessage]));
-          axios
-            .post("/api/bwccrm/getContactsUser", {
-              loginuser_id: data.Auth.data?.elsemployees_empid,
-              user_id: data.Auth.data?.elsemployees_empid,
-            })
-            .then((res) => {
-              dispatch(upDateUser(res.data.contacts));
-            });
-        } else if (data.groupChat?.group_id === groupMessage.group_id) {
-          dispatch(groupMsgs([...data.groupMsgs, groupMessage]));
-          axios
-            .post("/api/bwccrm/getUserGroups", {
-              loginuser_id: data.Auth.data?.elsemployees_empid,
-              user_id: data.Auth.data?.elsemployees_empid,
-            })
-            .then((res) => {
-              dispatch(updateGroup(res.data));
-            });
+        
+        if (userMessage.message_from === active_user?.elsemployees_empid) {
+          dispatch(setUserMessages([...messages, userMessage]));
+          const params = {
+            data: {
+              loginuser_id: auth_user.elsemployees_empid,
+              user_id: auth_user.elsemployees_empid,
+            }
+          };
+          
+           dispatch(getContactsUser(params));
+         } 
+        else if (active_group?.group_id === groupMessage.group_id) {
+          dispatch(setGroupMessages([...groupMessages, groupMessage]));
+          const getGroupsParams = {
+            data:{
+              loginuser_id: auth_user?.elsemployees_empid,
+              user_id: auth_user?.elsemployees_empid,
+            }
+          }
+          dispatch(getUserGroups(getGroupsParams));
         } else {
-          axios
-            .post("/api/bwccrm/getContactsUser", {
-              loginuser_id: data.Auth.data?.elsemployees_empid,
-              user_id: data.Auth.data?.elsemployees_empid,
-            })
-            .then((res) => {
-              dispatch(upDateUser(res.data.contacts));
-            });
+          
+          const params = {
+            data: {
+              loginuser_id: auth_user.elsemployees_empid,
+              user_id: auth_user.elsemployees_empid,
+            }
+          };
+          const getGroupsParams = {
+            data:{
+              loginuser_id: auth_user?.elsemployees_empid,
+              user_id: auth_user?.elsemployees_empid,
+            }
+          }
+          dispatch(setNewGroupMessage([...oldMessageGroupId,groupMessage.group_id]))
+          dispatch(getUserGroups(getGroupsParams));
+          dispatch(getContactsUser(params));
         }
       });
       return () => {
         socket.off('messaging')
       }
-  }, [data.userMsgs, data.groupMsgs, data.chat, data.groupChat,data.Auth]);
+  }, [messages, groupMessages, active_user, active_group,auth_user]);
 
   useEffect(() => {
-    const socket = getSocket(data.Auth?.data.elsemployees_empid)
+    const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("seen", (res) => {
-        dispatch(seen(res));
-        axios
-          .post("/api/bwccrm/fetchMessage", {
-            from_id: data.Auth.data?.elsemployees_empid,
-            to_id: data.chat?.elsemployees_empid,
-            user_id: data.Auth.data?.elsemployees_empid,
-          })
-          .then((res) => {
-            dispatch(userMsgs(res.data.messages));
-          });
+        const getMessageParams = {
+          data: {
+            from_id: auth_user?.elsemployees_empid,
+            to_id: active_user?.elsemployees_empid,
+            user_id: auth_user?.elsemployees_empid,
+          },
+        };
+        dispatch(getUserMessages(getMessageParams))
       });
       return () => {
         socket.off('seen')
       }
-  }, [data.chat,data.Auth]);
+  }, [active_user,auth_user]);
 
   useEffect(() => {
-    const socket = getSocket(data.Auth?.data.elsemployees_empid)
+    const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("isWindowOpen", (res) => {
-        axios
-        .post("/api/bwccrm/fetchMessage", {
-          from_id: data.Auth.data?.elsemployees_empid,
-          to_id: data.chat?.elsemployees_empid,
-          user_id: data.Auth.data?.elsemployees_empid,
-        })
-        .then((res) => {
-          dispatch(userMsgs(res.data.messages));
-        });
+        
+        const params = {
+          data:{
+            from_id: auth_user?.elsemployees_empid,
+            to_id: active_user?.elsemployees_empid,
+            user_id: auth_user?.elsemployees_empid,
+          }
+        }
+        dispatch(getUserMessages(params));
       });
       return () => {
         socket.off('isWindowOpen')
       }
-    
   });
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on('typing', (data)=>{
+      dispatch(setIsTyping({
+        data,
+        status:true
+        }));
+    })
+    return () => {
+      socket.off('typing')
+    }
+  },[messages])
 
   useEffect(() => {
-    const socket = getSocket(data.Auth?.data.elsemployees_empid)
-      socket.on("group-member", (res) => {
-        dispatch(groupMemberInfo(res));
-        axios
-          .post("/api/bwccrm/getUserGroups", {
-            loginuser_id: data.Auth.data.elsemployees_empid,
-            user_id: data.Auth.data.elsemployees_empid,
-          })
-          .then((res) => {
-            dispatch(updateGroup(res.data));
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on('leaveTyping', (data)=>{
+      dispatch(setIsTyping({
+        data,
+        status:false
+      }));
+    })
+    return () => {
+      socket.off('leaveTyping')
+    }
+  })
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid)
+      socket.on("group-member", (data) => {
+        dispatch(setGroupMemInfo(data));
+        const userGroupParams = {
+          data:{
+            loginuser_id: auth_user.elsemployees_empid,
+            user_id: auth_user.elsemployees_empid,
+          }
+        }
+        dispatch(getUserGroups(userGroupParams))
+        
+        .then((res) => {
             for (let i = 0; i < res.data; i++) {
-              if(res.data[i]?.group_id == data.groupChat?.group_id){
+              if(res.data[i]?.group_id == active_group?.group_id){
                 return 
               }
             }
-            dispatch(groupChat(null))
+            if (data.member_id === auth_user.elsemployees_empid) {
+              console.log(`${data.member_name} has been ${data.event}`);
+              dispatch(setActiveGroup({}))
+              history.push('/');
+            } 
           })
       });
       return () => {
         socket.off('group-member')
       }
-    
   });
 };
 export default useSocket;

@@ -1,76 +1,8 @@
-import axios from "axios";
-
-export function LoginNow({ Email, Password }) {
-  return function (dispatch) {
-    return axios
-      .post(
-        "/api/bwccrm/login",
-        {
-          email: Email,
-          password: Password,
-        },
-        { headers: {} }
-      )
-      .then((res) => {
-        alert("Login successful");
-        localStorage.setItem("user", JSON.stringify(res.data));
-        dispatch({
-          type: "Login",
-          payload: res.data,
-        });
-        window.location = "/";
-      }).catch(err=>{
-        alert(err.response.data);
-      });
-  };
-}
 export function Userid(user_id) {
   return function (dispatch) {
     dispatch({
       type: "chatting",
       payload: user_id,
-    });
-  };
-}
-export function Auth(auth) {
-  return function (dispatch) {
-    dispatch({
-      type: "Auth",
-      payload: auth,
-    });
-  };
-}
-export function groupChat(group) {
-  return function (dispatch) {
-    dispatch({
-      type: "groupChat",
-      payload: group,
-    });
-  };
-}
-export function UserSearch(UserSearch) {
-  return function (dispatch) {
-    dispatch({
-      type: "UserSearch",
-      payload: UserSearch,
-    });
-  };
-}
-
-export function searchData(searchData) {
-  return function (dispatch) {
-    dispatch({
-      type: "searchData",
-      payload: searchData,
-    });
-  };
-}
-
-export function upDateUser(setContactData) {
-  return function (dispatch) {
-    dispatch({
-      type: "upDateUser",
-      payload: setContactData,
     });
   };
 }

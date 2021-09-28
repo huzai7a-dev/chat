@@ -26,6 +26,7 @@ function MessageWindow() {
       )}
     </Dropzone>
   );
+
 }
 
 export default MessageWindow;

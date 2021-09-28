@@ -1,15 +1,23 @@
 import React, { useState } from "react";
 import "./groupName.css";
 
-import { Avatar, Button, IconButton, Input } from "@material-ui/core";
+import { Avatar, Button, IconButton, Input, Typography } from "@material-ui/core";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import { DARKMAIN } from "../../../../Theme/colorConstant";
+import { useSelector } from "react-redux";
 function GroupName({
   setGroupModelName,
   setgroupModelListContaier,
   setPassGroupName,
   setPassGroupPicture,
 }) {
+  const {isNightMode} = useSelector((store) => {
+    return {
+      isNightMode:store.app.mode || false
+    };
+  }); 
+
   const [groupPicture, setGroupPicture] = useState("");
   const [groupName, setGroupName] = useState("");
 
@@ -25,8 +33,8 @@ function GroupName({
   };
 
   return (
-    <div className="groupName" onKeyDown={(e)=>{
-      e.key==="Enter" ? setgroupModelListContaier(true) : console.log("");
+    <div className="groupName" style={{background: isNightMode ? DARKMAIN : "#eee"}} onKeyDown={(e)=>{
+      e.key==="Enter" && setgroupModelListContaier(true);
     }}>
       <div className="groupNameModel__prevIconContainer">
         <Button
@@ -34,11 +42,11 @@ function GroupName({
             setGroupModelName(false);
           }}
         >
-          <ArrowBackIcon />
+          <ArrowBackIcon style={{color: isNightMode && "#fff"}} />
         </Button>
       </div>
       <div className="groupName__header">
-        <h1>New Group Chat</h1>
+        <Typography variant="h6" color={isNightMode ? "primary" : "textSecondary"}>New Group Chat</Typography>
       </div>
 
       <label className="groupNameModel__imageContainer">
@@ -48,6 +56,7 @@ function GroupName({
 
       <div className="groupNameModel__nameContainer">
         <Input
+          style={{color:isNightMode ? "#fff": "#000"}}
           placeholder="Group Name"
           className="groupNameInputField"
           value={groupName}

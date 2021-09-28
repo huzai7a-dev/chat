@@ -19,13 +19,13 @@
   display: flex;
   justify-content: flex-end;
   color: #aeaeae;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Roboto' sans-serif;
   font-size: 0.8rem;
 }
 .senderMessage__details {
   display: flex;
   color: #aeaeae;
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Roboto' sans-serif;
   font-size: 0.8rem;
   margin-left: 5px;
 }

@@ -1,5 +1,4 @@
 .searchBar {
-  background: #fff;
   display: flex;
   align-items: center;
   height: 10px;
@@ -7,12 +6,14 @@
   padding: 15px 10px;
   cursor: pointer;
   justify-content: space-between;
-  border: 1px solid #d5d9de;
-  border-radius: 5px;
+  border: 1px solid #267396;
 }
 .searchBar .searchBarInput {
   width: 100%;
   height: auto;
   outline: none;
   border: none;
+}
+.searchBar .searchBarInput::placeholder {
+  color: #267396;
 }

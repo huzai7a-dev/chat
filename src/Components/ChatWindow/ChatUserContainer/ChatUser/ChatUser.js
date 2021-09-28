@@ -1,86 +1,115 @@
-import { Avatar } from "@material-ui/core";
+import { Avatar, Paper, Typography,Badge } from "@material-ui/core";
 
 import { useDispatch, useSelector } from "react-redux";
-import { quote, upDateUser, Userid } from "../../../../Redux/Action";
+import { quote } from "../../../../Redux/Action";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
-import Badge from "@material-ui/core/Badge";
-import axios from "axios";
-import { getSocket } from "../../../../socket";
 
-function ChatUser(props) {
+
+import { getSocket } from "../../../../socket";
+import { getContactsUser, seenMessage } from "../../../../api/chat";
+import { setActiveChat } from "../../../../Redux/actions/chat";
+import { useParams } from "react-router-dom";
+
+import loading from '../../../../Assets/loading.gif';
+
+import { DARKLIGHT, DARKMAIN, } from "../../../../Theme/colorConstant";
+
+  const  ChatUser = React.forwardRef((props, ref)=> {
+    
   const history = useHistory();
   const dispatch = useDispatch();
   const image = props.users?.elsemployees_image;
-  const data = useSelector((state) => {
-    return state;
+  const { auth_user, activeUser,isTyping,isNightMode} = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+      activeUser: store.chat.active_user || {},
+      isTyping:store.chat?.isTyping || {},
+      isNightMode:store.app.mode || false
+    }
   });
-  const LetterPicture = () => {
-    const fLetter = props.users?.elsemployees_name?.split(" ")[0].charAt(0);
-    const sLetter = props.users?.elsemployees_name?.split(" ")[1].charAt(0);
-    return (
-      <div className="pictureContainer">
-        <h2 className="picture">{fLetter + sLetter}</h2>
-      </div>
-    );
-  };
   const paramData = {
     message_to: props.users.elsemployees_empid,
   };
-  const switchToConve = () => {
-    dispatch(Userid(props.users));
+  const getLastMessage = ()=>{
+    if (props.users.last_msg.message_body) {
+      return props.users.last_msg.message_body
+    }
+    else if (props.users.last_msg.message_attachment){
+      return "Attachment"
+    }
+    else {
+      return null
+    }
+  }
+  const activeWindow = activeUser.elsemployees_empid == props.users.elsemployees_empid;
+  const lastMessage = getLastMessage();
+  const switchToConvo = () => {
+   
+    dispatch(setActiveChat(props.users));
     if (props.users.unseen == 1) {
-      const socket = getSocket(data.Auth.data?.elsemployees_empid);
+      const socket = getSocket(auth_user?.elsemployees_empid);
       socket.emit("seen", paramData);
     }
-    axios
-      .post("/api/bwccrm/makeSeen", {
+    history.push(`/user/${props.users.elsemployees_empid}`);
+    const seenParams =  {
+      data:{
         user_id: props.users?.elsemployees_empid,
-        loginuser_id: data.Auth.data?.elsemployees_empid,
-      })
-      .then((res) => {
-        const socket = getSocket(data.Auth.data?.elsemployees_empid);
+        loginuser_id: auth_user?.elsemployees_empid,
+      }
+    }
+    
+    dispatch(seenMessage(seenParams))
+    .then((res) => {
+      const contactParams = {
+        data: {
+          loginuser_id: auth_user.elsemployees_empid,
+          user_id: auth_user.elsemployees_empid,
+        }
+      };
+        const socket = getSocket(auth_user?.elsemployees_empid);
         socket.emit("seen", paramData);
-        axios
-          .post("/api/bwccrm/getContactsUser", {
-            loginuser_id: data.Auth.data?.elsemployees_empid,
-            user_id: data.Auth.data?.elsemployees_empid,
-          })
-          .then((res) => {
-            dispatch(upDateUser(res.data.contacts));
-          });
+        dispatch(getContactsUser(contactParams));
       })
-      .catch((err) => {
-        console.log(err);
-      });
-    history.push("/user");
+      .catch(err => console.warn(err));
     dispatch(quote(null));
   };
+  const Typing = ()=>{
+    return (
+      <Paper elevation={0} style={{display:"flex"}}> 
+        <Typography variant="caption" color="textSecondary">Typing</Typography>
+        <img src={loading} alt="Loading" height="20px" width="20px" className="loading" />
+      </Paper>
+    )
+  }
+  const background = isNightMode ? DARKMAIN : "#fff";
+  const activeBackground = isNightMode ? DARKLIGHT : "#d8ecf7";
+  const heading = isNightMode ? "#fff" : "#252423";
   return (
-    <div className="chatUser" onClick={switchToConve}>
+    <div className="chatUser" ref={ref} onClick={switchToConvo} style={{background: activeWindow ? activeBackground : background}}>
       <div className="loginStatus" />
       <div className="chatUser__picture">
         {image ? (
           <Avatar src={`/bizzportal/public/img/${image}`} />
         ) : (
-          <LetterPicture />
+          <Avatar>{props.users?.elsemployees_name[0]}</Avatar>
         )}
       </div>
-      <div className="chatUser__details">
-        <h3 style={{ fontWeight: props.users.unseen ? "700" : "400" }}>
+      <div className="chatUser__details" >
+        <h3 style={{ color: props.users.unseen ? "#267396" : heading}}>
           {props.users?.elsemployees_name}
         </h3>
-        <p>
-          {props.users.last_msg.message_body
-            ? props.users.last_msg.message_body
-            : "Attachment"}
-        </p>
+        <div className="chatUser__lastMessage">
+          {
+           isTyping?.data?.tPerson == props.users?.elsemployees_empid && isTyping.status ? <Typing/> : <p>{lastMessage}</p>
+          }
+        </div>
       </div>
       <div className="unseenMsg">
         <Badge badgeContent={props.users.unseen} color="primary"></Badge>
       </div>
-    </div>
+    </div>  
   );
-}
+})
 
 export default ChatUser;

@@ -3,39 +3,54 @@ import "./App.css";
 import Login from "./Components/Login/Login";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Auth } from "../src/Redux/Action";
+import { setAuthUser } from "../src/Redux/actions/auth";
 import { useHistory } from "react-router-dom";
-// import { Client } from "@pusher/push-notifications-web";
 import { Provider } from "react-redux";
 import Store from "./Redux/Store";
 import useSocket from "./hooks/useSocket";
 import useWorker from './hooks/useWorker'
-
-
-function App() {
-  const data = useSelector((state) => {
-    return state;
-  });
+import ThemeProvider from "@material-ui/styles/ThemeProvider";
+import {lightTheme} from './Theme/customTheme';
+import Modal from 'react-modal';
+import { getContactsTotal } from "./api/message";
+Modal.setAppElement('#root');
+const App = React.memo(() => {
+  const dispatch = useDispatch();
   const history = useHistory();
+  const { auth_user } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user
+    }
+  });
 
   useEffect(() => {
+    const auth_user = JSON.parse(localStorage.getItem("user"));
+    if (auth_user && auth_user.data) {
+      return localStorage.removeItem("user");
+    }
+    dispatch(setAuthUser(auth_user));
     history.push("/");
   }, []);
-
   useSocket();
   useWorker();
-
-  const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(Auth(JSON.parse(localStorage.getItem("user"))));
-  }, []);
-  return <div className="App">{data.Auth ? <MainWindow /> : <Login />}</div>;
-}
+    const params = {
+      data:{
+          campaign_id: 1,
+          user_id: auth_user?.elsemployees_empid || 1,
+      }
+    }
+    dispatch(getContactsTotal(params))
+  }, [])
 
-export default React.memo(() => {
+  return <div className="App">{auth_user ? <MainWindow /> : <Login />}</div>;
+})
+export default () => {
   return (
     <Provider store={Store}>
+      <ThemeProvider theme={lightTheme}>
       <App />
+      </ThemeProvider>
     </Provider>
   );
-});
+};

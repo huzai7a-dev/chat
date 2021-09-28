@@ -5,31 +5,38 @@ import { useDispatch, useSelector } from "react-redux";
 import { IconButton } from '@material-ui/core';
 import Modal from "react-modal";
 import EditGroup from "../EditGroup/EditGroup";
-import { modelState, participantModel } from "../../../Redux/Action";
+
 import Participants from "../Participants/Participants";
+import { setEditGroupModelState,setParticipantModelState } from "../../../Redux/actions/app";
 
 function MessageWindowHeader() {
-  const data = useSelector((state) => {
-    return state;
-  });
+  const { active_group, editGroupModelState,participantModelState,isNightMode} = useSelector((store) => {
+    return {
+      active_group: store.chat.active_group || {},
+      editGroupModelState: store.app.editGroupModelState || false,
+      participantModelState: store.app.participantModelState || false,
+      isNightMode:store.app.mode || false
+    };
+  }); 
+
   const dispatch = useDispatch();
-  const memberLength = data.groupChat?.memberid?.split(",").length;
+  const memberLength = active_group?.memberid?.split(",").length;
   return (
     <div className="MessageWindowHeader">
       <div className="userName">
-        <h2>{data.groupChat?.group_name}</h2>
-        <p onClick={() => dispatch(participantModel(true))}>{memberLength} participants</p>
+        <h2 style={{color:isNightMode ? "#fff":"#000"}}>{active_group?.group_name}</h2>
+        <p onClick={() => dispatch(setParticipantModelState(true))}>{memberLength} participants</p>
       </div>
       <div className="groupEdit">
-        <IconButton onClick={() => dispatch(modelState(true))}>
+        <IconButton onClick={() => dispatch(setEditGroupModelState(true))}>
           <GroupAddIcon color="primary" style={{ width: "40px", height: "40px" }} />
         </IconButton>
       </div>
-      <Modal className="groupModel" isOpen={data.modelState} onRequestClose={() => dispatch(modelState(false))}>
+      <Modal className="groupModel" isOpen={editGroupModelState} onRequestClose={() => dispatch(setEditGroupModelState(false))}>
         <EditGroup />
       </Modal>
 
-      <Modal className="groupModel" isOpen={data.participantModel} onRequestClose={() => dispatch(participantModel(false))}>
+      <Modal className="groupModel" isOpen={participantModelState} onRequestClose={() => dispatch(setParticipantModelState(false))}>
         <Participants />
       </Modal>
     </div>

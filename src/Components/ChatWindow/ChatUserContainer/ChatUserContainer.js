@@ -8,126 +8,143 @@ import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import SearchedUser from "./SearchedUser/SearchedUser";
-import {
-  updateGroup,
-  upDateUser,
-} from "../../../Redux/Action";
+import { getContactsUser, getUserGroups } from "../../../api/chat";
+import { makeStyles } from "@material-ui/core";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
-
+import FlipMove from 'react-flip-move';
+const useStyles = makeStyles({
+  tab: {
+    height: "35px",
+    borderRadius: "3px",
+    margin: "10px",
+     background: "#d8ecf7"
+  },
+});
 function ChatUserContainer() {
-  const data = useSelector((state) => {
-    return state;
-  });
+  const classes = useStyles();
+  const { auth_user, userSearch, searchText, contacts, groupsList } =
+    useSelector((store) => {
+      return {
+        auth_user: store.auth?.auth_user || {},
+        userSearch: store.app?.userSearch || {},
+        searchText: store.app?.searchText || "",
+        contacts: store.chat?.contacts || [],
+        groupsList: store.chat?.groups || [],
+      };
+    });
+
   const [people, setPeople] = useState(true);
   const [tabValue, setTabValue] = useState(0);
   const dispatch = useDispatch();
-  useEffect(() => {
-    return axios
-      .post("/api/bwccrm/getContactsUser", {
-        loginuser_id: data.Auth.data?.elsemployees_empid,
-        user_id: data.Auth.data?.elsemployees_empid,
-      })
-      .then((res) => {
-        dispatch(upDateUser(res.data.contacts));
-      });
-  }, []);
 
   useEffect(() => {
-    return axios
-      .post("/api/bwccrm/getUserGroups", {
-        loginuser_id: data.Auth.data?.elsemployees_empid,
-        user_id: data.Auth.data?.elsemployees_empid,
-      })
-      .then((res) => {
-        dispatch(updateGroup(res.data));
-      })
-      .catch((err) => {
-        console.warn("group error", err);
-      });
-  }, []);
+    if (auth_user) {
+      const params = {
+        data: {
+          loginuser_id: auth_user.elsemployees_empid,
+          user_id: auth_user.elsemployees_empid,
+        },
+      };
+      dispatch(getContactsUser(params));
+    }
+  }, [auth_user]);
 
   const handleTab = (event, newValue) => {
     setTabValue(newValue);
   };
-  const changePeopleTab=()=>{
-    setPeople(true)
-    axios // contact user api call when tab is changed
-      .post("/api/bwccrm/getContactsUser", {
-        loginuser_id: data.Auth.data.elsemployees_empid,
-        user_id: data.Auth.data.elsemployees_empid,
-      })
-      .then((res) => {
-        dispatch(upDateUser(res.data.contacts));
-      })
-    
-  }
-  const changeGroupTab=()=>{
-    setPeople(false)
-    axios // group api call when tab is changed
-      .post("/api/bwccrm/getUserGroups", {
-        loginuser_id: data.Auth.data?.elsemployees_empid,
-        user_id: data.Auth.data?.elsemployees_empid,
-      })
-      .then((res) => {
-        dispatch(updateGroup(res.data));
-      })
-      .catch((err) => {
-        console.warn("group error", err);
-      });
-  }
-  //sorting list according to time
-  const sorting = (a, b) => {
-    if (moment(a.groupmessagetime).isBefore(b.groupmessagetime)) {
-      return 1;
-    }
-    else {
+  const changePeopleTab = async () => {
+    setPeople(true);
+    const params = {
+      data: {
+        loginuser_id: auth_user.elsemployees_empid,
+        user_id: auth_user.elsemployees_empid,
+      },
+    };
+    await dispatch(getContactsUser(params));
+  };
+
+  const changeGroupTab = () => {
+    setPeople(false);
+    const params = {
+      data: {
+        loginuser_id: auth_user?.elsemployees_empid,
+        user_id: auth_user?.elsemployees_empid,
+      },
+    };
+    dispatch(getUserGroups(params));
+  };
+
+  const SwitchTabs = () => {
+    return (
+      <Paper elevation={0} className={classes.tab}>
+        <Tabs value={tabValue} onChange={handleTab}>
+          <Tab label="People" onClick={changePeopleTab} />
+          <Tab label="Groups" onClick={changeGroupTab} />
+        </Tabs>
+      </Paper>
+    );
+  };
+  const ContactList = () => {
+    return (
+      <div className="chatUserList">
+        
+        {contacts?.length > 0 ? (
+          <FlipMove>
+          {contacts.map((item, id) => <ChatUser users={item} key={id} />)}
+          </FlipMove>
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+
+            <CircularProgress />
+          
+          </div>
+        )}
+        
+      </div>
+    );
+  };
+  function sortedGroup(a,b){
+    if (moment(b.groupmessagetime || b.created_at).isAfter(a.groupmessagetime || a.created_at)) {
+      return 1
+    }else {
       return -1
     }
-}
+} 
+  
+  const GroupList = () => {
+    return (
+      <div className="groupList">
+        {groupsList.length > 0 ? (
+          groupsList?.sort(sortedGroup).map((list, id) => {
+            return <ChatGroup groups={list} key={id} />;
+          })
+        ) : (
+          <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+            <CircularProgress />
+          </div>
+        )}
+      </div>
+    );
+  };
+  const SearchedList = () => {
+    return (
+      <div className="searchedUser">
+        {userSearch?.map((user, id) => (
+          <SearchedUser users={user} key={id} />
+        ))}
+      </div>
+    );
+  };
   return (
     <div className="container">
-      {!data.searchData ? (
+      {!searchText ? (
         <div className="chatUserContainer">
-          <Paper  style={{ height:"35px", borderRadius:"3px", margin:"10px"}}>
-            <Tabs
-              indicatorColor="primary"
-              value={tabValue}
-              onChange={handleTab}
-            >
-              <Tab
-                label="People"
-                onClick={changePeopleTab}
-              />
-              <Tab
-
-                label="Groups"
-                onClick={changeGroupTab}
-              />
-            </Tabs>
-          </Paper>
-
-          {people ? (
-            <div className="chatUserList">
-              {!data.upDateUser.last_msg
-                ? data.upDateUser.map((item, id) => (
-                    <ChatUser users={item} key={id} />
-                  ))
-                : "NO CHATS ARE AVAILABLE"}
-            </div>
-          ) : (
-            <div className="groupList">
-              {data.updateGroup.sort(sorting).map((list, id) => {
-                return <ChatGroup groups={list} key={id} />;
-              })}
-            </div>
-          )}
+          <SwitchTabs />
+          {people ? <ContactList /> : <GroupList />}
         </div>
       ) : (
-        <div className="searchedUser">
-          {data.UserSearch.map((user, id) => {
-            return <SearchedUser users={user} key={id} />;
-          })}
-        </div>
+        <SearchedList />
       )}
     </div>
   );

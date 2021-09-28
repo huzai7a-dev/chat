@@ -1,16 +1,14 @@
 .groupName {
-  background: #eeee;
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 .groupName__header {
   margin: 30px 0px 20px 0px;
-  font-size: .8rem;
+  font-size: 0.8rem;
 }
 .groupName__header h1 {
   font-weight: 400;
@@ -42,7 +40,7 @@
   left: 0%;
 }
 .groupNameModel__nextIconContainer .nextBtn {
-  background-color:  #d8ecf7;
+  background-color: #d8ecf7;
   color: #000;
 }
 

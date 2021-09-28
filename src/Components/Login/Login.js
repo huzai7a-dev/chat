@@ -1,42 +1,55 @@
+import React, { useState, useCallback } from "react";
 import { Button, TextField } from "@material-ui/core";
-import React, { useState } from "react";
 import "./login.css";
 import logo from "../../Assets/Bizz World Logo.png";
 import { useDispatch } from "react-redux";
-import { LoginNow } from "../../Redux/Action";
+import { login } from "../../api/auth";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { IconButton } from "@material-ui/core";
 
-function Login() {
+const Login = React.memo(() => {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
-  const [Email, setEmail] = useState("");
-  const [Password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [checkEmail, setCheckEmail] = useState(false);
   const [checkPassword, setCheckPassword] = useState(false);
-  const [open, setOpen] = useState(true);
 
-  const handleLogin = () => {
-    if (Email === "") {
+  const params = {
+    data: {
+      email,
+      password,
+    },
+  };
+  const handleLogin = useCallback(() => {
+    if (email === "") {
       setCheckEmail(true);
     } else {
       setCheckEmail(false);
     }
-    if (Password === "") {
+    if (password === "") {
       setCheckPassword(true);
     } else {
       setCheckPassword(false);
     }
-  };
-  const loginOnEnter = (e) => {
-    if (e.key === "Enter") {
-      handleLogin();
-      e.preventDefault();
-      dispatch(LoginNow({ Email, Password }));
-    }
-  };
+  }, [email, password]);
+
+  const loginOnEnter = useCallback(
+    async (e) => {
+      if (e.key === "Enter") {
+        try {
+          handleLogin();
+          e.preventDefault();
+          await dispatch(login(params));
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    },
+    [handleLogin, email, password]
+  );
+
   return (
-    
     <div className="login" onKeyDown={loginOnEnter}>
       <div className="login__container">
         <img src={logo} alt="Logo" />
@@ -44,41 +57,36 @@ function Login() {
           <div className="email">
             <TextField
               style={{ width: "100%" }}
-              name={Email}
+              name={email}
               label="Email"
-              value={Email}
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={checkEmail}
             />
           </div>
-          <div className="passowrd">
+          <div className="password">
             <TextField
               style={{ width: "100%" }}
               type={!visible ? "password" : "text"}
-              name={Password}
+              name={password}
               label="Password"
-              value={Password}
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={checkPassword}
             />
-            {Password ? (
+            {password ? (
               <IconButton
                 className="visibleBtn"
-                onClick={() => {
-                  setVisible(!visible);
-                }}
+                onClick={() => setVisible(!visible)}
               >
                 <VisibilityIcon />
               </IconButton>
-            ) : (
-              null
-            )}
+            ) : null}
           </div>
         </div>
-
         <div className="loginBtn">
           <Button
-            onClick={() => dispatch(LoginNow({ Email, Password }))}
+            onClick={() => dispatch(login(params))}
             type="submit"
             style={{
               background: "#feb318",
@@ -93,6 +101,6 @@ function Login() {
       </div>
     </div>
   );
-}
+});
 
 export default Login;

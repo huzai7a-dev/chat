@@ -2,43 +2,76 @@ import React, { useRef, useState, useEffect, useMemo } from "react";
 import "./groupMessage.css";
 import SendIcon from "@material-ui/icons/Send";
 import AttachmentIcon from "@material-ui/icons/Attachment";
-import { IconButton } from "@material-ui/core";
-import axios from "axios";
+import { IconButton, makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
-import {
-  groupMsgs,
-  quote,
-  sendMsg,
-  updateGroup,
-  addTypedMsg,
-  removeFromTypedMessage
-} from "../../../Redux/Action";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
-import { nanoid } from "nanoid";
 import { getSocket } from "../../../socket";
-// import Picker from 'emoji-picker-react';
+import { setQuote } from "../../../Redux/actions/app";
+import Utils from "../../../helper/util";
+import { getGroupMessages, sendGroupMessage } from "../../../api/message";
+import { getUserGroups } from "../../../api/chat";
+import 'emoji-mart/css/emoji-mart.css'
+import { Picker } from 'emoji-mart'
+import { setGroupMessages } from "../../../Redux/actions/message";
+import { DARKLIGHT, DARKMAIN } from "../../../Theme/colorConstant";
+const useStyles = makeStyles({
+  sendBtn: {
+    width: "50px",
+    height: "50px",
+    background: "#267396",
+    color: "#fff",
+    borderRadius: "50%",
+    fontSize: "10px",
+    transition: ".3s",
+    "&:hover": {
+      background: "#d8ecf7",
+      color: "#267396",
+    },
+  },
+  attachBtn: {
+    width: "50px",
+    height: "50px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#267396",
+    color: "#fff",
+    borderRadius: "50%",
+    fontSize: "10px",
+    transition: ".3s",
+    "&:hover": {
+      background: "#d8ecf7",
+      color: "#267396",
+    },
+  },
+});
+
 function MessageInput({ inputProps, attachment, open, setAttachment }) {
-  const data = useSelector((state) => {
-    return state;
+  const classes = useStyles();
+  const { auth_user, active_group, quote,groupMessages,isNightMode } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || { },
+      active_group: store.chat.active_group || { },
+      quote: store.app.quoteData || { },
+      groupMessages:store.message.groupMessages || [],
+      isNightMode:store.app.mode || false
+    };
   });
 
   const [message, setMessage] = useState("");
-  const [attach, setAttach] = useState();
-  const [emojiPicker, setemojiPicker] = useState(false);
+  const [isEmojiActive, setIsEmojiActive] = useState(false)
   const textInput = useRef();
-  const onEmojiClick = (event, emojiObject) => {
-    setMessage(`${message}${emojiObject.emoji}`);
-    textInput.current.innerText = `${message}${emojiObject.emoji}`;
-  };
   const dispatch = useDispatch();
-
-  const deleteAttachment = (index) => {
-    attachment.splice(index, 1);
-    setAttachment([...attachment]);
+  const [pastedImg, setPastedImg] = useState([]);
+ 
+  const onEmojiClick = (event) => {
+    setMessage(`${message}${event.native}`);
+    textInput.current.innerText = `${message}${event.native}`;
   };
+  
   // function to generate Image preview & multiple attachment
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
@@ -46,7 +79,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       if (type === "image") {
         const url = URL.createObjectURL(item);
         return (
-          <div className="attachMedia">
+          <div className="attachMedia" key={index}>
             <CloseIcon
               className="cutIcon"
               onClick={() => {
@@ -66,7 +99,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       if (type === "video") {
         const url = URL.createObjectURL(item);
         return (
-          <div className="attachMedia">
+          <div className="attachMedia" key={index}>
             <CloseIcon
               className="cutIcon"
               onClick={() => {
@@ -84,7 +117,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
         );
       } else {
         return (
-          <div className="attachDocument">
+          <div className="attachDocument" key={index}>
             <CloseIcon
               className="cutIcon"
               onClick={() => {
@@ -100,99 +133,99 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       return null;
     });
   }, [attachment]);
+  // focus input field when page in load
+  useEffect(() => {
+    textInput.current.focus();
+  }, [active_group, quote]);
+
+  const deleteAttachment = (index) => {
+    attachment.splice(index, 1);
+    setAttachment([...attachment]);
+  };
+
+  const setToDefault = () => {
+    setMessage("");
+    setIsEmojiActive(false);
+    textInput.current.innerHTML = "";
+    setAttachment([]);
+    setPastedImg([]);
+    dispatch(setQuote(null));
+  };
   // send message on enter
   const SendMessageOnEnter = (e) => {
-    if(e.keyCode == 13 && e.shiftKey) {
-      setMessage(`${message}\n`)
-    }
-    if (e.keyCode == 13 && !e.shiftKey) {
+    if (e.key === "Enter") {
       e.preventDefault();
-      if (message.length > 0 || attachment.length > 0) {
+      if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
         SendMessage();
       }
     }
   };
-  const SendMessage = () => {
-    // function to generate id for temp message
-    const tempMsgId = nanoid();
-    dispatch(
-      addTypedMsg(
-        {
-          tempText: message,
-          tempAttachment: attachment,
-          id: tempMsgId,
-        })
-    );
-    const paramData = {
-      from_username: data.Auth.data.elsemployees_name,
-      from_userpicture: data.Auth.data.elsemployees_image,
-      user_id: data.Auth.data?.elsemployees_empid,
-      loginuser_id: data.Auth.data?.elsemployees_empid,
-      group_id: data.groupChat?.group_id,
-      group_name: data.groupChat?.group_name,
-      message_body: message,
-      message_id: Date.now(),
-      fullTime: moment().format('Y-MM-D, h:mm:ss'),
-      message_quoteid: data.quote ? data.quote?.message_id : null,
-      message_quotebody: data.quote ? data.quote?.groupmessage_body : null,
-      message_quoteuser: data.quote ? data.quote?.from_username : null,
-      messageOn:"group"
+  const SendMessage = async () => {
+    setToDefault();
+    
+    const messageParams = {
+      data: {
+        user_id: auth_user?.elsemployees_empid,
+        loginuser_id: auth_user?.elsemployees_empid,
+        group_id: active_group?.group_id,
+        message_body: message,
+        message_quoteid: quote?.message_id || null,
+        message_quotebody: quote?.groupmessage_body || null,
+        message_quoteuser: quote.from_username || null,
+        message_attachment: attachment.length > 0 ? attachment : pastedImg,
+      },
     };
-    const formData = new FormData();
-    formData.append("user_id", data.Auth.data?.elsemployees_empid);
-    formData.append("loginuser_id", data.Auth.data?.elsemployees_empid);
-    formData.append("group_id", data.groupChat?.group_id);
-    formData.append("message_body", message);
-    formData.append(
-      "message_quoteid", data.quote?.message_id || null
-    );
-    formData.append(
-      "message_quotebody",
-      data?.quote ? data?.quote.groupmessage_body : null
-    );
-    formData.append(
-      "message_quoteuser",
-      data?.quote ? data?.quote.from_username : null
-    );
-    attachment.forEach((element) => {
-      formData.append("message_attachment[]", element);
-    });
-    setMessage("");
-    setemojiPicker(false);
-    textInput.current.innerHTML = "";
-    setAttachment([]);
-    dispatch(quote(null));
-    return axios
-      .all([
-        axios.post("/api/bwccrm/sendMessage", formData),
-        axios.post("/api/bwccrm/getUserGroups", {
-          loginuser_id: data.Auth.data?.elsemployees_empid,
-          user_id: data.Auth.data?.elsemployees_empid,
-        }),
-      ])
+
+    messageParams.data = Utils.getFormData(messageParams.data);
+    await dispatch(sendGroupMessage(messageParams))
       .then((res) => {
-        const socket = getSocket(data.Auth.data?.elsemployees_empid);
-        socket.emit("group-messaging", paramData);
-        dispatch(sendMsg(res[0].data));
-        dispatch(updateGroup(res[1].data));
-        axios
-          .post("/api/bwccrm/fetchMessageGroup", {
-            group_id: data.groupChat?.group_id,
-            user_id: data.Auth.data?.elsemployees_empid,
-          })
-          .then((res) => {
-            dispatch(groupMsgs(res.data.messages));
-            dispatch(removeFromTypedMessage(tempMsgId))
-          });
+        const attachments = res.data.data.groupmessage_attachment
+        const socketParams = {
+          from_username: auth_user?.elsemployees_name,
+          from_userpicture: auth_user?.elsemployees_image,
+          user_id: auth_user?.elsemployees_empid,
+          loginuser_id: auth_user?.elsemployees_empid,
+          group_id: active_group?.group_id,
+          group_name: active_group?.group_name,
+          message_body: message,
+          message_id: Date.now(),
+          fullTime: moment().format("Y-MM-D, h:mm:ss"),
+          message_quoteid: data.quote ? data.quote?.message_id : null,
+          message_quotebody: data.quote ? data.quote?.groupmessage_body : null,
+          message_quoteuser: data.quote ? data.quote?.from_username : null,
+          messageOn: "group",
+          groupmessage_attachment: attachments || null
+        };
+        const socket = getSocket(auth_user?.elsemployees_empid);
+        socket.emit("group-messaging", socketParams);
+        dispatch(setGroupMessages([...groupMessages,res.data.data]))
+          const getGroupParams = {
+            data: {
+              loginuser_id: auth_user?.elsemployees_empid,
+              user_id: auth_user?.elsemployees_empid,
+            },
+          };
+          dispatch(getUserGroups(getGroupParams));
+        // });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => console.warn(err));
   };
   const attachStyle = {
-    background: "#eee",
+    background: isNightMode ? DARKMAIN :"#eee",
     height: "40vh",
   };
+  const Emoji = () => {
+    return (
+      <div
+        style={{ position: "absolute", bottom: "100%", left: "0" }}
+      >
+        <Picker
+          onSelect={onEmojiClick}
+           native={true}
+        />
+      </div>
+    )
+  }
   return (
     <div
       className="inputAttachContainer"
@@ -204,20 +237,19 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
           <div className="inputField__container">
-            <div className="qoutMsg__container">
-              {data.quote ? (
+            <div className="qoutMsg__container" style={{background: isNightMode ? DARKLIGHT : "#eeee", color: isNightMode ? "#fff": "#000"}}>
+              {quote.groupmessage_body ? (
                 <div>
                   <p className="qcMsg">
-                    {data.quote.attachment
-                      ? "Attachment"
-                      : data.quote.groupmessage_body}
+                    {quote.attachment ? "Attachment" : quote.groupmessage_body}
                   </p>
-                  <p className="qcName">{data.quote.from_username}</p>
+                  <p className="qcName">{quote.from_username}</p>
                   <IconButton
+                    style={{position:"absolute", top:"1%", right:"0%"}}
                     onClick={() => {
-                      dispatch(quote(null));
+                      dispatch(setQuote(null));
                     }}
-                    style={{ zIndex: "1000" }}
+                    
                   >
                     <CloseIcon />
                   </IconButton>
@@ -225,42 +257,45 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
               ) : (
                 ""
               )}
-              {/* {emojiPicker &&(
-<div style={{position:"absolute", bottom:"100%", right:"0"}}>
-{/ <Picker onEmojiClick={onEmojiClick} native={true} style={{overflowX:"none"}} /> /}
-</div>)
-} */}
+
+              {isEmojiActive && (
+                <Emoji/>
+              )}
               <div
                 className="inputField"
                 ref={textInput}
                 onKeyUp={(e) => {
                   setMessage(e.target.innerText);
                 }}
+                onPasteCapture={(e) => {
+                  setPastedImg(e.clipboardData.files);
+                }}
                 data-placeholder={"Type a Message"}
                 contentEditable={true}
               />
-              {/* <IconButton onClick={()=>{setemojiPicker(!emojiPicker)}}>
-{/ <EmojiEmotionsIcon color={emojiPicker ? "primary" : "inherit"}/> /}
-</IconButton> */}
+              <IconButton
+                style={{position:"absolute", top:"1%", left:"0%"}}
+                onClick={() => {
+                  setIsEmojiActive(!isEmojiActive);
+                }}
+              >
+                <EmojiEmotionsIcon
+                  color={isEmojiActive ? "primary" : "inherit"}
+                />
+              </IconButton>
             </div>
           </div>
-          {message.length > 0 || attachment.length > 0 ? (
-            <IconButton className="sendBtn" onClick={SendMessage}>
+          {message.length > 0 ||
+            attachment.length > 0 ||
+            pastedImg.length > 0 ? (
+            <IconButton className={classes.sendBtn} onClick={SendMessage}>
               <SendIcon />
             </IconButton>
           ) : (
-            <label
-              style={{
-                background: "#eeeeee",
-                width: "50px",
-                height: "50px",
-                borderRadius: "50%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "Center",
-              }}
-            >
-              <AttachmentIcon onClick={open} />
+            <label className="selectAttachment">
+              <div className={classes.attachBtn}>
+                <AttachmentIcon onClick={open} />
+              </div>
               <input {...inputProps()} />
             </label>
           )}

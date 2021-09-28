@@ -1,13 +1,11 @@
-:root {
-  --grayColor: #f0f4f8;
-}
-
 .container {
   height: 65vh;
-  background: var(--grayColor);
 }
 .chatUserContainer {
   height: 100%;
+}
+.searchedUser {
+  width: 350px;
 }
 .groupList,
 .chatUserList,
@@ -20,12 +18,22 @@
   min-height: 35px;
   line-height: 0px;
 }
-.chatUserContainer .MuiTabs-indicator {
-  background-color: #d8ecf7;
-}
-.chatUserContainer .Mui-selected {
-  background-color: #d8ecf7;
-}
 .MuiTabs-scroller {
   height: 100%;
+}
+.chatUser__details p {
+  font-style: italic;
+}
+
+.chatUser__details h3 {
+  font-weight: 600 !important;
+}
+.chatUserContainer .Mui-selected {
+  background-color: #267396;
+  color: #fff;
+  font-weight: bold;
+  box-shadow: none !important;
+}
+.chatUserContainer .MuiTabs-indicator {
+  background-color: #267396;
 }

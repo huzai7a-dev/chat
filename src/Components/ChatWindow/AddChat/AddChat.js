@@ -15,6 +15,7 @@ function AddChat() {
     <>
       <div className="add__chat">
         <IconButton
+          color="primary"
           className="addChat__btn"
           onClick={() => {
             setGroupModelName(true);
