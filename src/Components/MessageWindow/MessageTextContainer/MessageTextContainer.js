@@ -12,18 +12,22 @@ import { DARKLIGHT } from "../../../Theme/colorConstant";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { setUserMessages } from "../../../Redux/actions/message";
 import CircularProgress from "@material-ui/core/CircularProgress";
-function MessageTextContainer() {
-
+import { mergeArray } from "../../../helper/util";
+function MessageTextContainer({scrollDown}) {
+  const [hasMore,setHasMore] = useState(true);
   const { auth_user, active_user, userMessages, isTyping, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
       active_user: store.chat.active_user || {},
       userMessages: store.message.userMessages || [],
-      tempMessages: store.message.tempMessages || [],
       isTyping: store.chat?.isTyping || {},
       isNightMode: store.app.mode || false
     };
   });
+  useEffect(()=>{
+    setHasMore(true)
+  },[active_user])
+  
   const dispatch = useDispatch();
   const image = active_user?.elsemployees_image;
   const messageContainer = createRef();
@@ -48,7 +52,7 @@ function MessageTextContainer() {
   };
   useEffect(() => {
     scrollToBottom();
-  }, [active_user]);
+  }, [active_user,scrollDown]);
   // if there is no message this component will render
   const NoChat = () => {
     return (
@@ -74,7 +78,11 @@ function MessageTextContainer() {
     }
     const response = await dispatch(getMoreUserMessages(params));
     const olderMessages = response.data.messages;
-    dispatch(setUserMessages([...userMessages,...olderMessages]));
+    if (olderMessages.length <1) {
+      setHasMore(false);
+    }
+    const mergedArray = mergeArray(userMessages,olderMessages,"message_id");
+    dispatch(setUserMessages(mergedArray));
   }
   const ModifiedMessages = () => {
     const groupedByMessages = _.chain(userMessages)
@@ -99,7 +107,7 @@ function MessageTextContainer() {
         dataLength={userMessages.length}
         next={fetchMoreMessages}
         inverse={true} 
-        hasMore={true}
+        hasMore={hasMore}
         loader={<div style={{textAlign:"center"}}><CircularProgress /></div>}
         scrollableTarget="scrollableDiv"
         style={{ display: "flex", flexDirection: "column-reverse" }}

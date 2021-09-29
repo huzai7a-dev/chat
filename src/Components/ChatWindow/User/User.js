@@ -1,5 +1,5 @@
 import React, {useState } from "react";
-import { Avatar,IconButton, Tooltip  } from "@material-ui/core";
+import { Avatar,IconButton, Tooltip, Typography  } from "@material-ui/core";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Modal from "react-modal";
 import Brightness3Icon from '@material-ui/icons/Brightness3';
@@ -29,13 +29,13 @@ const User = React.memo(() => {
           src={`/bizzportal/public/img/${image}`}
           className="userImg"
         />
-        <p className="userName">{auth_user?.elsemployees_name}</p>
+        <Typography variant="subtitle1" style={{color:isNightMode ? "#fff": "primary"}} className="userName">{auth_user?.elsemployees_name}</Typography>
         <div className="onlineStatus"></div>
       </div>
       <Tooltip title={isNightMode ? "Day Mode": "Night Mode"}>
         <IconButton onClick={()=>{dispatch(setNightMode(!isNightMode))}}>
           {!isNightMode ?
-            <Brightness3Icon color="primary"/> : <WbSunnyIcon color="primary"/>
+            <Brightness3Icon style={{color:isNightMode ? "#fff" : "267396"}}/> : <WbSunnyIcon style={{color:isNightMode ? "#fff" : "267396"}}/>
           }
         </IconButton>
       </Tooltip>
@@ -47,7 +47,7 @@ const User = React.memo(() => {
             setMenuOpen(true);
           }}
         >
-          <ExitToAppIcon color="primary"/>
+          <ExitToAppIcon style={{color:isNightMode ? "#fff" : "267396"}}/>
         </IconButton>
         </Tooltip>
         <Modal

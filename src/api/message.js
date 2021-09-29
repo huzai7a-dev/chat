@@ -25,7 +25,7 @@ export const getUserMessages = (params = {}) => (dispatch) => {
   };
   
   const onSuccessGetUserMessages = (response, params) => (dispatch) => {
-    dispatch(setUserMessages(response.data?.messages));
+    dispatch(setUserMessages(response.data.messages));
   };
   
   const onFailureGetUserMessages = (error, params) => (dispatch) => {

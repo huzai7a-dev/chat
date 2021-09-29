@@ -9,9 +9,7 @@ import { setUserSearchResult, setSearchText } from "../../../Redux/actions/app";
 import { DARKMAIN } from "../../../Theme/colorConstant";
 
 function SearchBar() {
-  const data = useSelector((state) => {
-    return state;
-  });
+  
   const { auth_user,isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
@@ -36,7 +34,7 @@ function SearchBar() {
       });
   }, [users]);
   return (
-    <div className="searchBar">
+    <div className="searchBar" style={{border: isNightMode ?"1px solid #fff" : "1px solid #267396"}}>
       <input
         style={{background: isNightMode ? DARKMAIN : "#fff", color:isNightMode ? "#fff": "#000"}}
         className="searchBarInput"
@@ -49,14 +47,14 @@ function SearchBar() {
       />
       {users ? (
         <ClearIcon
-          color="primary"
+          style={{color:isNightMode ? "#fff" : "#267396"}}
           onClick={() => {
             setUsers("");
             dispatch(setSearchText(""));
           }}
         />
       ) : (
-        <SearchIcon color="primary" />
+        <SearchIcon style={{color:isNightMode ? "#fff" : "#267396"}} />
       )}
     </div>
   );

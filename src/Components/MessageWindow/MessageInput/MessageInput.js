@@ -53,7 +53,7 @@ const useStyles = makeStyles({
    },
   }
 })
-function MessageInput({ inputProps, attachment, open, setAttachment }) {
+function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDown }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
@@ -205,6 +205,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       await dispatch(sendMessage(messageParams))
       .then((res) => {
         const attachments = res.data.data.message_attachment
+        setScrollDown(res);
         const socketParams = {
           message_originalname: auth_user?.elsemployees_name,
           user_id: auth_user?.elsemployees_empid,
@@ -222,7 +223,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
      
         const socket = getSocket(auth_user?.elsemployees_empid);
         socket.emit("messaging", socketParams);
-            dispatch(setUserMessages([...userMessages,res.data?.data]))
+            dispatch(setUserMessages([res.data?.data,...userMessages]))
             const getContactsParams = {
               data: {
                 loginuser_id: auth_user.elsemployees_empid,

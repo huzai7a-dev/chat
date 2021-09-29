@@ -17,13 +17,14 @@ const useStyles = makeStyles({
   tab: {
     height: "35px",
     borderRadius: "3px",
+    width:"320px",
     margin: "10px",
      background: "#d8ecf7"
   },
 });
 function ChatUserContainer() {
   const classes = useStyles();
-  const { auth_user, userSearch, searchText, contacts, groupsList } =
+  const { auth_user, userSearch, searchText, contacts, groupsList,isNightMode } =
     useSelector((store) => {
       return {
         auth_user: store.auth?.auth_user || {},
@@ -31,6 +32,7 @@ function ChatUserContainer() {
         searchText: store.app?.searchText || "",
         contacts: store.chat?.contacts || [],
         groupsList: store.chat?.groups || [],
+        isNightMode:store.app.mode || false
       };
     });
 
@@ -79,8 +81,8 @@ function ChatUserContainer() {
     return (
       <Paper elevation={0} className={classes.tab}>
         <Tabs value={tabValue} onChange={handleTab}>
-          <Tab label="People" onClick={changePeopleTab} />
-          <Tab label="Groups" onClick={changeGroupTab} />
+          <Tab label="People" onClick={changePeopleTab} style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000"}} />
+          <Tab label="Groups" onClick={changeGroupTab}  style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000"}}/>
         </Tabs>
       </Paper>
     );

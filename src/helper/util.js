@@ -44,7 +44,12 @@ const appendObject = (formData, mainKey, obj) => {
         formData.append(`${mainKey}[${key}]`, value);
     })
 }
-
+export const mergeArray = (arr1 = [], arr2 = [], key = "") =>  {
+    const reduced = !arr1 || arr1.length === 0? arr1 : arr1.filter((aitem) => {
+      return !arr2.find((bitem) => aitem[key] === bitem[key]);
+    }) || [];
+    return reduced.concat(arr2);
+  }
 class Utils {
     static getFormData(obj = {}) {
         const formData = new FormData();

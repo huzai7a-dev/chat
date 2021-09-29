@@ -7,7 +7,7 @@ import axios from "axios";
 import { setActiveGroup, setContactUsers, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
-import { setSeen } from "../Redux/actions/app";
+
 import { getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
 const useSocket = () => {
@@ -30,7 +30,7 @@ const useSocket = () => {
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("messaging", (data) => {
-        console.log(data)
+        
         const userMessage = {
           message_body: data.message_body,
           message_from: data.user_id,
@@ -84,7 +84,7 @@ const useSocket = () => {
         };
         
         if (userMessage.message_from === active_user?.elsemployees_empid) {
-          dispatch(setUserMessages([...messages, userMessage]));
+          dispatch(setUserMessages([userMessage,...messages]));
           const params = {
             data: {
               loginuser_id: auth_user.elsemployees_empid,
