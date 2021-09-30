@@ -1,9 +1,9 @@
-import { SET_GROUP_MESSAGES, SET_USER_MESSAGES, ADD_TEMP_MESSAGES, DELETE_TYPED_MSG, SET_CONTACTS_TOTAL } from "../constant/message";
+import { SET_GROUP_MESSAGES, SET_USER_MESSAGES, SET_CONTACTS_TOTAL } from "../constant/message";
 
 const initState = {
     userMessages: [],
     groupMessages: [],
-    tempMessages: [],
+    
 };
 
 export default (state = initState, action) => {
@@ -18,20 +18,7 @@ export default (state = initState, action) => {
                 ...state,
                 groupMessages: action.groupMessages
             }
-        case ADD_TEMP_MESSAGES:
-            return state = {
-                ...state,
-                tempMessages: action.tempMessages
-            }
-        case DELETE_TYPED_MSG:
-            const i = state.tempMessages?.findIndex(m => m.id == action.messageId);
-            if (i >= 0) {
-                state.tempMessages.splice(state.tempMessages, 1)
-            }
-            return state = {
-                ...state,
-                tempMessages: Object.assign([], state.tempMessages),
-            }
+
             case SET_CONTACTS_TOTAL:
                 return state = {
                     ...state,

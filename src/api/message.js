@@ -94,3 +94,18 @@ const onSuccessGetMoreUserMessages = (response, params) => (dispatch) => {
 const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
   console.log("onFailureGetMoreUserMessages", error);
 };
+
+  /****************************************************************************************************************/
+  export const getMoreGroupMessages = (params = {}) => (dispatch) => {
+    params.path = "/api/bwccrm/fetchMoreMessageGroup";
+    params.method = "POST";
+    return dispatch(apiCall(params, onSuccessGetMoreGroupMessages, onFailureGetMoreGroupMessages));
+  };
+  
+  const onSuccessGetMoreGroupMessages = (response, params) => (dispatch) => {
+    console.log("onSuccessGetMoreGroupMessages");
+  };
+  
+  const onFailureGetMoreGroupMessages = (error, params) => (dispatch) => {
+    console.log("onFailureGetMoreGroupMessages", error);
+  };

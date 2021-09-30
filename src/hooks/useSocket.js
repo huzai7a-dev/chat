@@ -95,7 +95,8 @@ const useSocket = () => {
            dispatch(getContactsUser(params));
          } 
         else if (active_group?.group_id === groupMessage.group_id) {
-          dispatch(setGroupMessages([...groupMessages, groupMessage]));
+          
+          dispatch(setGroupMessages([groupMessage,...groupMessages]));
           const getGroupsParams = {
             data:{
               loginuser_id: auth_user?.elsemployees_empid,

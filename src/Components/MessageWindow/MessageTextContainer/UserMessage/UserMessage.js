@@ -9,7 +9,7 @@ import Modal from "react-modal";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
-
+import moment from 'moment';
 import ForwardMessage from "../ForwardMessage";
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
@@ -261,7 +261,7 @@ function UserMessage(props) {
             className="userMessage__time"
             style={{ display: "flex", alignItems: "center" }}
           >
-            {/* <p>{fullTime.time}</p> */}
+            <p>{moment(props.sender.fullTime).format("LT")}</p>
           </div>
 
           <div

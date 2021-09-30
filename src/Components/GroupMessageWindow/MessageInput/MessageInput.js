@@ -12,7 +12,7 @@ import { getSocket } from "../../../socket";
 import { setQuote } from "../../../Redux/actions/app";
 import Utils from "../../../helper/util";
 import { getGroupMessages, sendGroupMessage } from "../../../api/message";
-import { getUserGroups } from "../../../api/chat";
+import { getUserGroups, seenGroupMessage } from "../../../api/chat";
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
 import { setGroupMessages } from "../../../Redux/actions/message";
@@ -49,7 +49,7 @@ const useStyles = makeStyles({
   },
 });
 
-function MessageInput({ inputProps, attachment, open, setAttachment }) {
+function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDown }) {
   const classes = useStyles();
   const { auth_user, active_group, quote,groupMessages,isNightMode } = useSelector((store) => {
     return {
@@ -160,7 +160,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       }
     }
   };
-  const SendMessage = async () => {
+  const SendMessage =  () => {
     setToDefault();
     
     const messageParams = {
@@ -177,8 +177,27 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     };
 
     messageParams.data = Utils.getFormData(messageParams.data);
-    await dispatch(sendGroupMessage(messageParams))
+     dispatch(sendGroupMessage(messageParams))
       .then((res) => {
+        setScrollDown(res);
+        dispatch(setGroupMessages([res.data.data,...groupMessages]))
+        const seenParams = {
+          data:{
+            group_id:active_group.group_id,
+            user_id:auth_user?.elsemployees_empid
+          }
+        }
+        dispatch(seenGroupMessage(seenParams))
+          .then(() => {
+            const getGroupParams = {
+              data: {
+                loginuser_id: auth_user?.elsemployees_empid,
+                user_id: auth_user?.elsemployees_empid,
+              },
+            };
+            dispatch(getUserGroups(getGroupParams));
+        })
+        
         const attachments = res.data.data.groupmessage_attachment
         const socketParams = {
           from_username: auth_user?.elsemployees_name,
@@ -190,23 +209,15 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
           message_body: message,
           message_id: Date.now(),
           fullTime: moment().format("Y-MM-D, h:mm:ss"),
-          message_quoteid: data.quote ? data.quote?.message_id : null,
-          message_quotebody: data.quote ? data.quote?.groupmessage_body : null,
-          message_quoteuser: data.quote ? data.quote?.from_username : null,
+          message_quoteid: res.data.quote ? res.data.quote?.message_id : null,
+          message_quotebody: res.data.quote ? res.data.quote?.groupmessage_body : null,
+          message_quoteuser: res.data.quote ? res.data.quote?.from_username : null,
           messageOn: "group",
           groupmessage_attachment: attachments || null
         };
+        console.log(socketParams);
         const socket = getSocket(auth_user?.elsemployees_empid);
         socket.emit("group-messaging", socketParams);
-        dispatch(setGroupMessages([...groupMessages,res.data.data]))
-          const getGroupParams = {
-            data: {
-              loginuser_id: auth_user?.elsemployees_empid,
-              user_id: auth_user?.elsemployees_empid,
-            },
-          };
-          dispatch(getUserGroups(getGroupParams));
-        // });
       })
       .catch((err) => console.warn(err));
   };

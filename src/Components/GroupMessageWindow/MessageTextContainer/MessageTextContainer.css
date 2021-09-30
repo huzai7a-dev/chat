@@ -9,3 +9,6 @@
 .noChat h2 {
   font-weight: 400;
 }
+.infinite-scroll-component {
+  overflow: hidden !important;
+}

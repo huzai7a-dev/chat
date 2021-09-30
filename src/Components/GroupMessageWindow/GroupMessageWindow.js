@@ -8,6 +8,7 @@ import Dropzone from "react-dropzone";
 function GroupMessageWindow() {
   const dropzoneRef = createRef();
   const [attachment, setAttachment] = useState([]);
+  const [scrollDown,setScrollDown] = useState("");
   return (
     <Dropzone
       onDrop={(acceptedFiles) => setAttachment(acceptedFiles)}
@@ -20,8 +21,8 @@ function GroupMessageWindow() {
     {({ getRootProps, getInputProps }) => (
         <div className="message__window" {...getRootProps()}>
           <MessageWindowHeader />
-          <MessageTextContainer />
-          <MessageInput inputProps={getInputProps} attachment={attachment} setAttachment={setAttachment}/>
+          <MessageTextContainer scrollDown={scrollDown} />
+          <MessageInput inputProps={getInputProps} attachment={attachment} setAttachment={setAttachment} setScrollDown={setScrollDown}/>
         </div>
       )}
     </Dropzone>

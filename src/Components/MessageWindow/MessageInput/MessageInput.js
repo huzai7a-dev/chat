@@ -204,8 +204,8 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
       messageParams.data = Utils.getFormData(messageParams.data);
       await dispatch(sendMessage(messageParams))
       .then((res) => {
-        const attachments = res.data.data.message_attachment
         setScrollDown(res);
+        const attachments = res.data.data.message_attachment
         const socketParams = {
           message_originalname: auth_user?.elsemployees_name,
           user_id: auth_user?.elsemployees_empid,
