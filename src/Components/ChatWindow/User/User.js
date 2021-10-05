@@ -29,7 +29,7 @@ const User = React.memo(() => {
           src={`/bizzportal/public/img/${image}`}
           className="userImg"
         />
-        <Typography variant="subtitle1" style={{color:isNightMode ? "#fff": "primary"}} className="userName">{auth_user?.elsemployees_name}</Typography>
+        <Typography variant="caption" style={{color:isNightMode ? "#fff": "#267396"}} className="userName">{auth_user?.elsemployees_name}</Typography>
         <div className="onlineStatus"></div>
       </div>
       <Tooltip title={isNightMode ? "Day Mode": "Night Mode"}>
@@ -66,4 +66,4 @@ const User = React.memo(() => {
   );
 });
 
-export default User;
+export default React.memo(User);

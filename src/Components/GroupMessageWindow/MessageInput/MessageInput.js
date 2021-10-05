@@ -51,13 +51,14 @@ const useStyles = makeStyles({
 
 function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDown }) {
   const classes = useStyles();
-  const { auth_user, active_group, quote,groupMessages,isNightMode } = useSelector((store) => {
+  const { auth_user, active_group, quote,groupMessages,isNightMode,searchText } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || { },
       active_group: store.chat.active_group || { },
       quote: store.app.quoteData || { },
       groupMessages:store.message.groupMessages || [],
-      isNightMode:store.app.mode || false
+      isNightMode:store.app.mode || false,
+      searchText:store.app.searchText || "",
     };
   });
 
@@ -135,7 +136,9 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
   }, [attachment]);
   // focus input field when page in load
   useEffect(() => {
-    textInput.current.focus();
+    if(searchText.length < 1){
+      textInput.current.focus();
+    }
   }, [active_group, quote]);
 
   const deleteAttachment = (index) => {

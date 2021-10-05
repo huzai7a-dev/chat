@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed:ital,wght@1,300&display=swap");
 .chatUser {
+  width: 100%;
   display: flex;
   margin: 15px 0px;
   padding: 6px;
@@ -13,9 +14,4 @@
 }
 .chatUser__details h3 {
   font-size: 1rem;
-}
-
-.chatUser__details p {
-  font-size: 0.8rem;
-  color: black;
 }

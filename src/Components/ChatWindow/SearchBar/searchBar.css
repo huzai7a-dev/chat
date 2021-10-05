@@ -6,6 +6,7 @@
   padding: 15px 10px;
   cursor: pointer;
   justify-content: space-between;
+  border-radius: 5px;
 }
 .searchBar .searchBarInput {
   width: 100%;

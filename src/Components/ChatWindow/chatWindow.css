@@ -1,5 +1,8 @@
 .chat__window {
-  width: 350px;
+  width: 310px !important;
   height: 100vh;
   border-right: 1px solid #e0e0e0;
+}
+.chatWindow__header {
+  height: 25vh;
 }

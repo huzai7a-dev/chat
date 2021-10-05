@@ -15,7 +15,7 @@ function SearchedUser({ users }) {
       isNightMode:state.app?.mode || false
     }
   })
-  const background = isNightMode ? DARKLIGHT : "#fff";
+  const background = isNightMode && DARKMAIN ;
   const heading = isNightMode ? "#fff" : "#252423";
   return (
     <div

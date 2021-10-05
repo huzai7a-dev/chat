@@ -1,5 +1,5 @@
 
-import { Typography, Paper, TextField, makeStyles, Avatar, IconButton, Box } from '@material-ui/core';
+import { Typography, Paper, TextField, makeStyles, Avatar, IconButton, Box,Button } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import SendIcon from '@material-ui/icons/Send';
@@ -32,13 +32,14 @@ function ForwardMessageModel({setForwardModel,params}) {
     const dispatch = useDispatch()
     const [toForward, setToForward] = useState("");
     const [sentTo, setSentTo] = useState("")
-    const [message, setMessage] = useState({})
-    const {  contacts,userMessages,auth_user,isNightMode } = useSelector((store) => {
+    const [sentUser,setSentUser] = useState([])
+    
+    const {  contacts,auth_user,isNightMode,active_user } = useSelector((store) => {
         return {
             auth_user: store.auth.auth_user || { },
             contacts: store.message.contacts.contacts || [],
-            userMessages:store.message.userMessages || [],
-            isNightMode:store.app.mode || false
+            isNightMode:store.app.mode || false,
+            active_user: store.chat.active_user || {},
         };
     });
     const searchedUsers =(members)=>{
@@ -52,14 +53,12 @@ function ForwardMessageModel({setForwardModel,params}) {
                 message_to:userId,
             }
         }
-        await dispatch(sendMessage(messageParams))
-        .then((res)=>{
-            setMessage(res.data.data)
-        })   
+        const response =  await dispatch(sendMessage(messageParams))
+        setSentUser([...sentUser,response.data.data.message_to]);
     }
-    const forwardedDone =()=>{
-         dispatch(setUserMessages([...userMessages,message]))
-         dispatch(getContactsUser(params))
+    const forwardedDone = async()=>{
+         const response = await dispatch(getContactsUser(params))
+          response && setForwardModel(false)
     }   
     
     return (
@@ -73,18 +72,19 @@ function ForwardMessageModel({setForwardModel,params}) {
                     value={toForward}
                     onChange={(e)=>{setToForward(e.target.value)}}
                 />
-                <IconButton color="primary" onClick={forwardedDone}><DoneIcon /></IconButton>
+                <Button color="primary" onClick={forwardedDone}>Done</Button>
             </Box>
             <Paper elevation={0} style={{background:isNightMode ? DARKMAIN : "#fff"}}>
-                {contacts.filter(searchedUsers).map((contact) => (
-                    <Paper variant="outlined" className={classes.userContainer} key={contact.elsemployees_empid} style={{display: contact.elsemployees_empid === auth_user.elsemployees_empid ? "none": null,background:isNightMode ? DARKMAIN : "#fff"}}>
+                {contacts.filter(searchedUsers).map((contact) => {
+                    const sentToUser = sentUser.includes(contact.elsemployees_empid)
+                   return ( <Paper variant="outlined" className={classes.userContainer} key={contact.elsemployees_empid} style={{display: contact.elsemployees_empid === auth_user.elsemployees_empid || contact.elsemployees_empid === active_user?.elsemployees_empid ? "none": null,background:isNightMode ? DARKMAIN : "#fff"}}>
                         <Box display="flex" justifyContent="space-around" alignItems="center">
                            {contact.elsemployees_image ? <Avatar src={`/bizzportal/public/img/${contact.elsemployees_image}`}/>: <Avatar>{elsemployees_name}[0]</Avatar>}
                             <Typography style={{width:"200px",color:isNightMode ? "#fff": "#000"}}>{contact.elsemployees_name}</Typography>
-                            <IconButton color="primary" onClick={()=>{forwardMessage(contact.elsemployees_empid)}}> <SendIcon /></IconButton>
+                            <IconButton color="primary" onClick={()=>{forwardMessage(contact.elsemployees_empid)}}> {sentToUser ? <DoneIcon/>:<SendIcon />} </IconButton>
                         </Box>
-                    </Paper>
-                ))}
+                    </Paper>)
+                    })}
             </Paper>
         </Paper>
 

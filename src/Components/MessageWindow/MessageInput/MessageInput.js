@@ -62,14 +62,15 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
   const [pastedImg, setPastedImg] = useState([]);
   const [isEmojiActive, setIsEmojiActive] = useState(false)
   
-  const { auth_user, active_user,quote,userMessages,isNightMode } = useSelector((store) => {
+  const { auth_user, active_user,quote,userMessages,isNightMode,searchText } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
       active_user: store.chat.active_user || {},
       tempMsg: store.message.tempMessages || [],
       quote: store.app.quoteData || {},
       userMessages:store.message.userMessages || [],
-      isNightMode:store.app.mode || false
+      isNightMode:store.app.mode || false,
+      searchText:store.app.searchText || "",
     };
   });
   // clear typed messages when chat window changes 
@@ -78,7 +79,9 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
   }, [active_user])
   // focus input field when page in load 
   useEffect(() => {
-    textInput.current.focus();
+    if(searchText.length < 1){
+      textInput.current.focus();
+    }
   },[active_user,quote])
   
   useEffect(() => {
@@ -246,6 +249,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
         style={{ position: "absolute", bottom: "100%", left: "0" }}
       >
         <Picker
+
           onSelect={onEmojiClick}
            native={true}
         />
@@ -314,6 +318,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
                 data-placeholder={"Type a Message"}
                 contentEditable={true}
                 spellCheck={true}
+  
               />
               
             </div>

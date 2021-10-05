@@ -6,10 +6,11 @@ import Modal from "react-modal";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CancelIcon from "@material-ui/icons/Cancel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-
+import moment from 'moment';
 import { useOutsideAlerter } from '../../../../hooks/useOutsideClick';
 import { setQuote } from "../../../../Redux/actions/app";
 import ForwardMessage from './ForwardMessage';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 function UserMessage({ chatgroup }) {
   
   const { auth_user,active_user } = useSelector((store) => {
@@ -139,14 +140,19 @@ function UserMessage({ chatgroup }) {
             setOpenModel(false);
           }}
           className="mediaModel"
-        >
+          >
+         
           <div className="mediaContainer">
             {chatgroup.groupmessage_attachment ? (
+              <TransformWrapper>
+              <TransformComponent>
               <img
-                alt="Attachment"
-                src={media}
-                style={imgStyle}
-              />
+            alt="Attachment"
+            src={media}
+            style={imgStyle}
+          />
+              </TransformComponent>
+            </TransformWrapper>
             ) : (
               null
             )}
@@ -185,7 +191,7 @@ function UserMessage({ chatgroup }) {
     <div id={chatgroup.message_id} className={user !== admin ? "senderMessage " : "userMessage"}>
       <div className="userMessage__picture">
         {user !== admin ? (
-          <Avatar src={`/bizzportal/public/img/${image}`} />
+          <Avatar src={`/bizzportal/public/img/${image}`} style={{width:"50px",height:"50px"}} />
         ) : (
           ""
         )}
@@ -198,11 +204,11 @@ function UserMessage({ chatgroup }) {
           }
         >
           <div className="userMessage__name">
-            <p>{user !== admin ? chatgroup.from_username : ""}</p>
+            <p>{user !== admin ? chatgroup.from_username+"," : ""}</p>
           </div>
 
           <div className="userMessage__time">
-            
+            <p>{moment(chatgroup.fullTime).format("LT")}</p>
           </div>
 
           <div

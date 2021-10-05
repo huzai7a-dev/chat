@@ -1,23 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useCallback,useRef } from "react";
 import ChatUser from "./ChatUser/ChatUser";
 import "./chatUserContainer.css";
-import axios from "axios";
+import {WHITE,SECONDARYMAIN} from '../../../Theme/colorConstant'
 import { useDispatch, useSelector } from "react-redux";
 import ChatGroup from "./ChatGroup/ChatGroup";
 import Paper from "@material-ui/core/Paper";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import {Button,Box} from "@material-ui/core";
 import SearchedUser from "./SearchedUser/SearchedUser";
 import { getContactsUser, getUserGroups } from "../../../api/chat";
 import { makeStyles } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
-import FlipMove from 'react-flip-move';
+import { Badge } from "@material-ui/core";
 const useStyles = makeStyles({
-  tab: {
+  tabContainer: {
     height: "35px",
     borderRadius: "3px",
-    width:"320px",
+    // width:"320px",
     margin: "10px",
      background: "#d8ecf7"
   },
@@ -36,10 +37,10 @@ function ChatUserContainer() {
       };
     });
 
-  const [people, setPeople] = useState(true);
-  const [tabValue, setTabValue] = useState(0);
+ 
+  const [tabValue, setTabValue] = useState("People");
   const dispatch = useDispatch();
-
+   const tabRef = useRef();
   useEffect(() => {
     if (auth_user) {
       const params = {
@@ -52,11 +53,9 @@ function ChatUserContainer() {
     }
   }, [auth_user]);
 
-  const handleTab = (event, newValue) => {
-    setTabValue(newValue);
-  };
+  
   const changePeopleTab = async () => {
-    setPeople(true);
+    setTabValue("People");
     const params = {
       data: {
         loginuser_id: auth_user.elsemployees_empid,
@@ -67,7 +66,7 @@ function ChatUserContainer() {
   };
 
   const changeGroupTab = () => {
-    setPeople(false);
+    setTabValue("Groups");
     const params = {
       data: {
         loginuser_id: auth_user?.elsemployees_empid,
@@ -76,30 +75,55 @@ function ChatUserContainer() {
     };
     dispatch(getUserGroups(params));
   };
-
-  const SwitchTabs = () => {
+  const SwitchTabs = ()=>{
+    const allPeopleUnseenMessages = contacts.reduce((acc, curr, ) => {
+      return acc + curr.unseen
+    }, 0)
+    const allGroupsUnseenMessages = groupsList.reduce((acc,curr)=>{
+      return acc + curr.groupunseenmesg
+    },0)
+    const title = {
+      people:"People",
+      groups:"Groups",
+    }
+    
     return (
-      <Paper elevation={0} className={classes.tab}>
-        <Tabs value={tabValue} onChange={handleTab}>
-          <Tab label="People" onClick={changePeopleTab} style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000"}} />
-          <Tab label="Groups" onClick={changeGroupTab}  style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000"}}/>
-        </Tabs>
-      </Paper>
-    );
-  };
+      <Box display="flex" justifyContent="space-between" style={{margin: "5px 10px 0px 10px",height:"5vh"}}>
+      <Button onClick={changePeopleTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.people ? SECONDARYMAIN:WHITE}}>
+        {title.people}
+        {
+          allPeopleUnseenMessages > 0 && <Badge badgeContent={allPeopleUnseenMessages} color="primary" style={{marginLeft:"20px",padding:"0px"}}/>
+        }
+        
+      </Button>
+      <Button onClick={changeGroupTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.groups ? SECONDARYMAIN:WHITE}}>
+        {title.groups}
+        {
+          allGroupsUnseenMessages > 0 && <Badge badgeContent={allGroupsUnseenMessages} color="primary" style={{marginLeft:"20px",padding:"0px"}}/>
+        }
+      </Button>
+      </Box>
+    )
+  }
+  // const SwitchTabs = () => {
+  //   return (
+  //     <Paper elevation={0} className={classes.tabContainer}>
+  //       <Tabs value={tabValue} onChange={handleTab} style={{width:"100%"}}>
+  //         <Tab label="People" onClick={changePeopleTab} style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000" }} />
+  //         <Tab label="Groups" onClick={changeGroupTab}  style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000" }}/>
+  //       </Tabs>
+  //     </Paper>
+  //   );
+  // };
   const ContactList = () => {
     return (
       <div className="chatUserList">
         
         {contacts?.length > 0 ? (
-          <FlipMove>
-          {contacts.map((item, id) => <ChatUser users={item} key={id} />)}
-          </FlipMove>
+          contacts.map((item, id) => <ChatUser users={item} key={id} />)
         ) : (
           <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-
             <CircularProgress />
-          
           </div>
         )}
         
@@ -113,10 +137,9 @@ function ChatUserContainer() {
       return -1
     }
 } 
-  
   const GroupList = () => {
     return (
-      <div className="groupList">
+      <div className="chatUserList">
         {groupsList.length > 0 ? (
           groupsList?.sort(sortedGroup).map((list, id) => {
             return <ChatGroup groups={list} key={id} />;
@@ -143,13 +166,15 @@ function ChatUserContainer() {
       {!searchText ? (
         <div className="chatUserContainer">
           <SwitchTabs />
-          {people ? <ContactList /> : <GroupList />}
+          {tabValue == "People" ? <ContactList /> : <GroupList />}
         </div>
       ) : (
-        <SearchedList />
+        <div className="chatUserContainer">
+          <SearchedList />
+        </div>
       )}
     </div>
   );
 }
 
-export default ChatUserContainer;
+export default React.memo(ChatUserContainer);

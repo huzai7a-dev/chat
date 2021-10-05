@@ -4,11 +4,14 @@ import "./chatUser.css";
 import { useHistory } from "react-router-dom";
 import { setActiveGroup, } from "../../../../Redux/actions/chat";
 import { getUserGroups, seenGroupMessage} from "../../../../api/chat";
-import { DARKLIGHT, DARKMAIN } from "../../../../Theme/colorConstant";
+import { DARKLIGHT, DARKMAIN, PRIMARYMAIN, SECONDARYDARK, WHITE } from "../../../../Theme/colorConstant";
 
 const useStyles = makeStyles({
   group:{
-    background:"#267396",
+    background:SECONDARYDARK,
+    color:PRIMARYMAIN,
+    fontWeight:"600",
+    fontSize:".8rem",
   }
 })
 function ChatGroup({ groups }) {
@@ -45,9 +48,12 @@ function ChatGroup({ groups }) {
     })
     
   }
-  const background = isNightMode ? DARKMAIN : "#fff";
-  const activeBackground = isNightMode ?  DARKLIGHT : "#d8ecf7";
+  const background = isNightMode && DARKMAIN ;
+  const activeBackground = isNightMode ? DARKLIGHT : WHITE;
   const heading = isNightMode ? "#fff" : "#252423";
+  
+  const groupNamePicture = groups.group_name.split(" ").length > 1 ? groups.group_name.toUpperCase().split(" ")[0][0] + groups.group_name.toUpperCase().split(" ")[1][0] : groups.group_name.toUpperCase()[0] + groups.group_name.toUpperCase()[1]
+  
   return (
     <div
       className="chatUser"
@@ -55,10 +61,10 @@ function ChatGroup({ groups }) {
       onClick={switchToGroupChat}
     >
       <div className="chatUser__picture">
-        {image ? (<Avatar src={`/api/bwccrm/storage/app/public/chat_attachments/${image}`} />) : (<Avatar className={classes.group}>{groups.group_name.toUpperCase()[0]}</Avatar>)}
+        {image ? (<Avatar src={`/api/bwccrm/storage/app/public/chat_attachments/${image}`} />) : (<Avatar className={classes.group}>{groupNamePicture}</Avatar>)}
       </div>
       <div className="chatUser__details">
-        <h3 style={{color:groups.groupunseenmesg > 0 ? "#267396" :heading }}>{groups.group_name}</h3>
+        <h3 style={{color:groups.groupunseenmesg > 0 ? "#267396" :heading, fontWeight: groups.groupunseenmesg  ? "600":"100" }}>{groups.group_name}</h3>
         <p style={{fontWeight: groups.groupunseenmesg > 0 && "900"}}>{groups.lastmessage ? (groups.lastmessage) : "Attachment"}</p>
       </div>
       <div className="unseenMsg">
@@ -68,4 +74,4 @@ function ChatGroup({ groups }) {
   );
 }
 
-export default ChatGroup;
+export default React.memo(ChatGroup);

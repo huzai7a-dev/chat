@@ -1,17 +1,16 @@
 .container {
-  height: 65vh;
+  height: calc(100vh - 30vh);
 }
 .chatUserContainer {
   height: 100%;
 }
-.searchedUser {
-  width: 350px;
-}
+
 .groupList,
 .chatUserList,
 .searchedUser {
+  width: 310px !important;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 .chatUserContainer .MuiTab-root {
@@ -21,14 +20,11 @@
 .MuiTabs-scroller {
   height: 100%;
 }
-.chatUser__details p {
-  font-style: italic;
-}
+/* .chatUser__details p {
+  color: #d5d9de;
+} */
 
-.chatUser__details h3 {
-  font-weight: 600 !important;
-}
-.chatUserContainer .Mui-selected {
+/* .chatUserContainer .Mui-selected {
   background-color: #267396;
   color: #fff;
   font-weight: bold;
@@ -36,4 +32,11 @@
 }
 .chatUserContainer .MuiTabs-indicator {
   background-color: #267396;
+} */
+.tabBtn {
+  border-radius: 20px !important;
+  width: 135px;
+  height: 8px;
+  padding: 15px 10px !important;
+  /* border: 2px solid #fff !important; */
 }

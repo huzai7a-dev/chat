@@ -1,19 +1,15 @@
-import { Avatar, Paper, Typography,Badge } from "@material-ui/core";
-
+import { Avatar, Paper, Typography,Badge,Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { quote } from "../../../../Redux/Action";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
-
-
+import moment from 'moment'
 import { getSocket } from "../../../../socket";
 import { getContactsUser, seenMessage } from "../../../../api/chat";
 import { setActiveChat } from "../../../../Redux/actions/chat";
 import { useParams } from "react-router-dom";
-
 import loading from '../../../../Assets/loading.gif';
-
-import { DARKLIGHT, DARKMAIN, } from "../../../../Theme/colorConstant";
+import { DARKLIGHT, DARKMAIN, WHITE, } from "../../../../Theme/colorConstant";
 
   const  ChatUser = React.forwardRef((props, ref)=> {
     
@@ -82,8 +78,9 @@ import { DARKLIGHT, DARKMAIN, } from "../../../../Theme/colorConstant";
       </Paper>
     )
   }
-  const background = isNightMode ? DARKMAIN : "#fff";
-  const activeBackground = isNightMode ? DARKLIGHT : "#d8ecf7";
+  console.log(props.users);
+  const background = isNightMode && DARKMAIN ;
+  const activeBackground = isNightMode ? DARKLIGHT : WHITE;
   const heading = isNightMode ? "#fff" : "#252423";
   return (
     <div className="chatUser" ref={ref} onClick={switchToConvo} style={{background: activeWindow ? activeBackground : background}}>
@@ -96,9 +93,13 @@ import { DARKLIGHT, DARKMAIN, } from "../../../../Theme/colorConstant";
         )}
       </div>
       <div className="chatUser__details" >
-        <h3 style={{ color: props.users.unseen ? "#267396" : heading}}>
-          {props.users?.elsemployees_name}
-        </h3>
+        <Box display="flex" justifyContent="space-between">
+          <h3 style={{ color: props.users?.unseen ? "#267396" : heading,fontWeight:props.users?.unseen ? "600":"100",flex:"3"}}>
+            {props.users?.elsemployees_name}
+          </h3>
+          <p style={{flex:"1"}}>{moment(props.users?.last_msg.created_at).format("LT")}</p>
+        </Box>
+        
         <div className="chatUser__lastMessage">
           {
            isTyping?.data?.tPerson == props.users?.elsemployees_empid && isTyping.status ? <Typing/> : <p>{lastMessage}</p>
@@ -112,4 +113,4 @@ import { DARKLIGHT, DARKMAIN, } from "../../../../Theme/colorConstant";
   );
 })
 
-export default ChatUser;
+export default React.memo(ChatUser);

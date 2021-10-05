@@ -1,7 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed:ital,wght@1,300&display=swap");
 .chatUser {
-  margin: 5px 0px;
+  width: 100%;
+  display: flex;
+  margin: 15px 0px;
   padding: 6px;
+  cursor: pointer;
 }
 .chatUser:hover {
   background: #f1f1f1;
@@ -11,12 +14,11 @@
 }
 .chatUser__details h3 {
   font-size: 1rem;
-  font-weight: 400;
 }
 
 .chatUser__details p {
-  font-size: 0.8rem;
-  color: #646464;
+  font-size: 0.9rem;
+  color: #a5a5a5;
 }
 .unseenMsg .MuiBadge-colorPrimary {
   z-index: 0;

@@ -43,7 +43,7 @@ function GroupInfo() {
       setSelectedImage(e.target.files[0]);
     }
   };
-
+  console.log(selectedImage);
   const changeGroupNamePicture = () => {
     dispatch(setEditGroupNameToMemberModelState(true));
     if (nameChanged || imgChanged) {

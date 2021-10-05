@@ -6,7 +6,7 @@ import "./searchBar.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserSearchResult, setSearchText } from "../../../Redux/actions/app";
-import { DARKMAIN } from "../../../Theme/colorConstant";
+import { DARKMAIN, SECONDARYDARK, WHITE } from "../../../Theme/colorConstant";
 
 function SearchBar() {
   
@@ -34,9 +34,9 @@ function SearchBar() {
       });
   }, [users]);
   return (
-    <div className="searchBar" style={{border: isNightMode ?"1px solid #fff" : "1px solid #267396"}}>
+    <div className="searchBar" style={{border: isNightMode ?"1px solid #fff" : `1px solid ${SECONDARYDARK}`, background: isNightMode ? DARKMAIN:WHITE}}>
       <input
-        style={{background: isNightMode ? DARKMAIN : "#fff", color:isNightMode ? "#fff": "#000"}}
+        style={{background: isNightMode && DARKMAIN , color:isNightMode ? "#f1f1f4": "#000"}}
         className="searchBarInput"
         placeholder="Search People"
         value={users}
@@ -60,4 +60,4 @@ function SearchBar() {
   );
 }
 
-export default SearchBar;
+export default React.memo(SearchBar);

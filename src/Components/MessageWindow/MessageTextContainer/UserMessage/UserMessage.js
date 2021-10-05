@@ -13,6 +13,8 @@ import moment from 'moment';
 import ForwardMessage from "../ForwardMessage";
 import Zoom from 'react-medium-image-zoom'
 import 'react-medium-image-zoom/dist/styles.css'
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+
 import { DARKLIGHT } from "../../../../Theme/colorConstant";
 function UserMessage(props) {
   const { auth_user, active_user,isNightMode } = useSelector((store) => {
@@ -190,12 +192,15 @@ function UserMessage(props) {
           setOpenModel(false);
         }}
         className="mediaModel"
-      >
+        >
+        
         <div className="mediaContainer">
           {props.sender.message_attachment ? (
-            <Zoom >
+            <TransformWrapper>
+            <TransformComponent>
               <img alt="Attachment" src={media} style={imgStyle} />
-            </Zoom>
+            </TransformComponent>
+          </TransformWrapper>
           ) : null}
           <CancelIcon
             className="modelCutIcon"
@@ -237,7 +242,7 @@ function UserMessage(props) {
     >
       <div className="userMessage__picture">
         {props.sender.message_from !== loggedInUser ? (
-          <Avatar src={`/bizzportal/public/img/${image}`} />
+          <Avatar src={`/bizzportal/public/img/${image}`} style={{width:"50px",height:"50px"}} />
         ) : null}
       </div>
 
@@ -252,7 +257,7 @@ function UserMessage(props) {
           <div className="userMessage__name" style={{ marginRight: "5px" }}>
             <p>
               {props.sender.message_from !== loggedInUser
-                ? props.sender.from_username
+                ? props.sender.from_username+","
                 : ""}
             </p>
           </div>

@@ -120,7 +120,7 @@ const useSocket = () => {
           }
           dispatch(setNewGroupMessage([...oldMessageGroupId,groupMessage.group_id]))
           dispatch(getUserGroups(getGroupsParams));
-          dispatch(getContactsUser(params));
+          // dispatch(getContactsUser(params));
         }
       });
       return () => {
