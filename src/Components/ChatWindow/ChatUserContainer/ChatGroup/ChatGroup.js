@@ -1,11 +1,11 @@
-import { Avatar, makeStyles,Badge } from "@material-ui/core";
+import { Avatar, makeStyles,Badge,Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
 import { setActiveGroup, } from "../../../../Redux/actions/chat";
 import { getUserGroups, seenGroupMessage} from "../../../../api/chat";
 import { DARKLIGHT, DARKMAIN, PRIMARYMAIN, SECONDARYDARK, WHITE } from "../../../../Theme/colorConstant";
-
+import moment from 'moment'
 const useStyles = makeStyles({
   group:{
     background:SECONDARYDARK,
@@ -64,8 +64,14 @@ function ChatGroup({ groups }) {
         {image ? (<Avatar src={`/api/bwccrm/storage/app/public/chat_attachments/${image}`} />) : (<Avatar className={classes.group}>{groupNamePicture}</Avatar>)}
       </div>
       <div className="chatUser__details">
-        <h3 style={{color:groups.groupunseenmesg > 0 ? "#267396" :heading, fontWeight: groups.groupunseenmesg  ? "600":"100" }}>{groups.group_name}</h3>
-        <p style={{fontWeight: groups.groupunseenmesg > 0 && "900"}}>{groups.lastmessage ? (groups.lastmessage) : "Attachment"}</p>
+        <Box display="flex" justifyContent="space-between">
+          <h3 style={{color:groups.groupunseenmesg > 0 ? "#267396" :heading, fontWeight: groups.groupunseenmesg  ? "600":"100", flex:"3"}}>{groups.group_name}</h3>
+          <p style={{flex:"1"}}>{moment(groups?.groupmessagetime).format("LT")}</p>
+        </Box>
+
+        <div className="chatUser__lastMessage">
+          <p style={{fontWeight: groups.groupunseenmesg > 0 && "900"}}>{groups.lastmessage ? (groups.lastmessage) : "Attachment"}</p>
+        </div>
       </div>
       <div className="unseenMsg">
         <Badge badgeContent={groups.groupunseenmesg} color="primary"></Badge>

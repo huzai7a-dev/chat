@@ -78,7 +78,7 @@ import { DARKLIGHT, DARKMAIN, WHITE, } from "../../../../Theme/colorConstant";
       </Paper>
     )
   }
-  console.log(props.users);
+  
   const background = isNightMode && DARKMAIN ;
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
   const heading = isNightMode ? "#fff" : "#252423";

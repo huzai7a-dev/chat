@@ -11,7 +11,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { getSocket } from "../../../socket";
 import { setQuote } from "../../../Redux/actions/app";
 import Utils from "../../../helper/util";
-import { getGroupMessages, sendGroupMessage } from "../../../api/message";
+import {  sendGroupMessage } from "../../../api/message";
 import { getUserGroups, seenGroupMessage } from "../../../api/chat";
 import 'emoji-mart/css/emoji-mart.css'
 import { Picker } from 'emoji-mart'
@@ -56,12 +56,12 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
       auth_user: store.auth.auth_user || { },
       active_group: store.chat.active_group || { },
       quote: store.app.quoteData || { },
-      groupMessages:store.message.groupMessages || [],
+      groupMessages:store.message.groupMessages || {},
       isNightMode:store.app.mode || false,
       searchText:store.app.searchText || "",
     };
   });
-
+ 
   const [message, setMessage] = useState("");
   const [isEmojiActive, setIsEmojiActive] = useState(false)
   const textInput = useRef();
@@ -178,12 +178,12 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
         message_attachment: attachment.length > 0 ? attachment : pastedImg,
       },
     };
-
+    
     messageParams.data = Utils.getFormData(messageParams.data);
      dispatch(sendGroupMessage(messageParams))
       .then((res) => {
         setScrollDown(res);
-        dispatch(setGroupMessages([res.data.data,...groupMessages]))
+        dispatch(setGroupMessages({...groupMessages,messages:[res.data.data,...groupMessages.messages]}))
         const seenParams = {
           data:{
             group_id:active_group.group_id,

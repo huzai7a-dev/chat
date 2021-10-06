@@ -1,4 +1,4 @@
-import { Avatar, Button,Typography } from "@material-ui/core";
+import { Avatar, Box, Button, Typography } from "@material-ui/core";
 import React, { useCallback, useRef, useState } from "react";
 import "./userMessage.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -6,30 +6,30 @@ import Modal from "react-modal";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CancelIcon from "@material-ui/icons/Cancel";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import moment from 'moment';
-import { useOutsideAlerter } from '../../../../hooks/useOutsideClick';
+import moment from "moment";
+import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
-import ForwardMessage from './ForwardMessage';
+import ForwardMessage from "./ForwardMessage";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 function UserMessage({ chatgroup }) {
-  
-  const { auth_user,active_user } = useSelector((store) => {
+  const { auth_user, active_user, seenData } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
-      active_user: store.auth.auth_user || { },
-    }
+      active_user: store.auth.auth_user || {},
+      seenData: store.message.groupMessages.seendata || [],
+    };
   });
   const dispatch = useDispatch();
   const [media, setMedia] = useState("");
   const [option, setOption] = useState(false);
   const [openModel, setOpenModel] = useState(false);
-  const [forwardModel, setForwardModel] = useState(false)
+  const [forwardModel, setForwardModel] = useState(false);
   const attachments = chatgroup.groupmessage_attachment;
   const menuDiv = useRef();
 
-  const onClickOutside = useCallback(e => {
-    setOption(false)
-  }, [])
+  const onClickOutside = useCallback((e) => {
+    setOption(false);
+  }, []);
 
   useOutsideAlerter(menuDiv, onClickOutside);
   const forwardMessageParams = {
@@ -44,9 +44,9 @@ function UserMessage({ chatgroup }) {
       message_attachment: chatgroup.groupmessage_attachment,
       groupmessage_forwarded: 1,
       message_originalname: chatgroup.groupmessage_originalname || null,
-    }
-  }
-  
+    },
+  };
+
   const RenderSendAttachment = () => {
     return attachments.split(",").map((attachment, id) => {
       const DownloadButton = () => {
@@ -107,11 +107,9 @@ function UserMessage({ chatgroup }) {
           <div className="attachView" key={id}>
             <div className="file">
               <FileCopyIcon />
-              <Typography variant="button">
-                {fileName}
-              </Typography>
+              <Typography variant="button">{fileName}</Typography>
               <DownloadButton />
-            </div>    
+            </div>
           </div>
         );
       }
@@ -125,73 +123,73 @@ function UserMessage({ chatgroup }) {
     setMedia(e.target.src);
     setOpenModel(true);
   };
-  const AttachmentModel = ()=> {
+  const AttachmentModel = () => {
     const imgStyle = {
       width: "auto",
       maxWidth: "100%",
-      maxHeight:"100%",
+      maxHeight: "100%",
       display: "block",
       height: "auto",
     };
     return (
       <Modal
-          isOpen={openModel}
-          onRequestClose={() => {
-            setOpenModel(false);
-          }}
-          className="mediaModel"
-          >
-         
-          <div className="mediaContainer">
-            {chatgroup.groupmessage_attachment ? (
-              <TransformWrapper>
+        isOpen={openModel}
+        onRequestClose={() => {
+          setOpenModel(false);
+        }}
+        className="mediaModel"
+      >
+        <div className="mediaContainer">
+          {chatgroup.groupmessage_attachment ? (
+            <TransformWrapper>
               <TransformComponent>
-              <img
-            alt="Attachment"
-            src={media}
-            style={imgStyle}
-          />
+                <img alt="Attachment" src={media} style={imgStyle} />
               </TransformComponent>
             </TransformWrapper>
-            ) : (
-              null
-            )}
-          </div>
-          <CancelIcon
-            className="modelCutIcon"
-            onClick={() => {
-              setOpenModel(false);
-            }}
-          />
-        </Modal>
-    )
-  }
+          ) : null}
+        </div>
+        <CancelIcon
+          className="modelCutIcon"
+          onClick={() => {
+            setOpenModel(false);
+          }}
+        />
+      </Modal>
+    );
+  };
   // function to get quote data
   const quoteData = () => {
     const quoteMsg = {
       from_username: chatgroup.from_username,
       message_id: chatgroup.message_id,
-      groupmessage_body: chatgroup.groupmessage_attachment || chatgroup.groupmessage_body,
+      groupmessage_body:
+        chatgroup.groupmessage_attachment || chatgroup.groupmessage_body,
       attachment: chatgroup.groupmessage_attachment,
     };
     dispatch(setQuote(quoteMsg));
     setOption(false);
   };
   const downloadAttachment = (file) => {
-    const attachList = file.split(",")
+    const attachList = file.split(",");
     attachList.forEach((attachment) => {
       const anchor = document.createElement("a");
       anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
       anchor.download = attachment;
-      anchor.click()
-    })
-  }
+      anchor.click();
+    });
+  };
 
   return (
-    <div id={chatgroup.message_id} className={user !== admin ? "senderMessage " : "userMessage"}>
+    <div
+      id={chatgroup.message_id}
+      className={user !== admin ? "senderMessage " : "userMessage"}
+    >
       <div className="userMessage__picture">
         {user !== admin ? (
-          <Avatar src={`/bizzportal/public/img/${image}`} style={{width:"50px",height:"50px"}} />
+          <Avatar
+            src={`/bizzportal/public/img/${image}`}
+            style={{ width: "50px", height: "50px" }}
+          />
         ) : (
           ""
         )}
@@ -204,7 +202,7 @@ function UserMessage({ chatgroup }) {
           }
         >
           <div className="userMessage__name">
-            <p>{user !== admin ? chatgroup.from_username+"," : ""}</p>
+            <p>{user !== admin ? chatgroup.from_username + "," : ""}</p>
           </div>
 
           <div className="userMessage__time">
@@ -220,18 +218,28 @@ function UserMessage({ chatgroup }) {
           >
             <MoreVertIcon />
             {option ? (
-              <div
-                className="optionsContainer"
-              >
+              <div className="optionsContainer">
                 <div className="options">
-                <p onClick={() => { setForwardModel(true) }}>Forward</p>
+                  <p
+                    onClick={() => {
+                      setForwardModel(true);
+                    }}
+                  >
+                    Forward
+                  </p>
                   <p onClick={quoteData}>Quote</p>
-                  {chatgroup.groupmessage_attachment ? (<p onClick={() => downloadAttachment(chatgroup.groupmessage_attachment)}>Download</p>) : null}
+                  {chatgroup.groupmessage_attachment ? (
+                    <p
+                      onClick={() =>
+                        downloadAttachment(chatgroup.groupmessage_attachment)
+                      }
+                    >
+                      Download
+                    </p>
+                  ) : null}
                 </div>
               </div>
-            ) : (
-              null
-            )}
+            ) : null}
           </div>
         </div>
         {chatgroup.groupmessage_attachment ? (
@@ -242,24 +250,24 @@ function UserMessage({ chatgroup }) {
               flexWrap: "wrap",
               justifyContent:
                 chatgroup.message_from === admin ? "flex-end" : "flex-start",
-              alignItems: "center"
+              alignItems: "center",
             }}
           >
             <RenderSendAttachment />
           </div>
-        ) : (
-          null
-        )}
+        ) : null}
         {chatgroup.groupmessage_body ? (
           <div className="recieverQoutMsg__container">
-            {chatgroup.groupmessage_quotebody && chatgroup.groupmessage_quotebody !== "null" ? (
-              <a className="sendQuotedMsg" href={"#" + chatgroup.groupmessage_quoteid}>
+            {chatgroup.groupmessage_quotebody &&
+            chatgroup.groupmessage_quotebody !== "null" ? (
+              <a
+                className="sendQuotedMsg"
+                href={"#" + chatgroup.groupmessage_quoteid}
+              >
                 <p className="qName">{chatgroup.groupmessage_quoteuser}</p>
                 <p className="qMsg">{chatgroup.groupmessage_quotebody}</p>
               </a>
-            ) : (
-              null
-            )}
+            ) : null}
             <div
               className={
                 user !== admin ? "senderMessage__text" : "recieverMessage__text"
@@ -267,14 +275,19 @@ function UserMessage({ chatgroup }) {
             >
               {chatgroup.groupmessage_body}
             </div>
+            <Box display="flex" style={{float:"right"}}>
+              {seenData.map((seen,id) => {
+                return seen.messageid == chatgroup.groupmessage_id && seen.messageid != active_user?.elsemployees_empid  ? <Avatar key={id} style={{height:"20px",width:"20px"}} src={`/bizzportal/public/img/${seen.userpicture}`}/> : null;
+              })}
+            </Box>
           </div>
-        ) : (
-          null
-        )}
-        <AttachmentModel/>
+        ) : null}
+        <AttachmentModel />
         <Modal
           isOpen={forwardModel}
-          onRequestClose={() => { setForwardModel(false) }}
+          onRequestClose={() => {
+            setForwardModel(false);
+          }}
           className="forwardModel"
         >
           <ForwardMessage
@@ -287,4 +300,4 @@ function UserMessage({ chatgroup }) {
   );
 }
 
-export default UserMessage;
+export default React.memo(UserMessage);

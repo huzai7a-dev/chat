@@ -89,14 +89,14 @@ function ChatUserContainer() {
     
     return (
       <Box display="flex" justifyContent="space-between" style={{margin: "5px 10px 0px 10px",height:"5vh"}}>
-      <Button onClick={changePeopleTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.people ? SECONDARYMAIN:WHITE}}>
+      <Button onClick={changePeopleTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.people ? WHITE:SECONDARYMAIN}}>
         {title.people}
         {
           allPeopleUnseenMessages > 0 && <Badge badgeContent={allPeopleUnseenMessages} color="primary" style={{marginLeft:"20px",padding:"0px"}}/>
         }
         
       </Button>
-      <Button onClick={changeGroupTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.groups ? SECONDARYMAIN:WHITE}}>
+      <Button onClick={changeGroupTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.groups ? WHITE:SECONDARYMAIN}}>
         {title.groups}
         {
           allGroupsUnseenMessages > 0 && <Badge badgeContent={allGroupsUnseenMessages} color="primary" style={{marginLeft:"20px",padding:"0px"}}/>

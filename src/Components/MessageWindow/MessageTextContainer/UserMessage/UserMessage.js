@@ -11,8 +11,7 @@ import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import moment from 'moment';
 import ForwardMessage from "../ForwardMessage";
-import Zoom from 'react-medium-image-zoom'
-import 'react-medium-image-zoom/dist/styles.css'
+
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 import { DARKLIGHT } from "../../../../Theme/colorConstant";

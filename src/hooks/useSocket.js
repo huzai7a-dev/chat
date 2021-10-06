@@ -69,7 +69,7 @@ const useSocket = () => {
             };
              dispatch(getContactsUser(params));
           }
-        const groupMessage = {
+        const newMessage = {
           groupmessage_body: data.message_body,
           from_userpicture: data.from_userpicture,
           message_from: data.loginuser_id,
@@ -94,9 +94,9 @@ const useSocket = () => {
           
            dispatch(getContactsUser(params));
          } 
-        else if (active_group?.group_id === groupMessage.group_id) {
+        else if (active_group?.group_id === newMessage.group_id) {
           
-          dispatch(setGroupMessages([groupMessage,...groupMessages]));
+          dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
           const getGroupsParams = {
             data:{
               loginuser_id: auth_user?.elsemployees_empid,
@@ -118,7 +118,7 @@ const useSocket = () => {
               user_id: auth_user?.elsemployees_empid,
             }
           }
-          dispatch(setNewGroupMessage([...oldMessageGroupId,groupMessage.group_id]))
+          dispatch(setNewGroupMessage([...oldMessageGroupId,newMessage.group_id]))
           dispatch(getUserGroups(getGroupsParams));
           // dispatch(getContactsUser(params));
         }

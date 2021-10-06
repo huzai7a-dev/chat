@@ -21,7 +21,7 @@ function MessageTextContainer({scrollDown}) {
     return {
       auth_user: store.auth.auth_user || {},
       active_group: store.chat.active_group || {},
-      groupMessages: store.message.groupMessages || {},
+      groupMessages: store.message.groupMessages.messages || [],
       groupMemInfo: store.chat.groupMemInfo || {},
       isNightMode: store.app.mode || false,
     };
@@ -133,6 +133,7 @@ function MessageTextContainer({scrollDown}) {
       >
         {Object.keys(groupedByMessages)?.map((key, id) => {
           const groupedByMessage = groupedByMessages[key];
+          
           return (
             <div key={key} >
               <div className="dividerContainer" >

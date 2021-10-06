@@ -16,6 +16,9 @@
 .chatUser__details {
   width: 100%;
   height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .chatUser__details h3 {
   font-size: 15px;
@@ -36,7 +39,9 @@
   white-space: nowrap;
   padding: 0 !important;
 }
-
+.chatUser__lastMessage {
+  width: 200px;
+}
 .unseenMsg {
   position: absolute;
   right: 10%;

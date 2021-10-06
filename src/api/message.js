@@ -57,7 +57,7 @@ export const getUserMessages = (params = {}) => (dispatch) => {
   };
   
   const onSuccessGetGroupMessages = (response, params) => (dispatch) => {
-    dispatch(setGroupMessages(response.data.messages));
+    dispatch(setGroupMessages(response.data));
   };
   
   const onFailureGetGroupMessages = (error, params) => (dispatch) => {
