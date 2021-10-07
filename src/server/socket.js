@@ -59,6 +59,18 @@ export const withSocket = (app) => {
         })
         .catch((err) => console.log(err));
     });
+
+    socket.on("group-seen", (data) => {
+      axios
+        .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
+        .then((res) => {
+          res.data.participants?.forEach(participant => {
+              socketMappings[participant.elsemployees_empid]?.emit("group-seen", data);
+          })
+        })
+        .catch((err) => console.log(err));
+    });
+
     socket.on("typing", (data) => {
       socketMappings[data?.user_id]?.emit("typing", data);
     });

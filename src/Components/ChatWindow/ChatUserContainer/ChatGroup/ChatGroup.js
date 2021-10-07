@@ -6,6 +6,7 @@ import { setActiveGroup, } from "../../../../Redux/actions/chat";
 import { getUserGroups, seenGroupMessage} from "../../../../api/chat";
 import { DARKLIGHT, DARKMAIN, PRIMARYMAIN, SECONDARYDARK, WHITE } from "../../../../Theme/colorConstant";
 import moment from 'moment'
+import { getSocket } from "../../../../socket";
 const useStyles = makeStyles({
   group:{
     background:SECONDARYDARK,
@@ -38,6 +39,15 @@ function ChatGroup({ groups }) {
     }
     dispatch(seenGroupMessage(seenParams))
     .then((res)=>{
+      
+      const socketParams = {
+          group_id:groups.group_id,
+          user_id:auth_user?.elsemployees_empid,
+          info:"real time seen"
+      }
+      
+      const socket = getSocket(auth_user?.elsemployees_empid);
+      socket.emit("group-seen", socketParams);
       const params = {
         data: {
           loginuser_id: auth_user?.elsemployees_empid,

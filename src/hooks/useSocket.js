@@ -2,13 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { nanoid } from "nanoid";
-import axios from "axios";
 import { setActiveGroup, setContactUsers, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
-import { getUserMessages } from "../api/message";
+import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
 const useSocket = () => {
   const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId } = useSelector((store) => {
@@ -182,6 +180,21 @@ const useSocket = () => {
         data,
         status:false
       }));
+    })
+    return () => {
+      socket.off('leaveTyping')
+    }
+  })
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("group-seen",(data)=>{
+      const params = {
+        data: {
+          group_id: active_group?.group_id,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      };
+      dispatch(getGroupMessages(params));
     })
     return () => {
       socket.off('leaveTyping')

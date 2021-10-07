@@ -218,7 +218,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
           messageOn: "group",
           groupmessage_attachment: attachments || null
         };
-        console.log(socketParams);
+        
         const socket = getSocket(auth_user?.elsemployees_empid);
         socket.emit("group-messaging", socketParams);
       })
