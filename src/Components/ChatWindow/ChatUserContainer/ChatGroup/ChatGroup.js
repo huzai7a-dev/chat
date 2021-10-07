@@ -37,15 +37,14 @@ function ChatGroup({ groups }) {
         user_id:auth_user?.elsemployees_empid
       }
     }
+    
     dispatch(seenGroupMessage(seenParams))
     .then((res)=>{
-      
       const socketParams = {
-          group_id:groups.group_id,
+          group_id:active_group.group_id,
           user_id:auth_user?.elsemployees_empid,
           info:"real time seen"
       }
-      
       const socket = getSocket(auth_user?.elsemployees_empid);
       socket.emit("group-seen", socketParams);
       const params = {

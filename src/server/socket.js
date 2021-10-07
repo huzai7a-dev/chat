@@ -65,7 +65,9 @@ export const withSocket = (app) => {
         .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
         .then((res) => {
           res.data.participants?.forEach(participant => {
+            if(participant.elsemployees_empid != data.user_id) {
               socketMappings[participant.elsemployees_empid]?.emit("group-seen", data);
+            }
           })
         })
         .catch((err) => console.log(err));

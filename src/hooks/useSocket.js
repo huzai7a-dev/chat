@@ -188,6 +188,7 @@ const useSocket = () => {
   useEffect(()=>{
     const socket = getSocket(auth_user.elsemployees_empid)
     socket.on("group-seen",(data)=>{
+      
       const params = {
         data: {
           group_id: active_group?.group_id,
@@ -199,7 +200,7 @@ const useSocket = () => {
     return () => {
       socket.off('leaveTyping')
     }
-  })
+  },[active_group])
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("group-member", (data) => {
