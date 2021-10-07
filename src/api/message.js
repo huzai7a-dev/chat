@@ -103,7 +103,7 @@ const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
   };
   
   const onSuccessGetMoreGroupMessages = (response, params) => (dispatch) => {
-    console.log("onSuccessGetMoreGroupMessages");
+    console.log("onSuccessGetMoreGroupMessages",response);
   };
   
   const onFailureGetMoreGroupMessages = (error, params) => (dispatch) => {

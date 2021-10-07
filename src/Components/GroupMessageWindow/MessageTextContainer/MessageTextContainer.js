@@ -82,24 +82,23 @@ function MessageTextContainer({scrollDown}) {
   // if there is not message 
   const fetchMoreMessages = async() => {
     
-    const lastMsgId = groupMessages[groupMessages.length-1].groupmessage_id
-    const params = {
-      data: {
-        from_id: auth_user?.elsemployees_empid,
-        user_id: auth_user?.elsemployees_empid,
-        groupmessage_id:lastMsgId,
-        group_id: active_group?.group_id,
-      }
-    }
+    // const lastMsgId = groupMessages[groupMessages.length-1].groupmessage_id
+    // const params = {
+    //   data: {
+    //     from_id: auth_user?.elsemployees_empid,
+    //     user_id: auth_user?.elsemployees_empid,
+    //     groupmessage_id:lastMsgId,
+    //     group_id: active_group?.group_id,
+    //   }
+    // }
     
-    const response = await dispatch(getMoreGroupMessages(params));
-    const olderMessages = response.data.messages;
-    if (olderMessages.length <1) {
-      setHasMore(false);
-    }
-    const mergedArray = mergeArray(groupMessages,olderMessages,"groupmessage_id");
-    
-    dispatch(setGroupMessages(mergedArray));
+    // const response = await dispatch(getMoreGroupMessages(params));
+    // const olderMessages = await response.messages;
+    // if (olderMessages.length <1) {
+    //   setHasMore(false);
+    // }
+    // const mergedArray = mergeArray(groupMessages,olderMessages,"groupmessage_id");
+    // dispatch(setGroupMessages(mergedArray));
   }
 
   const Messages = () => {

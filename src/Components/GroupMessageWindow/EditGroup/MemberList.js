@@ -152,11 +152,11 @@ function MemberList() {
                   </div>
                   {isMemberAdded ? (
                     <IconButton onClick={removeMember}>
-                      <DeleteIcon style={{color:isNightMode ? "#fff": "#eee"}}/>
+                      <DeleteIcon style={{color:isNightMode && "#fff"}}/>
                     </IconButton>
                   ) : (
                     <IconButton onClick={addMember}>
-                      <AddIcon  style={{color:isNightMode ? "#fff": "#eee"}}/>
+                      <AddIcon  style={{color:isNightMode && "#fff"}}/>
                     </IconButton>
                   )}
                 </div>
