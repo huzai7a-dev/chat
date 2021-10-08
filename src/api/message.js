@@ -1,5 +1,5 @@
 import { apiCall } from "../helper/api";
-import { setContactsTotal, setGroupMessages, setUserMessages } from "../Redux/actions/message";
+import { setContactsTotal, setGroupMessages, setUserAttachments, setUserMessages } from "../Redux/actions/message";
 
 
 
@@ -109,4 +109,20 @@ const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
   
   const onFailureGetMoreGroupMessages = (error, params) => (dispatch) => {
     console.log("onFailureGetMoreGroupMessages", error);
+  };
+
+  /****************************************************************************************************************/
+  export const getUserAttachments = (params = {}) => (dispatch) => {
+    params.path = "/api/bwccrm/fetchAttachments";
+    params.method = "POST";
+    return dispatch(apiCall(params, onSuccessGetUserAttachments, onFailureGetUserAttachments));
+  };
+  
+  const onSuccessGetUserAttachments = (response, params) => (dispatch) => {
+    console.log("onSuccessGetUserAttachments",response);
+    return dispatch(setUserAttachments(response.data.attachments))
+  };
+  
+  const onFailureGetUserAttachments = (error, params) => (dispatch) => {
+    console.log("onFailureGetUserAttachments", error);
   };

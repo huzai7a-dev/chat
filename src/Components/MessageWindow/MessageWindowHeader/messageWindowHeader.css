@@ -2,6 +2,7 @@
   height: 10vh;
   padding: 0px 20px;
   color: #252423;
+  border-right: 1px solid #d5d9de;
   display: flex;
   flex-direction: column;
   justify-content: center;
