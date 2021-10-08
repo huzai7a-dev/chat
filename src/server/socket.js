@@ -73,6 +73,20 @@ export const withSocket = (app) => {
         .catch((err) => console.log(err));
     });
 
+    socket.on("isGroupWindowOpen", (data) => {
+      console.log("Group Window")
+      axios
+        .post(`${env.url}/bwccrm/groupparticipants`, {user_id: data.user_id, group_id: data.group_id})
+        .then((res) => {
+          res.data.participants?.forEach(participant => {
+            if(participant.elsemployees_empid != data.user_id) {
+              socketMappings[participant.elsemployees_empid]?.emit("isGroupWindowOpen", data);
+            }
+          })
+        })
+        .catch((err) => console.log(err));
+    });
+
     socket.on("typing", (data) => {
       socketMappings[data?.user_id]?.emit("typing", data);
     });

@@ -3,7 +3,7 @@ import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 
 import { setActiveGroup, setContactUsers, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
-import { getContactsUser, getUserGroups, seenMessage } from "../api/chat";
+import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
 import { getGroupMessages, getUserMessages } from "../api/message";
@@ -93,8 +93,22 @@ const useSocket = () => {
            dispatch(getContactsUser(params));
          } 
         else if (active_group?.group_id === newMessage.group_id) {
-          
-          dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
+          const socketParams = {
+            group_id:active_group.group_id,
+            user_id:auth_user?.elsemployees_empid,
+          }
+          const seenParams = {
+            data:{
+              group_id:active_group.group_id,
+              user_id:auth_user?.elsemployees_empid
+            }
+          }
+          dispatch(seenGroupMessage(seenParams))
+          .then((res)=>{
+            const socket = getSocket(auth_user?.elsemployees_empid);
+            socket.emit("isGroupWindowOpen", socketParams);
+          })
+        dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
           const getGroupsParams = {
             data:{
               loginuser_id: auth_user?.elsemployees_empid,
@@ -104,12 +118,6 @@ const useSocket = () => {
           dispatch(getUserGroups(getGroupsParams));
         } else {
           
-          const params = {
-            data: {
-              loginuser_id: auth_user.elsemployees_empid,
-              user_id: auth_user.elsemployees_empid,
-            }
-          };
           const getGroupsParams = {
             data:{
               loginuser_id: auth_user?.elsemployees_empid,
@@ -118,7 +126,7 @@ const useSocket = () => {
           }
           dispatch(setNewGroupMessage([...oldMessageGroupId,newMessage.group_id]))
           dispatch(getUserGroups(getGroupsParams));
-          // dispatch(getContactsUser(params));
+
         }
       });
       return () => {
@@ -143,6 +151,22 @@ const useSocket = () => {
       }
   }, [active_user,auth_user]);
 
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("group-seen",(data)=>{
+      const params = {
+        data: {
+          group_id: active_group?.group_id,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      };
+      dispatch(getGroupMessages(params));
+    })
+    return () => {
+      socket.off('group-seen')
+    }
+  })
+
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("isWindowOpen", (res) => {
@@ -160,6 +184,24 @@ const useSocket = () => {
         socket.off('isWindowOpen')
       }
   });
+
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid)
+      socket.on("isGroupWindowOpen", (res) => {
+        console.log("window is open");
+        const params = {
+          data: {
+            group_id: active_group?.group_id,
+            user_id: auth_user?.elsemployees_empid,
+          },
+        };
+        dispatch(getGroupMessages(params));
+      });
+      return () => {
+        socket.off('isGroupWindowOpen')
+      }
+  });
+
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid);
     socket.on('typing', (data)=>{
@@ -185,22 +227,7 @@ const useSocket = () => {
       socket.off('leaveTyping')
     }
   })
-  useEffect(()=>{
-    const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("group-seen",(data)=>{
-      
-      const params = {
-        data: {
-          group_id: active_group?.group_id,
-          user_id: auth_user?.elsemployees_empid,
-        },
-      };
-      dispatch(getGroupMessages(params));
-    })
-    return () => {
-      socket.off('leaveTyping')
-    }
-  },[active_group])
+  
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("group-member", (data) => {

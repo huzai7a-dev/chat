@@ -278,6 +278,7 @@ function UserMessage({ chatgroup }) {
             <Box display="flex" style={{float:"right"}}>
               {seenData.map((seen,id) => {
                 return seen.messageid == chatgroup.groupmessage_id && seen.userid != active_user?.elsemployees_empid  ? <Avatar key={id} style={{height:"20px",width:"20px"}} src={`/bizzportal/public/img/${seen.userpicture}`}/> : null;
+                debugger
               })}
             </Box>
           </div>
