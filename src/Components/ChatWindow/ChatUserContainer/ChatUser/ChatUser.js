@@ -10,6 +10,7 @@ import { setActiveChat } from "../../../../Redux/actions/chat";
 import { useParams } from "react-router-dom";
 import loading from '../../../../Assets/loading.gif';
 import { DARKLIGHT, DARKMAIN, WHITE, } from "../../../../Theme/colorConstant";
+import { setGallery } from "../../../../Redux/actions/message";
 
   const  ChatUser = React.forwardRef((props, ref)=> {
     
@@ -41,7 +42,7 @@ import { DARKLIGHT, DARKMAIN, WHITE, } from "../../../../Theme/colorConstant";
   const activeWindow = activeUser.elsemployees_empid == props.users.elsemployees_empid;
   const lastMessage = getLastMessage();
   const switchToConvo = () => {
-   
+   dispatch(setGallery(false));
     dispatch(setActiveChat(props.users));
     if (props.users.unseen == 1) {
       const socket = getSocket(auth_user?.elsemployees_empid);

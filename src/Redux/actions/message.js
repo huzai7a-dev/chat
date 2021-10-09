@@ -1,4 +1,4 @@
-import { SET_GROUP_MESSAGES, SET_USER_MESSAGES,SET_CONTACTS_TOTAL, SET_USER_ATTACHMENTS } from "../constant/message"
+import { SET_GROUP_MESSAGES, SET_USER_MESSAGES,SET_CONTACTS_TOTAL, SET_USER_ATTACHMENTS, SET_GALLERY } from "../constant/message"
 export const setUserMessages = (userMessages) => {
     return {
         type:SET_USER_MESSAGES,
@@ -22,6 +22,12 @@ export const setUserAttachments = (attachments)=> {
     return {
       type: SET_USER_ATTACHMENTS,
       attachments,
+    };
+}
+export const setGallery = (gallery)=> {
+    return {
+      type: SET_GALLERY,
+      gallery,
     };
 }
 

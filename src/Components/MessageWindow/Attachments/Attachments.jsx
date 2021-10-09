@@ -6,10 +6,11 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import Select from '@mui/material/Select';
 import { Typography, Box, IconButton, Button } from '@material-ui/core';
 import { makeStyles } from '@mui/styles';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack'
 import Modal from '@mui/material/Modal';
+import { setGallery } from '../../../Redux/actions/message';
 const useStyle = makeStyles({
   attachmentHeader: {
     height: "10vh",
@@ -21,16 +22,18 @@ const useStyle = makeStyles({
     padding: "0px 5px"
   }
 })
-function Attachments({ gallery, setGallery }) {
+function Attachments() {
   const classes = useStyle();
   const [attachmentType, setAttachmentType] = useState("all");
   const [attachSrc, setAttachSrc] = useState("");
   const [open, setOpen] = useState(false);
-  const { auth_user, active_user, attachments } = useSelector((store) => {
+  const dispatch = useDispatch();
+  const { auth_user, active_user, attachments,gallery } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
-      attachments: store.message?.attachments || ""
+      attachments: store.message?.attachments || "",
+      gallery:store.message?.gallery || false,
     };
   });
   const openImage = (e) => {
@@ -61,7 +64,7 @@ function Attachments({ gallery, setGallery }) {
   const AttachmentsHeader = () => {
     return (
       <Box display="flex" justifyContent="space-between" alignItems="center" className={classes.attachmentHeader}>
-        <IconButton onClick={() => { setGallery(false) }}>
+        <IconButton onClick={() => { dispatch(setGallery(false)) }}>
           <CloseIcon />
         </IconButton>
         <Typography variant="h5">Gallery</Typography>
@@ -155,8 +158,8 @@ function Attachments({ gallery, setGallery }) {
   }
   const imgStyle = {
     width: "auto",
-    maxWidth: "100%",
-    maxHeight: "100%",
+    maxWidth: "100wv",
+    maxHeight: "100vh",
     display: "block",
     height: "auto",
   };

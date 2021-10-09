@@ -8,7 +8,9 @@ import "./user.css";
 import {setNightMode} from '../../../Redux/actions/app'; 
 import { useDispatch, useSelector } from "react-redux";
 import SignOut from "./SignOut/SignOut";
-
+import { useHistory } from "react-router-dom";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import {Huzaifa,Mehroz} from '../../../Role/index';
 Modal.setAppElement("#root");
 
 const User = React.memo(() => {
@@ -19,7 +21,8 @@ const User = React.memo(() => {
       isNightMode:store.app.mode || false
     }
   });
-
+  const role = auth_user.elsemployees_batchid;
+  const history = useHistory()
   const [isMenuOpen, setMenuOpen] = useState(false);
   const image = auth_user?.elsemployees_image;
   return (
@@ -32,6 +35,14 @@ const User = React.memo(() => {
         <Typography variant="caption" style={{color:isNightMode ? "#fff": "#267396"}} className="userName">{auth_user?.elsemployees_name}</Typography>
         <div className="onlineStatus"></div>
       </div>
+      { role == Huzaifa || role == Mehroz ? (
+        <Tooltip title={"Admin Panel"}>
+        <IconButton onClick={()=>{history.push('/admin')}}>
+          <AdminPanelSettingsIcon style={{color:isNightMode ? "#fff": "#267396"}}/>
+        </IconButton>
+      </Tooltip>
+      ): null
+      }
       <Tooltip title={isNightMode ? "Day Mode": "Night Mode"}>
         <IconButton onClick={()=>{dispatch(setNightMode(!isNightMode))}}>
           {!isNightMode ?

@@ -2,9 +2,9 @@ import React from "react";
 import "./messageWindowHeader.css";
 import { useDispatch, useSelector } from "react-redux";
 import { IconButton ,Typography} from "@material-ui/core";
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import { getUserAttachments } from "../../../api/message";
-function MessageWindowHeader({setGallery}) {
+import { setGallery } from "../../../Redux/actions/message";
+function MessageWindowHeader() {
   
   const { active_user,isNightMode,auth_user } = useSelector((store) => {
     return {
@@ -14,8 +14,9 @@ function MessageWindowHeader({setGallery}) {
     }
   });
   const dispatch = useDispatch();
-  const openGallery = async()=>{
-    setGallery(true)
+  const openGallery = ()=>{
+    // setGallery(true)
+    dispatch(setGallery(true))
     const params = {
       data:{
           user_id:auth_user?.elsemployees_empid,
