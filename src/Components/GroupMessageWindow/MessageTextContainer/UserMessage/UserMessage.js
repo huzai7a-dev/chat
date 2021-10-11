@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Typography } from "@material-ui/core";
+import { Avatar, Box, Button, Tooltip, Typography } from "@material-ui/core";
 import React, { useCallback, useRef, useState } from "react";
 import "./userMessage.css";
 import { useSelector, useDispatch } from "react-redux";
@@ -277,8 +277,10 @@ function UserMessage({ chatgroup }) {
             </div>
             <Box display="flex" style={{float:"right"}}>
               {seenData.map((seen,id) => {
-                return seen.messageid == chatgroup.groupmessage_id && seen.userid != active_user?.elsemployees_empid  ? <Avatar key={id} style={{height:"20px",width:"20px"}} src={`/bizzportal/public/img/${seen.userpicture}`}/> : null;
-                debugger
+               
+                return seen.messageid == chatgroup.groupmessage_id && seen.userid != active_user?.elsemployees_empid  ? <Tooltip title={seen.username}>
+                  <Avatar key={id} style={{height:"20px",width:"20px"}} src={`/bizzportal/public/img/${seen.userpicture}`}/></Tooltip>  : null;
+                
               })}
             </Box>
           </div>

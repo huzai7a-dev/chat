@@ -10,7 +10,7 @@ function MessageWindow() {
   const dropzoneRef = createRef();
   const [attachment, setAttachment] = useState([]);
   const [scrollDown, setScrollDown] = useState("");
-  const [gallery, setGallery] = useState(false);
+ 
   return (
     <Dropzone
       minSize={0}
@@ -27,13 +27,12 @@ function MessageWindow() {
 
         <Box display="flex" justifyContent="space-between" style={{width:"100%"}}>
           <div className="message__window" {...getRootProps()}>
-            <MessageWindowHeader setGallery={setGallery} />
+            <MessageWindowHeader/>
             <MessageTextContainer scrollDown={scrollDown} />
             <MessageInput inputProps={getInputProps} attachment={attachment} setAttachment={setAttachment} setScrollDown={setScrollDown} />
           </div>
-         <Attachments setGallery={setGallery} gallery={gallery}/>
+         <Attachments/>
         </Box>
-
       )}
     </Dropzone>
   );

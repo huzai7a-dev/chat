@@ -50,6 +50,9 @@ export const mergeArray = (arr1 = [], arr2 = [], key = "") =>  {
     }) || [];
     return reduced.concat(arr2);
   }
+
+
+
 class Utils {
     static getFormData(obj = {}) {
         const formData = new FormData();

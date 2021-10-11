@@ -1,9 +1,10 @@
-import { SET_GROUP_MESSAGES, SET_USER_MESSAGES, SET_CONTACTS_TOTAL, SET_USER_ATTACHMENTS, SET_GALLERY } from "../constant/message";
+import { SET_GROUP_MESSAGES, SET_USER_MESSAGES, SET_CONTACTS_TOTAL, SET_USER_ATTACHMENTS, SET_GALLERY, SET_GROUP_ATTACHMENTS } from "../constant/message";
 
 const initState = {
     userMessages: [],
     groupMessages: [],
-    attachments:"",
+    attachments:[],
+    groupAttachments:[],
     gallery:false
 };
 
@@ -29,6 +30,11 @@ export default (state = initState, action) => {
                 return state = {
                     ...state,
                     attachments: action.attachments
+                }
+            case SET_GROUP_ATTACHMENTS:
+                return state = {
+                    ...state,
+                    groupAttachments: action.attachments
                 }
             case SET_GALLERY:
                 return state = {

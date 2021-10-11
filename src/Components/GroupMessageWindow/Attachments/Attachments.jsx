@@ -32,11 +32,10 @@ function Attachments() {
     return {
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
-      attachments: store.message?.attachments || "",
+      attachments: store.message?.groupAttachments || [],
       gallery:store.message?.gallery || false,
     };
   });
- 
   const openImage = (e) => {
     setOpen(true);
     setAttachSrc(e.target.currentSrc);
@@ -46,6 +45,7 @@ function Attachments() {
     const handleChange = (e) => {
       setAttachmentType(e.target.value);
     }
+    
     return (
       <FormControl sx={{ minWidth: 80 }}>
         <Select
@@ -82,11 +82,11 @@ function Attachments() {
       })
     )
   }
-  
   const filterAttachment = (attachment)=>{
+    
     const media = ["jpg","jpeg","gif","jpeg","mp4","mkv","wmv","flv","png"];
-    const files = ["DOC","DOCX","HTML","HTM","ODT","PDF","XLS","XLSX","ODS","PPT","PPTX","TXT","ZIP","GITIGNORE"];
-    const extension = attachment.message_originalname.split('.').pop();
+    const files = ["DOC","DOCX","HTML","HTM","ODT","PDF","XLS","XLSX","ODS","PPT","PPTX","TXT","ZIP","GITIGNORE","SVG"];
+    const extension = attachment.groupmessage_originalname.split('.').pop();
     if (attachmentType == "media") {
       return media.includes(extension.toLowerCase())
     }
@@ -99,7 +99,7 @@ function Attachments() {
   }
   const Attachments = () => {
     return attachments.filter(filterAttachment).map((attachmentObj) => {
-      return  attachmentObj.message_attachment.split(",").map((attachment, id) => {
+      return  attachmentObj.groupmessage_attachment.split(",").map((attachment, id) => {
         const DownloadButton = () => {
           return (
             <Button variant="outlined" size="small" color={"primary"}>
@@ -113,14 +113,13 @@ function Attachments() {
             </Button>
           );
         };
-        const attachmentType = attachment.split(".").pop();
-        
+        const splitAttachment = attachment.split(".");
+        const attachmentType = splitAttachment[splitAttachment.length - 1];
         if (
           attachmentType.toLowerCase() === "jpg" ||
           attachmentType.toLowerCase() === "gif" ||
           attachmentType.toLowerCase() === "png" ||
           attachmentType.toLowerCase() === "jpeg"
-          
         ) {
           return (
             <div className="attachView" key={id}>
@@ -155,7 +154,7 @@ function Attachments() {
           );
         }
         else {
-          const fileName = attachmentObj.message_originalname;
+          const fileName = attachmentObj.groupmessage_originalname;
           return (
             <div className="attachView" key={id}>
               <div className="file" style={{ maxWidth: "100%" }}>
@@ -186,10 +185,12 @@ function Attachments() {
     <Box style={{ width: gallery ? "400px" : "0px", transition: "0.2s" }}>
       <AttachmentsHeader />
       <Box className={classes.attachments}>
-        {attachments.length > 0 ? <Attachments /> : <>
+        {attachments.length > 0 ? <Attachments /> : 
+        <>
           <AttachmentSkeleton/>
           <Typography variant="h5" style={{textAlign:"center"}}>It's Empty Right Now</Typography>
-        </> }
+        </> 
+        }
       </Box>
       <Modal
         open={open}
