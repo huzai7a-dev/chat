@@ -5,14 +5,14 @@ import Modal from "react-modal";
 import Brightness3Icon from '@material-ui/icons/Brightness3';
 import WbSunnyIcon from '@material-ui/icons/WbSunny';
 import "./user.css";
-import {setNightMode} from '../../../Redux/actions/app'; 
+import {setNightMode,setAdminPanel} from '../../../Redux/actions/app'; 
 import { useDispatch, useSelector } from "react-redux";
 import SignOut from "./SignOut/SignOut";
 import { useHistory } from "react-router-dom";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import {Huzaifa,Mehroz} from '../../../Role/index';
 Modal.setAppElement("#root");
-
+  
 const User = React.memo(() => {
   const dispatch = useDispatch();
   const { auth_user,isNightMode } = useSelector((store) => {
@@ -25,6 +25,11 @@ const User = React.memo(() => {
   const history = useHistory()
   const [isMenuOpen, setMenuOpen] = useState(false);
   const image = auth_user?.elsemployees_image;
+
+  const switchToAdmin = ()=>{
+    dispatch(setAdminPanel(true))
+    history.push('/admin')
+  }
   return (
     <div className="user">
       <div className="user__info">
@@ -37,7 +42,7 @@ const User = React.memo(() => {
       </div>
       { role == Huzaifa || role == Mehroz ? (
         <Tooltip title={"Admin Panel"}>
-        <IconButton onClick={()=>{history.push('/admin')}}>
+        <IconButton onClick={switchToAdmin}>
           <AdminPanelSettingsIcon style={{color:isNightMode ? "#fff": "#267396"}}/>
         </IconButton>
       </Tooltip>
@@ -71,8 +76,6 @@ const User = React.memo(() => {
           <SignOut isMenuOpen={isMenuOpen} setMenuOpen={setMenuOpen} />
         </Modal>
       </div>
-
-      
     </div>
   );
 });

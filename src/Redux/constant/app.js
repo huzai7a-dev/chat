@@ -6,3 +6,4 @@ export const SET_PARTICIPANT_MODEL_STATE = "SET_PARTICIPANT_MODEL_STATE";
 export const SET_QUOTE = "SET_QUOTE";
 export const SET_SEEN = "SET_SEEN";
 export const SET_NIGHT_MODE = "SET_NIGHT_MODE";
+export const SET_ADMIN_PANEL = "SET_ADMIN_PANEL";

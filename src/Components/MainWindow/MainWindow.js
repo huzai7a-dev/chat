@@ -10,14 +10,15 @@ import { useSelector } from "react-redux";
 import AdminPanel from "../AdminPanel/AdminPanel";
 
 const MainWindow = React.memo(() => {
-  const {isNightMode } = useSelector((store) => {
+  const {isNightMode,adminPanel } = useSelector((store) => {
     return {
-      isNightMode:store.app.mode || false
+      isNightMode:store.app.mode || false,
+      adminPanel:store.app.adminPanel || false,
     }
   });
   return (
     <div className="main__window" style={{background:isNightMode ? DARKMAIN : "#fff"}}>
-      <ChatWindow />
+      {!adminPanel && <ChatWindow />}
       <Switch>
         <Route path="/" component={Welcome} exact />
         <Route path="/user/:id" component={MessageWindow} />

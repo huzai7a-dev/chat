@@ -6,7 +6,8 @@ import {
   SET_PARTICIPANT_MODEL_STATE,
   SET_QUOTE,
   SET_SEEN,
-  SET_NIGHT_MODE
+  SET_NIGHT_MODE,
+  SET_ADMIN_PANEL
 } from "../constant/app";
 
 export const setUserSearchResult = (userSearch) => {
@@ -62,5 +63,11 @@ export const setNightMode = (mode) => {
   return {
     type: SET_NIGHT_MODE,
     mode,
+  };
+};
+export const setAdminPanel = (setAdmin) => {
+  return {
+    type: SET_ADMIN_PANEL,
+    setAdmin,
   };
 };

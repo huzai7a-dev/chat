@@ -6,7 +6,8 @@ import {
   SET_PARTICIPANT_MODEL_STATE,
   SET_QUOTE,
   SET_SEEN,
-  SET_NIGHT_MODE
+  SET_NIGHT_MODE,
+  SET_ADMIN_PANEL
 } from "../constant/app";
 const initState = {
   userSearch: null,
@@ -15,6 +16,7 @@ const initState = {
   typedMsg: [],
   seen:false,
   mode:false,
+  adminPanel:false
 };
 
 export default (state = initState, action) => {
@@ -59,6 +61,11 @@ export default (state = initState, action) => {
         return (state = {
           ...state,
           mode: action.mode,
+        });
+        case SET_ADMIN_PANEL:
+        return (state = {
+          ...state,
+          adminPanel: action.setAdmin,
         });
     default:
       return state;

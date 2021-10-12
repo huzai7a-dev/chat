@@ -7,6 +7,7 @@ import { getUserGroups, seenGroupMessage} from "../../../../api/chat";
 import { DARKLIGHT, DARKMAIN, PRIMARYMAIN, SECONDARYDARK, WHITE } from "../../../../Theme/colorConstant";
 import moment from 'moment'
 import { getSocket } from "../../../../socket";
+import { setGallery } from "../../../../Redux/actions/message";
 const useStyles = makeStyles({
   group:{
     background:SECONDARYDARK,
@@ -29,6 +30,7 @@ function ChatGroup({ groups }) {
   });
   const active = active_group.group_id == groups.group_id;
   const switchToGroupChat = () => {
+    dispatch(setGallery(false));
     dispatch(setActiveGroup(groups))
     history.push(`/group/${groups.group_name}`)
     const seenParams = {
