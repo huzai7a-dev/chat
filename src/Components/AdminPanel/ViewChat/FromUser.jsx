@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme) => ({
 function User(props) {
     const classes = useStyles();
     return (
-        <Button className={classes.user} onClick={()=>{props.onSelectFromUser(props.user.elsemployees_name)}}>
+        <Button className={classes.user} onClick={()=>{props.onSelectUser(props.user)}}>
             <Box display="flex" alignItems="center">
             <Avatar src={`/bizzportal/public/img/${props.user.elsemployees_image}`} />
             <Typography style={{marginLeft:"5px"}}>{props.user.elsemployees_name}</Typography>
