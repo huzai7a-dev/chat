@@ -1,4 +1,4 @@
-import { SET_ACTIVE_USER, SET_ACTIVE_GROUP, SET_CONTACT_USERS, SET_USER_GROUPS,SET_GROUP_MEM_INFO, SET_IS_TYPING, SET_NEW_GROUP_MESSAGE } from "../constant/chat"
+import { SET_ACTIVE_USER, SET_ACTIVE_GROUP, SET_CONTACT_USERS, SET_USER_GROUPS,SET_GROUP_MEM_INFO, SET_IS_TYPING, SET_NEW_GROUP_MESSAGE, SET_TOTAL_CONTACTS } from "../constant/chat"
 
 export const setActiveChat = (active_user) => {
     return {
@@ -46,5 +46,11 @@ export const setNewGroupMessage = (newMessage) => {
     return {
         type: SET_NEW_GROUP_MESSAGE,
         newMessage,
+    }
+}
+export const setTotalContacts = (contacts) => {
+    return {
+        type: SET_TOTAL_CONTACTS,
+        contacts,
     }
 }

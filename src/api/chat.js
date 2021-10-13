@@ -1,5 +1,5 @@
 import { apiCall } from "../helper/api";
-import { setContactUsers, setUserGroups} from "../Redux/actions/chat";
+import { setContactUsers, setTotalContacts, setUserGroups} from "../Redux/actions/chat";
 
 export const getContactsUser = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getContactsUser";
@@ -65,4 +65,22 @@ const onSuccessSeenGroupMessage = (response, params) => (dispatch) => {
 
 const onFailureSeenGroupMessage = (error, params) => (dispatch) => {
   console.log("onFailureSeenGroupMessage", error);
+};
+
+/****************************************************************************************************************/
+
+export const getContactsTotal = (params = {}) => (dispatch) => {
+  params.path = "/api/bwccrm/getContactsTotal";
+  params.method = "POST";
+  return dispatch(apiCall(params, onSuccessgetContactsTotal, onFailuregetContactsTotal));
+};
+
+const onSuccessgetContactsTotal = (response, params) => (dispatch) => {
+  dispatch(setTotalContacts(response.data.contacts));
+  console.log("OnSuccessgetContactsTotal", response);
+  
+};
+
+const onFailuregetContactsTotal = (error, params) => (dispatch) => {
+  console.log("onFailuregetContactsTotal", error);
 };
