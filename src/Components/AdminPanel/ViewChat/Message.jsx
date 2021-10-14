@@ -1,37 +1,46 @@
-import { Box, makeStyles, Typography, Avatar,Button } from "@material-ui/core";
+import { Box, makeStyles, Typography, Avatar, Button } from "@material-ui/core";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import React from "react";
 import {
   PRIMARYLIGHT,
   PRIMARYMAIN,
   SECONDARYDARK,
+  SECONDARYMAIN,
 } from "../../../Theme/colorConstant";
 
 const useStyles = makeStyles((theme) => ({
   message: {
     alignSelf: (props) =>
       props.message.message_to == props.toId ? "end" : "start",
-    flexDirection:(props)=> props.message.message_to == props.toId && "row-reverse",
+    flexDirection: (props) =>
+      props.message.message_to == props.toId && "row-reverse",
     display: "flex",
   },
   messageBody: {
     width: "420px",
-    background: (props) =>
-      props.message.message_to == props.toId ? SECONDARYDARK : PRIMARYLIGHT,
     height: "auto",
-    margin: "10px 0px",
+    margin: props => props.message?.message_quotebody == "null" && "10px 0px",
     padding: "10px",
     whiteSpace: "pre-wrap",
-    borderRadius: "10px",
+    borderRadius: props => props.message?.message_quotebody !== "null" ? "0px 0px 10px 10px" :"10px",
+    background: (props) =>
+      props.message.message_to == props.toId ? SECONDARYDARK : PRIMARYLIGHT,
+  },
+  quotedMessageBody: {
+    width: "420px",
+    background: SECONDARYMAIN,
+    marginTop:"10px",
+    borderRadius:"10px 10px 0px 0px",
+    height: "auto",
+    padding: "10px",
   },
 }));
 
 function Message(props) {
   const classes = useStyles(props);
 
-
   const RenderSendAttachment = () => {
-      const attachments = props.message.message_attachment
+    const attachments = props.message.message_attachment;
     return attachments.split(",").map((attachment, id) => {
       const DownloadButton = () => {
         return (
@@ -112,16 +121,24 @@ function Message(props) {
       <Avatar
         src={`/bizzportal/public/img/${props.message.from_userpicture}`}
       />
-      {props.message?.message_attachment !== null ? (
+      <Box>
+        {props.message.message_forwarded == 1 && <Typography variant="caption">Forwarded</Typography>}
+        {props.message?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
             <RenderSendAttachment />
           </div>
         ) : null}
-      {props.message.message_body !== null && (
-        <Box className={classes.messageBody}>
-          <Typography>{props.message.message_body}</Typography>
-        </Box>
-      )}
+        {props.message?.message_quotebody !== "null" && (
+          <Box className={classes.quotedMessageBody}>
+            <Typography color="textSecondary">{props.message.message_quotebody}</Typography>
+          </Box>
+        )}
+        {props.message.message_body !== null && (
+          <Box className={classes.messageBody}>
+            <Typography>{props.message.message_body}</Typography>
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 }
