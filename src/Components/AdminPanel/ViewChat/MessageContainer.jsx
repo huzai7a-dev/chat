@@ -11,6 +11,7 @@ const useStyles = makeStyles(() => ({
         overflowX:"hidden",
         display: "flex",
         flexDirection: "column-reverse",
+        padding:"0px 20px"
     }
 }));
 

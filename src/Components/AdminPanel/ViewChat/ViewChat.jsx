@@ -34,7 +34,7 @@ function ViewMessages() {
   const [from, setFrom] = useState("");
   const [toId, setToId] = useState("");
   const [fromId, setFromId] = useState("");
-  const [hasMessages, setHasMessages] = useState(false);
+  const [hasMessages, setHasMessages] = useState(true);
   const [isUserSelected, setUserSelected] = useState(true);
 
   const { auth_user, contacts } = useSelector((store) => {
@@ -54,21 +54,53 @@ function ViewMessages() {
     dispatch(getContactsTotal(params));
   }, []);
 
+  const handleToUser =(e)=>{
+        setTo(e.target.value);
+        if(to.length > 0){
+            setHasMessages(false)
+        }else {
+            setHasMessages(true)
+        }
+  }
+  const handleFromUser = (e)=>{
+    setFrom(e.target.value);
+    if (from.length > 0) {
+        setHasMessages(false);
+    }else {
+        setHasMessages(true)
+    }
+  }
   const filterToUser = (user) => {
     return user?.elsemployees_name?.toLowerCase()?.indexOf(to) >= 0;
   };
   const filterFromUser = (user) => {
     return user?.elsemployees_name?.toLowerCase()?.indexOf(from) >= 0;
   };
+
   const selectToUser = (toUser) => {
     setUserSelected(false);
     setTo(toUser.elsemployees_name);
     setToId(toUser.elsemployees_empid);
   };
+
   const selectFromUser = (fromUser) => {
     setFrom(fromUser.elsemployees_name);
     setFromId(fromUser.elsemployees_empid);
   };
+
+  const getMessages = () => {
+    const params = {
+      data: {
+        from_id: fromId,
+        to_id: toId,
+        user_id: auth_user?.elsemployees_empid,
+      },
+    };
+    dispatch(getUserMessages(params)).then((res) => {
+      setHasMessages(true);
+    });
+  };
+
   const FromUserList = () => {
     return (
       <div className={classes.userContainer}>
@@ -100,18 +132,7 @@ function ViewMessages() {
       </div>
     );
   };
-  const getMessages = () => {
-    const params = {
-      data: {
-        from_id: fromId,
-        to_id: toId,
-        user_id: auth_user?.elsemployees_empid,
-      },
-    };
-    dispatch(getUserMessages(params)).then((res) => {
-      setHasMessages(true);
-    });
-  };
+ 
 
   return (
     <Box style={{ marginBottom: "20px" }}>
@@ -124,16 +145,12 @@ function ViewMessages() {
         >
           <TextField
             label="To"
-            onChange={(e) => {
-              setTo(e.target.value);
-            }}
+            onChange={handleToUser}
             value={to}
           />
           <TextField
             label="From"
-            onChange={(e) => {
-              setFrom(e.target.value);
-            }}
+            onChange={handleFromUser}
             value={from}
             disabled={isUserSelected}
           />
@@ -147,8 +164,8 @@ function ViewMessages() {
           <MessageContainer toId={toId} />
         ) : (
           <div className={classes.mainContainer}>
-            <ToUserList />
-            <FromUserList />
+            {to.length > 0 && <ToUserList />}
+            {from.length > 0 && <FromUserList />}
           </div>
         )}
       </Box>

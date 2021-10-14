@@ -72,6 +72,11 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
+    width: props => props ?  "100vw" : `calc(100vw - ${drawerWidth}px)`,
+    width:`calc(100vw - ${drawerWidth}px)`,
+    display:"flex",
+    flexDirection:"column",
+    alignItems:"center"
   },
   contentShift: {
     transition: theme.transitions.create('margin', {
@@ -96,7 +101,7 @@ const adminOptions = [
     }
 ]
 export default function AdminPanel() {
-  const classes = useStyles();
+  const classes = useStyles(open);
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const history = useHistory()
