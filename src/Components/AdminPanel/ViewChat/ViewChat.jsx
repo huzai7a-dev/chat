@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme) => ({
   mainContainer: {
     height: "500px",
     display: "flex",
+    overflowY: "auto",
   },
   userContainer: {
     height: "100%",
@@ -88,14 +89,15 @@ function ViewMessages() {
     setFromId(fromUser.elsemployees_empid);
   };
 
+  const params = {
+    data: {
+      from_id: fromId,
+      to_id: toId,
+      user_id: auth_user?.elsemployees_empid,
+    },
+  };
+
   const getMessages = () => {
-    const params = {
-      data: {
-        from_id: fromId,
-        to_id: toId,
-        user_id: auth_user?.elsemployees_empid,
-      },
-    };
     dispatch(getUserMessages(params)).then((res) => {
       setHasMessages(true);
     });
@@ -161,7 +163,7 @@ function ViewMessages() {
       </Box>
       <Box className={classes.mainContainer}>
         {hasMessages ? (
-          <MessageContainer toId={toId} />
+          <MessageContainer toId={toId} messageParams={params} />
         ) : (
           <div className={classes.mainContainer}>
             {to.length > 0 && <ToUserList />}

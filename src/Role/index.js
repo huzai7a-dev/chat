@@ -1,2 +1,2 @@
-export const Huzaifa = 1257;
-export const Mehroz = 1218;
+export const ADMIN = 1;
+

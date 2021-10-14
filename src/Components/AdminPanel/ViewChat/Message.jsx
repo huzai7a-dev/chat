@@ -7,7 +7,7 @@ import {
   SECONDARYDARK,
   SECONDARYMAIN,
 } from "../../../Theme/colorConstant";
-
+import moment from 'moment'
 const useStyles = makeStyles((theme) => ({
   message: {
     alignSelf: (props) =>
@@ -19,17 +19,16 @@ const useStyles = makeStyles((theme) => ({
   messageBody: {
     width: "420px",
     height: "auto",
-    margin: props => props.message?.message_quotebody == "null" && "10px 0px",
     padding: "10px",
     whiteSpace: "pre-wrap",
     borderRadius: props => props.message?.message_quotebody !== "null" ? "0px 0px 10px 10px" :"10px",
     background: (props) =>
       props.message.message_to == props.toId ? SECONDARYDARK : PRIMARYLIGHT,
+      wordWrap: "break-word",
   },
   quotedMessageBody: {
     width: "420px",
     background: SECONDARYMAIN,
-    marginTop:"10px",
     borderRadius:"10px 10px 0px 0px",
     height: "auto",
     padding: "10px",
@@ -122,7 +121,10 @@ function Message(props) {
         src={`/bizzportal/public/img/${props.message.from_userpicture}`}
       />
       <Box>
+        <Box style={{marginTop:"10px",padding:"0px 5px"}}>
+          <Typography variant="caption">{moment(props.message.fullTime).format('lll')}</Typography>
         {props.message.message_forwarded == 1 && <Typography variant="caption">Forwarded</Typography>}
+        </Box>
         {props.message?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
             <RenderSendAttachment />
@@ -130,12 +132,12 @@ function Message(props) {
         ) : null}
         {props.message?.message_quotebody !== "null" && (
           <Box className={classes.quotedMessageBody}>
-            <Typography color="textSecondary">{props.message.message_quotebody}</Typography>
+            <Typography variant="caption" color="textSecondary">{props.message.message_quotebody}</Typography>
           </Box>
         )}
         {props.message.message_body !== null && (
           <Box className={classes.messageBody}>
-            <Typography>{props.message.message_body}</Typography>
+            <Typography variant="caption">{props.message.message_body}</Typography>
           </Box>
         )}
       </Box>

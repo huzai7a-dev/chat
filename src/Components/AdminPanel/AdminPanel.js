@@ -1,37 +1,38 @@
-import React from 'react';
-import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
+import React from "react";
+import clsx from "clsx";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
+import List from "@material-ui/core/List";
+import Typography from "@material-ui/core/Typography";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import MenuIcon from "@material-ui/icons/Menu";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
 import { Route, Switch } from "react-router-dom";
-import { Button,Box } from '@material-ui/core';
+import { Button, Box } from "@material-ui/core";
 import { useHistory } from "react-router-dom";
-import { useDispatch } from 'react-redux';
-import { setAdminPanel } from '../../Redux/actions/app';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import GroupIcon from '@material-ui/icons/Group';
-import ViewChat from './ViewChat/ViewChat';
-import ViewUsers from './ViewUsers/ViewUsers';
-import WelcomeAdmin from './WelcomeAdmin';
+import { useDispatch } from "react-redux";
+import { setAdminPanel } from "../../Redux/actions/app";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import GroupIcon from "@material-ui/icons/Group";
+import ViewChat from "./ViewChat/ViewChat";
+import ViewUsers from "./ViewUsers/ViewUsers";
+import WelcomeAdmin from "./WelcomeAdmin";
+import {PRIMARYMAIN} from '../../Theme/colorConstant'
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
   },
   appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
@@ -39,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
   appBarShift: {
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -48,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(2),
   },
   hide: {
-    display: 'none',
+    display: "none",
   },
   drawer: {
     width: drawerWidth,
@@ -58,28 +59,28 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth,
   },
   drawerHeader: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
-    justifyContent: 'flex-end',
+    justifyContent: "flex-end",
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
-    width: props => props ?  "100vw" : `calc(100vw - ${drawerWidth}px)`,
-    width:`calc(100vw - ${drawerWidth}px)`,
-    display:"flex",
-    flexDirection:"column",
-    alignItems:"center"
+    width: (props) => (props ? "100vw" : `calc(100vw - ${drawerWidth}px)`),
+    width: `calc(100vw - ${drawerWidth}px)`,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
   },
   contentShift: {
-    transition: theme.transitions.create('margin', {
+    transition: theme.transitions.create("margin", {
       easing: theme.transitions.easing.easeOut,
       duration: theme.transitions.duration.enteringScreen,
     }),
@@ -87,25 +88,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 const adminOptions = [
-    {
-        id:1,
-        title:"View Chat",
-        icon:<VisibilityIcon/>,
-        path:"/admin/view_chat"
-    },
-    {
-        id:2,
-        title:"View Users",
-        icon:<GroupIcon/>,
-        path:"/admin/view_users"
-    }
-]
+  {
+    id: 1,
+    title: "View Chat",
+    icon: <VisibilityIcon />,
+    path: "/admin/view_chat",
+  },
+  // {
+  //   id: 2,
+  //   title: "View Users",
+  //   icon: <GroupIcon />,
+  //   path: "/admin/view_users",
+  // },
+];
 export default function AdminPanel() {
   const classes = useStyles(open);
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-  const history = useHistory()
-  const dispatch = useDispatch()
+  const history = useHistory();
+  const dispatch = useDispatch();
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -113,10 +114,10 @@ export default function AdminPanel() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  const backToChat = ()=>{
-      dispatch(setAdminPanel(false));
-      history.push('/')
-  }
+  const backToChat = () => {
+    dispatch(setAdminPanel(false));
+    history.goBack();
+  };
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -151,19 +152,29 @@ export default function AdminPanel() {
         }}
       >
         <div>
-            <Box display="flex" justifyContent="space-between" p={0.9}> 
-            <Button onClick={backToChat}>Back to Chat</Button>
+          <Box display="flex" justifyContent="space-between" p={0.9}>
+            <Button onClick={backToChat} style={{fontWeight:"600",color:PRIMARYMAIN}}>Back to Chat</Button>
             <IconButton onClick={handleDrawerClose}>
-                {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+              {theme.direction === "ltr" ? (
+                <ChevronLeftIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
             </IconButton>
-            </Box>
+          </Box>
         </div>
         <Divider />
         <List>
-          {adminOptions.map(({id,icon,title,path}) => (
-            <ListItem button key={id} onClick={()=>{history.push(path)}}>
-              <ListItemIcon>{icon}</ListItemIcon>
-              <ListItemText primary={title} />
+          {adminOptions.map(({ id, icon, title, path }) => (
+            <ListItem
+              button
+              key={id}
+              onClick={() => {
+                history.push(path);
+              }}
+            >
+              <ListItemIcon style={{color:PRIMARYMAIN}}>{icon}</ListItemIcon>
+              <ListItemText style={{color:PRIMARYMAIN}} primary={title} />
             </ListItem>
           ))}
         </List>
@@ -175,11 +186,11 @@ export default function AdminPanel() {
       >
         <div className={classes.drawerHeader} />
         <Switch>
-          <Route path="/admin"
-          render={(props) => (
-            <WelcomeAdmin {...props} isBarOpen={open} />
-          )}
-          exact />
+          <Route
+            path="/admin"
+            render={(props) => <WelcomeAdmin {...props} isBarOpen={open} />}
+            exact
+          />
           <Route path="/admin/view_chat" component={ViewChat} exact />
           <Route path="/admin/view_users" component={ViewUsers} exact />
         </Switch>

@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SignOut from "./SignOut/SignOut";
 import { useHistory } from "react-router-dom";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import {Huzaifa,Mehroz} from '../../../Role/index';
+import {ADMIN} from '../../../Role/index';
 Modal.setAppElement("#root");
   
 const User = React.memo(() => {
@@ -21,7 +21,7 @@ const User = React.memo(() => {
       isNightMode:store.app.mode || false
     }
   });
-  const role = auth_user.elsemployees_batchid;
+  const role = auth_user.elsemployees_roleid;
   const history = useHistory()
   const [isMenuOpen, setMenuOpen] = useState(false);
   const image = auth_user?.elsemployees_image;
@@ -40,7 +40,7 @@ const User = React.memo(() => {
         <Typography variant="caption" style={{color:isNightMode ? "#fff": "#267396"}} className="userName">{auth_user?.elsemployees_name}</Typography>
         <div className="onlineStatus"></div>
       </div>
-      { role == Huzaifa || role == Mehroz ? (
+      { role == ADMIN ? (
         <Tooltip title={"Admin Panel"}>
         <IconButton onClick={switchToAdmin}>
           <AdminPanelSettingsIcon style={{color:isNightMode ? "#fff": "#267396"}}/>
