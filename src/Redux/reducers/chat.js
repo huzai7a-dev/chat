@@ -1,4 +1,4 @@
-import { SET_ACTIVE_USER, SET_ACTIVE_GROUP, SET_CONTACT_USERS, SET_USER_GROUPS,SET_GROUP_MEM_INFO, SET_IS_TYPING, SET_NEW_GROUP_MESSAGE, SET_TOTAL_CONTACTS } from "../constant/chat";
+import { SET_ACTIVE_USER, SET_ACTIVE_GROUP, SET_CONTACT_USERS, SET_USER_GROUPS,SET_GROUP_MEM_INFO, SET_IS_TYPING, SET_NEW_GROUP_MESSAGE, SET_TOTAL_CONTACTS, SET_ALL_CONTACTS } from "../constant/chat";
 
 const initState = {
   active_user: null,
@@ -6,7 +6,8 @@ const initState = {
   contacts: [],
   groups:[],
   groupMemInfo:{},
-  newMessage:[]
+  newMessage:[],
+  allContacts:[]
 };
 
 export default (state = initState, action) => {
@@ -51,6 +52,11 @@ export default (state = initState, action) => {
         return state = {
           ...state,
           contacts:action.contacts
+        }
+        case SET_ALL_CONTACTS:
+        return state = {
+          ...state,
+          allContacts:action.contacts
         }
     default:
       return state;

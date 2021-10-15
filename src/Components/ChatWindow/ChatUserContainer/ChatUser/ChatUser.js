@@ -12,7 +12,7 @@ import loading from '../../../../Assets/loading.gif';
 import { DARKLIGHT, DARKMAIN, WHITE, } from "../../../../Theme/colorConstant";
 import { setGallery } from "../../../../Redux/actions/message";
 
-  const  ChatUser = React.forwardRef((props, ref)=> {
+  const  ChatUser = (props)=> {
     
   const history = useHistory();
   const dispatch = useDispatch();
@@ -29,7 +29,7 @@ import { setGallery } from "../../../../Redux/actions/message";
     message_to: props.users.elsemployees_empid,
   };
   const getLastMessage = ()=>{
-    if (props.users.last_msg.message_body) {
+    if (props.users?.last_msg.message_body) {
       return props.users.last_msg.message_body
     }
     else if (props.users.last_msg.message_attachment){
@@ -84,7 +84,7 @@ import { setGallery } from "../../../../Redux/actions/message";
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
   const heading = isNightMode ? "#fff" : "#252423";
   return (
-    <div className="chatUser" ref={ref} onClick={switchToConvo} style={{background: activeWindow ? activeBackground : background}}>
+    <div className="chatUser" onClick={switchToConvo} style={{background: activeWindow ? activeBackground : background}}>
       <div className="loginStatus" />
       <div className="chatUser__picture">
         {image ? (
@@ -112,6 +112,6 @@ import { setGallery } from "../../../../Redux/actions/message";
       </div>
     </div>  
   );
-})
+}
 
 export default React.memo(ChatUser);

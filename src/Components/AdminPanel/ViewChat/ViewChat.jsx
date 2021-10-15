@@ -3,11 +3,11 @@ import { Box, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { useDispatch, useSelector } from "react-redux";
-import { getContactsTotal } from "../../../api/chat";
+import { getAllContacts, getContactsTotal } from "../../../api/chat";
 import ToUser from "./ToUser";
 import { Skeleton } from "@mui/material";
 import FromUser from "./FromUser";
-import { getUserMessages } from "../../../api/message";
+import { getAdminUserMessages, getUserMessages } from "../../../api/message";
 import MessageContainer from "./MessageContainer";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,14 +35,14 @@ function ViewMessages() {
   const [from, setFrom] = useState("");
   const [toId, setToId] = useState("");
   const [fromId, setFromId] = useState("");
-  const [hasMessages, setHasMessages] = useState(true);
+  const [hasMessages, setHasMessages] = useState(false);
   const [isUserSelected, setUserSelected] = useState(true);
 
   const { auth_user, contacts } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
       isNightMode: store.app.mode || false,
-      contacts: store.chat.contacts || [],
+      contacts: store.chat.allContacts || [],
     };
   });
   const dispatch = useDispatch();
@@ -52,11 +52,11 @@ function ViewMessages() {
         user_id: auth_user?.elsemployees_empid,
       },
     };
-    dispatch(getContactsTotal(params));
+    dispatch(getAllContacts(params));
   }, []);
 
   const handleToUser =(e)=>{
-        setTo(e.target.value);
+        setTo(e.target.value);        
         if(to.length > 0){
             setHasMessages(false)
         }else {
@@ -98,7 +98,7 @@ function ViewMessages() {
   };
 
   const getMessages = () => {
-    dispatch(getUserMessages(params)).then((res) => {
+    dispatch(getAdminUserMessages(params)).then((res) => {
       setHasMessages(true);
     });
   };
@@ -147,11 +147,13 @@ function ViewMessages() {
         >
           <TextField
             label="To"
+            
             onChange={handleToUser}
             value={to}
           />
           <TextField
             label="From"
+           
             onChange={handleFromUser}
             value={from}
             disabled={isUserSelected}

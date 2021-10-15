@@ -15,17 +15,17 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch,useHistory,useLocation } from "react-router-dom";
 import { Button, Box } from "@material-ui/core";
-import { useHistory } from "react-router-dom";
+
 import { useDispatch } from "react-redux";
 import { setAdminPanel } from "../../Redux/actions/app";
-import VisibilityIcon from "@material-ui/icons/Visibility";
+import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
 import GroupIcon from "@material-ui/icons/Group";
 import ViewChat from "./ViewChat/ViewChat";
 import ViewUsers from "./ViewUsers/ViewUsers";
 import WelcomeAdmin from "./WelcomeAdmin";
-import {PRIMARYMAIN} from '../../Theme/colorConstant'
+import {PRIMARYMAIN,PRIMARYLIGHT} from '../../Theme/colorConstant'
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,27 +86,32 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: 0,
   },
+  active:{
+    background:"aliceblue"
+  }
 }));
 const adminOptions = [
   {
     id: 1,
     title: "View Chat",
-    icon: <VisibilityIcon />,
+    icon: <ChatBubbleIcon />,
     path: "/admin/view_chat",
   },
-  // {
-  //   id: 2,
-  //   title: "View Users",
-  //   icon: <GroupIcon />,
-  //   path: "/admin/view_users",
-  // },
+  {
+    id: 2,
+    title: "View Group Chat",
+    icon: <GroupIcon />,
+    path: "/admin/view_group_chat",
+  },
 ];
 export default function AdminPanel() {
   const classes = useStyles(open);
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const history = useHistory();
+  const location = useLocation()
   const dispatch = useDispatch();
+  const activePath = location.pathname;
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -115,8 +120,8 @@ export default function AdminPanel() {
     setOpen(false);
   };
   const backToChat = () => {
+    history.push('/');
     dispatch(setAdminPanel(false));
-    history.goBack();
   };
   return (
     <div className={classes.root}>
@@ -167,8 +172,8 @@ export default function AdminPanel() {
         <List>
           {adminOptions.map(({ id, icon, title, path }) => (
             <ListItem
-              button
-              key={id}
+            button
+            style={{background: activePath == path && "aliceblue"}}
               onClick={() => {
                 history.push(path);
               }}
@@ -192,7 +197,7 @@ export default function AdminPanel() {
             exact
           />
           <Route path="/admin/view_chat" component={ViewChat} exact />
-          <Route path="/admin/view_users" component={ViewUsers} exact />
+          <Route path="/admin/view_group_chat" component={ViewUsers} exact />
         </Switch>
       </main>
     </div>

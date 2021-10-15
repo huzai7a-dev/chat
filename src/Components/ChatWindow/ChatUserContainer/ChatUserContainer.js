@@ -105,16 +105,7 @@ function ChatUserContainer() {
       </Box>
     )
   }
-  // const SwitchTabs = () => {
-  //   return (
-  //     <Paper elevation={0} className={classes.tabContainer}>
-  //       <Tabs value={tabValue} onChange={handleTab} style={{width:"100%"}}>
-  //         <Tab label="People" onClick={changePeopleTab} style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000" }} />
-  //         <Tab label="Groups" onClick={changeGroupTab}  style={{backgroundColor:isNightMode && "#fff", color:isNightMode && "#000" }}/>
-  //       </Tabs>
-  //     </Paper>
-  //   );
-  // };
+  
   const ContactList = () => {
     return (
       <div className="chatUserList">
