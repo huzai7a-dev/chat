@@ -8,7 +8,7 @@ import { mergeArray } from "../../../helper/util";
 import {
   setAdminUserMessages,
 } from "../../../Redux/actions/message";
-
+import { Alert } from '@material-ui/lab';
 const useStyles = makeStyles(() => ({
   messageContainer: {
     height: "100%",
@@ -67,7 +67,7 @@ function MessageContainer(props) {
         scrollableTarget="scrollableDiv"
       >
         {messages.length < 1 ? (
-          <Typography className={classes.noMessage}>No messages between them </Typography>
+           <Typography className={classes.noMessage}>No messages between them </Typography>
         ) : (
           messages.map((message) => {
             return (

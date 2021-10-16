@@ -23,7 +23,7 @@ import { setAdminPanel } from "../../Redux/actions/app";
 import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
 import GroupIcon from "@material-ui/icons/Group";
 import ViewChat from "./ViewChat/ViewChat";
-import ViewUsers from "./ViewUsers/ViewUsers";
+import ViewGroupChat from "./ViewGroupChat/ViewGroupChat";
 import WelcomeAdmin from "./WelcomeAdmin";
 import {PRIMARYMAIN,PRIMARYLIGHT} from '../../Theme/colorConstant'
 const drawerWidth = 240;
@@ -172,6 +172,7 @@ export default function AdminPanel() {
         <List>
           {adminOptions.map(({ id, icon, title, path }) => (
             <ListItem
+            key={id}
             button
             style={{background: activePath == path && "aliceblue"}}
               onClick={() => {
@@ -197,7 +198,7 @@ export default function AdminPanel() {
             exact
           />
           <Route path="/admin/view_chat" component={ViewChat} exact />
-          <Route path="/admin/view_group_chat" component={ViewUsers} exact />
+          <Route path="/admin/view_group_chat" component={ViewGroupChat} exact />
         </Switch>
       </main>
     </div>

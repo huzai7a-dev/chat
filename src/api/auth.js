@@ -1,6 +1,6 @@
 import { apiCall } from "../helper/api";
 import { setAuthUser } from "../Redux/actions/auth";
-
+import { message } from 'antd';
 export const login = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/login";
   params.method = "POST";
@@ -16,7 +16,8 @@ const onSuccessLogin = (response, params) => (dispatch) => {
 
 const onFailureLogin = (error, params) => (dispatch) => {
   console.log("onFailureLogin", error);
-  alert("Invalid Email or Password");
+  // alert("Invalid Email or Password");
+  message.error("Invalid Email or Password")
 };
 
 /****************************************************************************************************************/
