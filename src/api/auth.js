@@ -1,6 +1,6 @@
 import { apiCall } from "../helper/api";
+import { Notify } from "../helper/notify";
 import { setAuthUser } from "../Redux/actions/auth";
-import { message } from 'antd';
 export const login = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/login";
   params.method = "POST";
@@ -8,40 +8,32 @@ export const login = (params = {}) => (dispatch) => {
 };
 
 const onSuccessLogin = (response, params) => (dispatch) => {
-  console.log("OnSuccessLogin", response);
+  Notify(response.data.message,'success');
   localStorage.setItem("user", JSON.stringify(response.data.data));
   dispatch(setAuthUser(response.data.data));
-  window.location = "/";
 };
 
 const onFailureLogin = (error, params) => (dispatch) => {
-  console.log("onFailureLogin", error);
-  // alert("Invalid Email or Password");
-  message.error("Invalid Email or Password")
+  Notify(error.response.data,'error');
 };
 
 /****************************************************************************************************************/
 
 export const logout = (params = {}) => (dispatch) => {
-  params.path = "/logout";
+  params.path = "/api/bwccrm/logout";
   params.method = "POST";
   return dispatch(apiCall(params, onSuccessLogout, onFailureLogout));
 };
 
 const onSuccessLogout = (response, params) => (dispatch) => {
-  console.log("OnSuccessLogout", response);
-  dispatch(setLoggedInUser(null));
-//   window.location.href = "/"
-//   message.success(response.data.message, 3);
+  console.log("OnSuccessLogout", response.data);
+  Notify(response.data,'success');
+  dispatch(setAuthUser(null));
+  localStorage.removeItem("user");
 };
 
 const onFailureLogout = (error, params) => (dispatch) => {
   console.log("onFailureLogout", error);
-//   if (error.response && typeof error.response.data === typeof "") {
-//     message.error(error.response.data, 3);
-//   } else {
-//     message.error("Server not responding", 3);
-//   }
 };
 
 /****************************************************************************************************************/

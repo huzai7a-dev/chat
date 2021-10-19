@@ -6,48 +6,33 @@ import { useDispatch } from "react-redux";
 import { login } from "../../api/auth";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { IconButton } from "@material-ui/core";
-
+import { useHistory } from "react-router";
 const Login = React.memo(() => {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [checkEmail, setCheckEmail] = useState(false);
-  const [checkPassword, setCheckPassword] = useState(false);
-
-  const params = {
-    data: {
-      email,
-      password,
-    },
-  };
-  const handleLogin = useCallback(() => {
-    if (email === "") {
-      setCheckEmail(true);
-    } else {
-      setCheckEmail(false);
+  const history = useHistory();
+  const handleLogin = async() =>{
+    try {
+      const params = {
+        data: {
+          email,
+          password,
+        },
+      };
+      const response = await dispatch(login(params))
+      history.replace('/');
+    }catch(err) {
+      console.log(error)
     }
-    if (password === "") {
-      setCheckPassword(true);
-    } else {
-      setCheckPassword(false);
-    }
-  }, [email, password]);
+  }
 
-  const loginOnEnter = useCallback(
-    async (e) => {
+  const loginOnEnter =(e)=> {
       if (e.key === "Enter") {
-        try {
-          handleLogin();
-          e.preventDefault();
-          await dispatch(login(params));
-        } catch (e) {
-          console.log(e);
-        }
+        handleLogin();
       }
-    },
-    [handleLogin, email, password]
-  );
+  }
 
   return (
     <div className="login" onKeyDown={loginOnEnter}>
@@ -61,7 +46,7 @@ const Login = React.memo(() => {
               label="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              error={checkEmail}
+              
             />
           </div>
           <div className="password">
@@ -72,7 +57,7 @@ const Login = React.memo(() => {
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              error={checkPassword}
+              
             />
             {password ? (
               <IconButton
@@ -86,7 +71,7 @@ const Login = React.memo(() => {
         </div>
         <div className="loginBtn">
           <Button
-            onClick={() => dispatch(login(params))}
+            onClick={handleLogin}
             type="submit"
             style={{
               background: "#feb318",
