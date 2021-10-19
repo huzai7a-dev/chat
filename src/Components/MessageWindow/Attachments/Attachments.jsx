@@ -75,9 +75,9 @@ function Attachments() {
   }
   const AttachmentSkeleton = ()=>{
     return (
-      [1,2,3].map((ele)=>{
+      [1,2,3].map((ele,id)=>{
         return (
-          <Stack style={{margin:"5px 0px"}}><Skeleton variant="rectangular" width={300} height={118} key={ele}/></Stack>
+          <Stack style={{margin:"5px 0px"}}><Skeleton variant="rectangular" width={300} height={118} key={id}/></Stack>
         )
       })
     )

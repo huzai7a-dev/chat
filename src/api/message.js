@@ -1,5 +1,5 @@
 import { apiCall } from "../helper/api";
-import { setAdminUserMessages, setContactsTotal, setGroupAttachments, setGroupMessages, setUserAttachments, setUserMessages } from "../Redux/actions/message";
+import { setAdminGroupMessages, setAdminUserMessages, setContactsTotal, setGroupAttachments, setGroupMessages, setUserAttachments, setUserMessages } from "../Redux/actions/message";
 
 
 
@@ -157,4 +157,21 @@ const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
     
     const onFailureGetAdminUserMessages = (error, params) => (dispatch) => {
       console.log("onFailureGetAdminUserMessages", error);
+    };
+
+/****************************************************************************************************************/
+
+    export const getAdminGroupMessages = (params = {}) => (dispatch) => {
+      params.path = "/api/bwccrm/fetchMessageGroup";
+      params.method = "POST";
+      return dispatch(apiCall(params, onSuccessGetAdminGroupMessages, onFailureGetAdminGroupMessages));
+    };
+    
+    const onSuccessGetAdminGroupMessages = (response, params) => (dispatch) => {
+      dispatch(setAdminGroupMessages(response.data.messages));
+      console.log('onSuccessGetAdminGroupMessages')
+    };
+    
+    const onFailureGetAdminGroupMessages = (error, params) => (dispatch) => {
+      console.log("onFailureGetAdminGroupMessages", error);
     };
