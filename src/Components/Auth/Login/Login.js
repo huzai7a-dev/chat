@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../api/auth";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { useHistory } from "react-router";
+import { AUTHCOLOR } from "../../../Theme/colorConstant";
 const Login = React.memo(() => {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
@@ -71,7 +72,7 @@ const Login = React.memo(() => {
             onClick={handleLogin}
             type="submit"
             style={{
-              background: "#feb318",
+              background: AUTHCOLOR,
               color: "#fff",
               width: "100%",
               textDecoration: "none",
@@ -81,7 +82,7 @@ const Login = React.memo(() => {
           </Button>
         </div>
       <Typography>
-        Not have an account ? <Link onClick={()=> history.push('/signup')} style={{color:"#feb318",cursor:"pointer"}}>Signup</Link>
+        Not have an account ? <Link onClick={()=> history.push('/signup')} style={{color:AUTHCOLOR,cursor:"pointer"}}>Signup</Link>
       </Typography>
       </div>
     </div>

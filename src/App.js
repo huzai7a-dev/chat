@@ -1,6 +1,5 @@
-import MainWindow from "./Components/MainWindow/MainWindow";
+import Main from "./Components/Main/Main";
 import "./App.css";
-import Login from "./Components/Login/Login";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuthUser } from "../src/Redux/actions/auth";
@@ -13,6 +12,7 @@ import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import {lightTheme} from './Theme/customTheme';
 import Modal from 'react-modal';
 import { getContactsTotal } from "./api/message";
+import Auth from "./Components/Auth/Auth";
 Modal.setAppElement('#root');
 const App = React.memo(() => {
   const dispatch = useDispatch();
@@ -43,7 +43,7 @@ const App = React.memo(() => {
     dispatch(getContactsTotal(params))
   }, [])
 
-  return <div className="App">{auth_user ? <MainWindow /> : <Login />}</div>;
+  return <div className="App">{auth_user ? <Main /> : <Auth />}</div>;
 })
 export default () => {
   return (

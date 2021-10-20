@@ -1,15 +1,15 @@
 import ChatWindow from "../ChatWindow/ChatWindow";
 import MessageWindow from "../MessageWindow/MessageWindow";
 import Welcome from "../Welcome/Welcome";
-import "./MainWindow.css";
-
+import "./Main.css";
 import GroupMessageWindow from "../GroupMessageWindow/GroupMessageWindow";
 import { Route, Switch } from "react-router-dom";
 import { DARKMAIN } from "../../Theme/colorConstant";
 import { useSelector } from "react-redux";
 import AdminPanel from "../AdminPanel/AdminPanel";
 
-const MainWindow = React.memo(() => {
+
+const Main = React.memo(() => {
   const {isNightMode,adminPanel } = useSelector((store) => {
     return {
       isNightMode:store.app.mode || false,
@@ -21,12 +21,12 @@ const MainWindow = React.memo(() => {
       {!adminPanel && <ChatWindow />}
       <Switch>
         <Route path="/" component={Welcome} exact />
-        <Route path="/user/:id" component={MessageWindow} />
-        <Route path="/group/:id" component={GroupMessageWindow} />
-        <Route path="/admin" component={AdminPanel} />
+        <Route path="/user/:id" component={MessageWindow} exact/>
+        <Route path="/group/:id" component={GroupMessageWindow} exact/>
+        <Route path="/admin" component={AdminPanel} exact/>
       </Switch>
     </div>
   );
 });
 
-export default MainWindow;
+export default Main;
