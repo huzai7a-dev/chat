@@ -88,7 +88,7 @@ function ChatUserContainer() {
     }
     
     return (
-      <Box display="flex" justifyContent="space-between" style={{margin: "5px 10px 0px 10px",height:"5vh"}}>
+      <Box display="flex" justifyContent="space-between" style={{margin: "5px 10px 0px 10px",flexShrink:"0"}}>
       <Button onClick={changePeopleTab} ref={tabRef} className="tabBtn" style={{background:tabValue == title.people ? WHITE:SECONDARYMAIN}}>
         {title.people}
         {
@@ -152,11 +152,21 @@ function ChatUserContainer() {
       </div>
     );
   };
+  const List = React.useMemo(()=>{
+    switch (tabValue) {
+      case "People":
+        return <ContactList />
+      case "Groups":
+        return <GroupList />
+      default:
+        break;
+    }
+  },[searchText,tabValue])
   return (
     <div className="container">
+      <SwitchTabs />
       {!searchText ? (
         <div className="chatUserContainer">
-          <SwitchTabs />
           {tabValue == "People" ? <ContactList /> : <GroupList />}
         </div>
       ) : (
