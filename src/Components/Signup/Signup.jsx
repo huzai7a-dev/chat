@@ -1,20 +1,11 @@
-import { Box, Grid, Typography, TextField, Button } from "@material-ui/core";
+import { Grid, Typography, TextField, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import DateFnsUtils from '@date-io/date-fns';
-import { alpha } from '@material-ui/core/styles'
-import {
-  MuiPickersUtilsProvider,
-  KeyboardTimePicker,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
-
 import React from "react";
 import {
-  AUTHCOLOR,
   PRIMARYLIGHT,
   PRIMARYMAIN,
   SECONDARYMAIN,
-  WHITE,    
+  WHITE,
 } from "../../Theme/colorConstant";
 import AddAPhotoIcon from "@material-ui/icons/AddAPhoto";
 import { Formik } from "formik";
@@ -40,13 +31,13 @@ const schema = yup.object().shape({
   fName: yup.string().required(),
   email: yup.string().required().email(),
   password: yup.string().required().min(8),
-  dateOfBirth: yup.date(),
-  contactNo: yup.string(),
-  cnicNo: yup.string(),
-  profile: yup.string(),
+  dateOfBirth: yup.string(),
+  contactNo: yup.string().min(11),
+  cnicNo: yup.string().min(13),
   address: yup.string(),
 });
 function Signup() {
+  const [profile,setProfile] = React.useState({});
   const classes = useStyle();
   return (
     <Grid
@@ -63,18 +54,31 @@ function Signup() {
             fName: "",
             email: "",
             password: "",
-            dateOfBirth: moment().format("MM/DD/YYYY"),
+            dateOfBirth: moment().format("YYYY-MM-DD"),
             contactNo: "",
             cnicNo: "",
-            profile: "",
+            profile:[],
             address: "",
           }}
           validationSchema={schema}
           onSubmit={(values) => {
-            console.log(values);
+            const params = {
+              data:{
+                elsemployees_name:values.name || '-',
+                elsemployees_fname:values.fName || '-',
+                elsemployees_cnic:values.cnicNo || '-',
+                elsemployees_cno:values.contactNo || '-',
+                elsemployees_email:values.email || '-',
+                elsemployees_password:values.password || '-',
+                elsemployees_dofbirth:values.dateOfBirth || moment().format("YYYY-MM-DD"),
+                elsemployees_address:values.address || '-',
+                elsemployees_image:values.profile || '-'
+              }
+            }
+            console.log(params)
           }}
         >
-          {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
+          {({ values, errors, handleChange, handleSubmit, setFieldValue }) => (
             <Grid
               container
               justifyContent="space-between"
@@ -134,20 +138,16 @@ function Signup() {
                 />
               </Grid>
               <Grid item xs={6}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <KeyboardDatePicker
-                    variant="inline"
-                    format="MM/dd/yyyy"
-                    margin="normal"
-                    id="date-picker-inline"
-                    label="Date picker inline"
-                    value={values.dateOfBirth}
-                    onChange={() => handleChange}
-                    KeyboardButtonProps={{
-                      "aria-label": "change date",
-                    }}
-                  />
-                </MuiPickersUtilsProvider>
+                <TextField
+                  id="date"
+                  label="Birthday"
+                  type="date"
+                  defaultValue={values.dateOfBirth}
+                  onChange={handleChange}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
               </Grid>
               <Grid item xs={6}>
                 <TextField
@@ -172,26 +172,9 @@ function Signup() {
                 />
               </Grid>
               <Grid item xs={6}>
-                <Button
-                  variant="contained"
-                  component="placeholder"
-                  onChange={handleChange}
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: 15,
-                  }}
-                >
-                  Select Profile
-                  <input
-                    type="file"
-                    hidden
-                    name="profile"
-                    onChange={handleChange}
-                    value={values.profile}
-                  />
-                  <AddAPhotoIcon />
+                <Button variant="contained" component="label" style={{width:"100%",padding:"15px"}}>
+                  Upload File
+                  <input type="file" name="profile" hidden onChange={(e)=> setFieldValue(e.target.files[0])}/>
                 </Button>
               </Grid>
               <Grid item xs={12}>

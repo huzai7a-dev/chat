@@ -18,6 +18,22 @@ const onFailureLogin = (error, params) => (dispatch) => {
 };
 
 /****************************************************************************************************************/
+export const signUp = (params = {}) => (dispatch) => {
+  params.path = "/api/bwccrm/signup";
+  params.method = "POST";
+  return dispatch(apiCall(params, onSuccessSignUp, onFailureSignUp));
+};
+
+const onSuccessSignUp = (response, params) => (dispatch) => {
+  Notify(response.data.message,'success');
+  localStorage.setItem("user", JSON.stringify(response.data.data));
+};
+
+const onFailureSignUp = (error, params) => (dispatch) => {
+  Notify(error.response.data,'error');
+};
+
+/****************************************************************************************************************/
 
 export const logout = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/logout";
