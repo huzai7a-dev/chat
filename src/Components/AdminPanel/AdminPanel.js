@@ -28,6 +28,8 @@ import ViewGroupChat from "./ViewGroupChat/ViewGroupChat";
 import WelcomeAdmin from "./WelcomeAdmin";
 import {PRIMARYMAIN} from '../../Theme/colorConstant'
 import ViewUsers from "./ViewUsers/ViewUsers";
+import ViewApprovedUsers from "./ApprovedUsers/ViewApprovedUser";
+import ViewDeclinedUser from "./ViewDeclinedUsers/ViewDeclinedUser";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -107,9 +109,21 @@ const adminOptions = [
   },
   {
     id: 3,
-    title: "View Users",
+    title: "View Signed Up User",
     icon: <PersonIcon />,
     path: "/admin/view_users",
+  },
+  {
+    id: 4,
+    title: "View Approved Users",
+    icon: <PersonIcon />,
+    path: "/admin/view_approved_users",
+  },
+  {
+    id: 5,
+    title: "View Declined Users",
+    icon: <PersonIcon />,
+    path: "/admin/view_declined_users",
   },
 ];
 export default function AdminPanel() {
@@ -209,6 +223,8 @@ export default function AdminPanel() {
           <Route path={`${path}/view_chat`} component={ViewChat} exact />
           <Route path={`${path}/view_group_chat`} component={ViewGroupChat} exact />
           <Route path={`${path}/view_users`} component={ViewUsers} exact />
+          <Route path={`${path}/view_approved_users`} component={ViewApprovedUsers} exact />
+          <Route path={`${path}/view_declined_users`} component={ViewDeclinedUser} exact />
         </Switch>
       </main>
     </div>
