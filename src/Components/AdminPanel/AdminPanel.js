@@ -15,7 +15,8 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import { Route, Switch,useHistory,useLocation } from "react-router-dom";
+import PersonIcon from '@material-ui/icons/Person';
+import { Route, Switch,useHistory,useLocation,useRouteMatch } from "react-router-dom";
 import { Button, Box } from "@material-ui/core";
 
 import { useDispatch } from "react-redux";
@@ -25,7 +26,8 @@ import GroupIcon from "@material-ui/icons/Group";
 import ViewChat from "./ViewChat/ViewChat";
 import ViewGroupChat from "./ViewGroupChat/ViewGroupChat";
 import WelcomeAdmin from "./WelcomeAdmin";
-import {PRIMARYMAIN,PRIMARYLIGHT} from '../../Theme/colorConstant'
+import {PRIMARYMAIN} from '../../Theme/colorConstant'
+import ViewUsers from "./ViewUsers/ViewUsers";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,6 +105,12 @@ const adminOptions = [
     icon: <GroupIcon />,
     path: "/admin/view_group_chat",
   },
+  {
+    id: 3,
+    title: "View Users",
+    icon: <PersonIcon />,
+    path: "/admin/view_users",
+  },
 ];
 export default function AdminPanel() {
   const classes = useStyles(open);
@@ -112,10 +120,11 @@ export default function AdminPanel() {
   const location = useLocation()
   const dispatch = useDispatch();
   const activePath = location.pathname;
+  let {path,url} = useRouteMatch()
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-
+  console.log(path,url)
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -193,12 +202,13 @@ export default function AdminPanel() {
         <div className={classes.drawerHeader} />
         <Switch>
           <Route
-            path="/admin"
-            render={(props) => <WelcomeAdmin {...props} isBarOpen={open} />}
+            path="/"
             exact
+            render={(props) => <WelcomeAdmin {...props} isBarOpen={open} />}
           />
-          <Route path="/admin/view_chat" component={ViewChat} exact />
-          <Route path="/admin/view_group_chat" component={ViewGroupChat} exact />
+          <Route path={`${path}/view_chat`} component={ViewChat} exact />
+          <Route path={`${path}/view_group_chat`} component={ViewGroupChat} exact />
+          <Route path={`${path}/view_users`} component={ViewUsers} exact />
         </Switch>
       </main>
     </div>

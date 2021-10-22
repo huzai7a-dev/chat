@@ -26,7 +26,6 @@ export const signUp = (params = {}) => (dispatch) => {
 
 const onSuccessSignUp = (response, params) => (dispatch) => {
   Notify(response.data.message,'success');
-  localStorage.setItem("user", JSON.stringify(response.data.data));
 };
 
 const onFailureSignUp = (error, params) => (dispatch) => {

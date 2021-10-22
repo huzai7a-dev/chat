@@ -25,6 +25,8 @@
   color: rgb(37, 36, 35);
   font-family: "SF Regular", "Segoe System UI Regular", "Segoe UI Regular",
     sans-serif;
+  white-space: pre;
+  margin-right: 5px;
 }
 
 .chatUser__details p {
@@ -35,7 +37,7 @@
   font-weight: 400;
   overflow-x: hidden;
   width: 80%;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
   white-space: nowrap;
   padding: 0 !important;
 }

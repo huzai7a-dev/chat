@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Button, Link, TextField, Typography,IconButton } from "@material-ui/core";
 import "./login.css";
-import logo from "../../Assets/Bizz World Logo.png";
+import logo from "../../../Assets/logo.png";
 import { useDispatch } from "react-redux";
-import { login } from "../../api/auth";
+import { login } from "../../../api/auth";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { useHistory } from "react-router";
 import { AUTHCOLOR } from "../../../Theme/colorConstant";

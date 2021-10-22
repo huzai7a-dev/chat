@@ -1,12 +1,10 @@
 .chat__window {
-  width: 310px ;
+  width: 310px;
   height: 100vh;
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
 }
 .chatWindow__header {
-  height: auto;
-  flex-shrink: 0;
-
+  height: 170px;
 }
