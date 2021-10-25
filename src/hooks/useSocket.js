@@ -28,7 +28,6 @@ const useSocket = () => {
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("messaging", (data) => {
-        
         const userMessage = {
           message_body: data.message_body,
           message_from: data.user_id,
@@ -107,15 +106,15 @@ const useSocket = () => {
           .then((res)=>{
             const socket = getSocket(auth_user?.elsemployees_empid);
             socket.emit("isGroupWindowOpen", socketParams);
+            dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
+              const getGroupsParams = {
+                data:{
+                  loginuser_id: auth_user?.elsemployees_empid,
+                  user_id: auth_user?.elsemployees_empid,
+                }
+              }
+              dispatch(getUserGroups(getGroupsParams));
           })
-        dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
-          const getGroupsParams = {
-            data:{
-              loginuser_id: auth_user?.elsemployees_empid,
-              user_id: auth_user?.elsemployees_empid,
-            }
-          }
-          dispatch(getUserGroups(getGroupsParams));
         } else {
           
           const getGroupsParams = {
@@ -188,7 +187,6 @@ const useSocket = () => {
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("isGroupWindowOpen", (res) => {
-        console.log("window is open");
         const params = {
           data: {
             group_id: active_group?.group_id,

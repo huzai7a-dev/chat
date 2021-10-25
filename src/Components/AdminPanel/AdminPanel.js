@@ -18,10 +18,13 @@ import ListItemText from "@material-ui/core/ListItemText";
 import PersonIcon from '@material-ui/icons/Person';
 import { Route, Switch,useHistory,useLocation,useRouteMatch } from "react-router-dom";
 import { Button, Box } from "@material-ui/core";
-
 import { useDispatch } from "react-redux";
-import { setAdminPanel } from "../../Redux/actions/app";
 import ChatBubbleIcon from '@material-ui/icons/ChatBubble';
+import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
+import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
+import ForumIcon from '@material-ui/icons/Forum';
+
+import { setAdminPanel } from "../../Redux/actions/app";
 import GroupIcon from "@material-ui/icons/Group";
 import ViewChat from "./ViewChat/ViewChat";
 import ViewGroupChat from "./ViewGroupChat/ViewGroupChat";
@@ -30,7 +33,7 @@ import {PRIMARYMAIN} from '../../Theme/colorConstant'
 import ViewUsers from "./ViewUsers/ViewUsers";
 import ViewApprovedUsers from "./ApprovedUsers/ViewApprovedUser";
 import ViewDeclinedUser from "./ViewDeclinedUsers/ViewDeclinedUser";
-const drawerWidth = 240;
+const drawerWidth = 250;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -104,7 +107,7 @@ const adminOptions = [
   {
     id: 2,
     title: "View Group Chat",
-    icon: <GroupIcon />,
+    icon: <ForumIcon />,
     path: "/admin/view_group_chat",
   },
   {
@@ -116,13 +119,13 @@ const adminOptions = [
   {
     id: 4,
     title: "View Approved Users",
-    icon: <PersonIcon />,
+    icon: <VerifiedUserIcon />,
     path: "/admin/view_approved_users",
   },
   {
     id: 5,
     title: "View Declined Users",
-    icon: <PersonIcon />,
+    icon: <PersonAddDisabledIcon />,
     path: "/admin/view_declined_users",
   },
 ];
@@ -203,7 +206,7 @@ export default function AdminPanel() {
               }}
             >
               <ListItemIcon style={{color:PRIMARYMAIN}}>{icon}</ListItemIcon>
-              <ListItemText style={{color:PRIMARYMAIN}} primary={title} />
+              <ListItemText style={{color:PRIMARYMAIN}}  primary={title} />
             </ListItem>
           ))}
         </List>
@@ -216,7 +219,7 @@ export default function AdminPanel() {
         <div className={classes.drawerHeader} />
         <Switch>
           <Route
-            path="/"
+            path="/admin"
             exact
             render={(props) => <WelcomeAdmin {...props} isBarOpen={open} />}
           />

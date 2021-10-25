@@ -115,7 +115,7 @@ function MessageTextContainer({scrollDown}) {
     {Object.keys(groupedByMessages)?.map((key, id) => {
       const groupedByMessage = groupedByMessages[key];
       return (
-        <div key={key} >
+        <div key={id} >
             <div className="dividerContainer" >
               <div className="divider" style={{ background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)" }} />
               <Typography variant="body2" align="center" color={isNightMode ? "primary" : "textSecondary"} style={{ padding: "0px 5px" }}>{key}</Typography>

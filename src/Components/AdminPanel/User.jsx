@@ -14,7 +14,7 @@ function User({name,profile,handleDecline,handleApproved}) {
           </Box>
         <Box display="flex" flex="2" justifyContent="space-around">
           {handleDecline && <Button variant="outlined" style={{color:DANGER, backgroundColor:DANGERLIGHT}} onClick={handleDecline}>Decline</Button>}
-          {handleApproved &&<Button variant="outlined" style={{color:SUCCESS, background:SUCCESSLIGHT}} onClick={handleApproved}>Approved</Button>}
+          {handleApproved &&<Button variant="outlined" style={{color:SUCCESS, background:SUCCESSLIGHT}} onClick={handleApproved}>Approve</Button>}
         </Box>
       </Box>
     </Box>
