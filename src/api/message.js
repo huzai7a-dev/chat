@@ -16,7 +16,6 @@ const onSuccessSendMessage = (response, params) => (dispatch) => {
 
 const onFailureSendMessage = (error, params) => (dispatch) => {
   console.log("onFailureSendMessage", error);
-  Notify(error.response.message,'error');
 };
 
 /****************************************************************************************************************/

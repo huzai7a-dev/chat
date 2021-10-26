@@ -106,7 +106,7 @@ function ChatGroup({ groups }) {
 
         <div className="chatUser__lastMessage">
           <p style={{ fontWeight: groups.groupunseenmesg > 0 && "900" }}>
-            {groups.lastmessage ? groups.lastmessage : "Attachment"}
+            {groups.lastmessage !== "null" && groups.lastmessage !== null ? groups.lastmessage : "Attachment"}
           </p>
         </div>
       </div>

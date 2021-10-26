@@ -171,7 +171,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
         user_id: auth_user?.elsemployees_empid,
         loginuser_id: auth_user?.elsemployees_empid,
         group_id: active_group?.group_id,
-        message_body: message,
+        message_body: message || null,
         message_quoteid: quote?.message_id || null,
         message_quotebody: quote?.groupmessage_body || null,
         message_quoteuser: quote.from_username || null,

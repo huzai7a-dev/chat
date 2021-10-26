@@ -268,13 +268,13 @@ function UserMessage({ chatgroup }) {
                 <p className="qMsg">{chatgroup.groupmessage_quotebody}</p>
               </a>
             ) : null}
-            <div
+            {chatgroup.groupmessage_body !== null && chatgroup.groupmessage_body !== "null" && (<div
               className={
                 user !== admin ? "senderMessage__text" : "recieverMessage__text"
               }
             >
               {chatgroup.groupmessage_body}
-            </div>
+            </div>)}
             <Box display="flex" style={{float:"right"}}>
               {seenData.map((seen,id) => {
                

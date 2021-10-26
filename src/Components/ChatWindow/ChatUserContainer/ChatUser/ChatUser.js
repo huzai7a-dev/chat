@@ -29,7 +29,7 @@ import { setGallery } from "../../../../Redux/actions/message";
     message_to: props.users.elsemployees_empid,
   };
   const getLastMessage = ()=>{
-    if (props.users?.last_msg.message_body) {
+    if (props.users?.last_msg.message_body !== "null") {
       return props.users.last_msg.message_body
     }
     else if (props.users.last_msg.message_attachment){
