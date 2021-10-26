@@ -54,6 +54,7 @@ const useStyles = makeStyles({
   }
 })
 function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDown }) {
+  console.log(attachment);
   const classes = useStyles();
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
@@ -190,6 +191,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
   };
   const SendMessage = async() => {
     setToDefault();  
+    console.log(attachment.length)
     const messageParams = {
       data:{
       user_id:auth_user?.elsemployees_empid,
@@ -203,7 +205,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment,setScrollDow
       message_attachment: attachment.length > 0 ? attachment : pastedImg || "",
       }
     }
-    
       messageParams.data = Utils.getFormData(messageParams.data);
       await dispatch(sendMessage(messageParams))
       .then((res) => {

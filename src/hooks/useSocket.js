@@ -78,9 +78,9 @@ const useSocket = () => {
           groupmessage_quoteuser: data.message_quoteuser,
           fullTime: data.fullTime,
           groupmessage_attachment:data.groupmessage_attachment
-        };
+        };  
         
-        if (userMessage.message_from === active_user?.elsemployees_empid) {
+        if(!data.hasOwnProperty('group_id') && userMessage.message_from === active_user?.elsemployees_empid) {
           dispatch(setUserMessages([userMessage,...messages]));
           const params = {
             data: {
@@ -91,7 +91,8 @@ const useSocket = () => {
           
            dispatch(getContactsUser(params));
          } 
-        else if (active_group?.group_id === newMessage.group_id) {
+        else if (data.hasOwnProperty('group_id') && active_group?.group_id === data?.group_id) {
+          console.log('reached to group')
           const socketParams = {
             group_id:active_group.group_id,
             user_id:auth_user?.elsemployees_empid,
@@ -106,17 +107,16 @@ const useSocket = () => {
           .then((res)=>{
             const socket = getSocket(auth_user?.elsemployees_empid);
             socket.emit("isGroupWindowOpen", socketParams);
-            dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
-              const getGroupsParams = {
-                data:{
-                  loginuser_id: auth_user?.elsemployees_empid,
-                  user_id: auth_user?.elsemployees_empid,
-                }
-              }
-              dispatch(getUserGroups(getGroupsParams));
           })
+           dispatch(setGroupMessages({...groupMessages,messages:[newMessage,...groupMessages.messages]}));
+            const getGroupsParams = {
+              data:{
+                loginuser_id: auth_user?.elsemployees_empid,
+                user_id: auth_user?.elsemployees_empid,
+              }
+            }
+            dispatch(getUserGroups(getGroupsParams));
         } else {
-          
           const getGroupsParams = {
             data:{
               loginuser_id: auth_user?.elsemployees_empid,
@@ -125,7 +125,6 @@ const useSocket = () => {
           }
           dispatch(setNewGroupMessage([...oldMessageGroupId,newMessage.group_id]))
           dispatch(getUserGroups(getGroupsParams));
-
         }
       });
       return () => {
@@ -169,7 +168,7 @@ const useSocket = () => {
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("isWindowOpen", (res) => {
-        
+        console.log('widow is open')
         const params = {
           data:{
             from_id: auth_user?.elsemployees_empid,

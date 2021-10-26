@@ -24,7 +24,7 @@ const Login = React.memo(() => {
       const response = await dispatch(login(params));
       history.replace("/");
     } catch (err) {
-      console.log(error);
+      console.log(err);
     }
   };
 

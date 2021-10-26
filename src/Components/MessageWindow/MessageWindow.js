@@ -15,7 +15,6 @@ function MessageWindow() {
     <Dropzone
       onDrop={useCallback((acceptedFiles) => setAttachment(acceptedFiles))}
       onDropRejected={()=>{Notify('File Rejected','error')}}
-    
       noClick={true}
       noKeyboard={true}
       ref={dropzoneRef}

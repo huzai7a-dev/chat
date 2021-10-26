@@ -1,7 +1,7 @@
 .inputAttachContainer {
   position: fixed;
   bottom: 0;
-  width: calc(100% - 340px);
+  width: calc(100% - 310px);
 }
 .messageInput {
   width: 100%;
