@@ -89,20 +89,4 @@ const useWorker = () => {
   }, [auth_user]);
 };
 
-// const connectBeam = async (interest = "hello") => {
-//   const beamsClient = new Client({
-//     instanceId: "8562583c-fb65-44fd-8627-417d33f86cb0",
-//   });
-
-//   try {
-//     await beamsClient.start();
-//     await beamsClient.addDeviceInterest(interest);
-//     const deviceId = await beamsClient?.getDeviceId();
-//     console.log("Successfully registered with Beams. Device ID:", deviceId)
-//     return beamsClient;
-//   }
-//   catch (e) {
-//     throw console.error(e);
-//   }
-// }
 export default useWorker;

@@ -42,8 +42,8 @@ router.use("/api/*", multer().any(), (req, res, next) => {
 
   if (contentType?.includes("form")) {
     axiosRoute.headers["Content-Type"] = "application/json";
-    const data = Object.assign({}, body, { [req.files[0]?.fieldname]: req.files });
-    console.log(req.files)
+    const data = Object.assign({}, body, { message_attachment: req.files });
+    console.log(data)
     const formData = getFormData(data)
     axiosRoute.headers = formData.getHeaders();
     axiosRoute.data = formData;

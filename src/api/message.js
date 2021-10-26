@@ -1,4 +1,5 @@
 import { apiCall } from "../helper/api";
+import { Notify } from "../helper/notify";
 import { setAdminGroupMessages, setAdminUserMessages, setContactsTotal, setGroupAttachments, setGroupMessages, setUserAttachments, setUserMessages } from "../Redux/actions/message";
 
 
@@ -15,6 +16,7 @@ const onSuccessSendMessage = (response, params) => (dispatch) => {
 
 const onFailureSendMessage = (error, params) => (dispatch) => {
   console.log("onFailureSendMessage", error);
+  Notify(error.response.message,'error');
 };
 
 /****************************************************************************************************************/
