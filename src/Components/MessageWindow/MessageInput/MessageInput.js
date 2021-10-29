@@ -5,7 +5,7 @@ import AttachmentIcon from "@material-ui/icons/Attachment";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
 import MicIcon from "@material-ui/icons/Mic";
-import { IconButton, makeStyles } from "@material-ui/core";
+import { Box, IconButton, makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
 import moment from "moment";
@@ -22,7 +22,8 @@ import { sendMessage } from "../../../api/message";
 import Utils from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
-import { useRecorder } from "../../../hooks/useRecorder";
+import { useReactMediaRecorder } from "react-media-recorder";
+import Recorder from "./recorder";
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -55,7 +56,7 @@ const useStyles = makeStyles({
     },
   },
   micIcon: {
-    color: (isRecording) => isRecording == "true" && DANGER,
+    color: DANGER,
   },
 });
 function MessageInput({
@@ -72,7 +73,6 @@ function MessageInput({
   const textInput = useRef();
   const classes = useStyles(isRecording);
   const dispatch = useDispatch();
-  const {file, recorder} = useRecorder();
   const {
     auth_user,
     active_user,
@@ -97,11 +97,13 @@ function MessageInput({
   }, [active_user]);
   // focus input field when page in load
   useEffect(() => {
-    if (searchText.length < 1) {
+    if (searchText.length < 1 && textInput.current) {
       textInput.current.focus();
     }
   }, [active_user, quote]);
-
+  useEffect(() => {
+    startRecording();
+  }, []);
   useEffect(() => {
     if (message.length > 0) {
       typing();
@@ -128,6 +130,12 @@ function MessageInput({
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
   };
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({
+      video: false,
+      audio: true,
+      echoCancellation: true,
+    });
 
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
@@ -187,15 +195,6 @@ function MessageInput({
     attachment.splice(index, 1);
     setAttachment([...attachment]);
   };
-
-  const startRecording = ()=>{
-    setRecording(true);
-    recorder.start();
-  }
-  const stopRecording = ()=>{
-    setRecording(false);
-    recorder.stop();
-  }
   // function to set to default
   const setToDefault = () => {
     setMessage("");
@@ -276,6 +275,75 @@ function MessageInput({
       </div>
     );
   };
+  const handleStartRecording = () => {
+    setRecording(true);
+  };
+  const handleStopRecording = () => {
+    setRecording(false);
+  };
+  const InputField = () => {
+    return (
+      <Box display="flex" style={{ width: "100%" }}>
+        <div className="inputField__container">
+          <div
+            className="qoutMsg__container"
+            style={{
+              background: isNightMode ? DARKLIGHT : "#eeee",
+              color: isNightMode ? "#fff" : "#000",
+            }}
+          >
+            <IconButton
+              style={{ position: "absolute", top: "1%", left: "0%" }}
+              onClick={() => {
+                setIsEmojiActive(!isEmojiActive);
+              }}
+            >
+              <EmojiEmotionsIcon
+                color={isEmojiActive ? "primary" : "inherit"}
+              />
+            </IconButton>
+            {quote.message_body ? (
+              <div>
+                <p className="qcMsg">
+                  {quote.attachment ? "Attachment" : quote.message_body}
+                </p>
+                <p className="qcName">{quote.from_username}</p>
+                <IconButton
+                  style={{ position: "absolute", top: "1%", right: "0%" }}
+                  onClick={() => {
+                    dispatch(setQuote(null));
+                  }}
+                >
+                  <CloseIcon color="primary" />
+                </IconButton>
+              </div>
+            ) : null}
+            {isEmojiActive && <Emoji />}
+
+            <div
+              className="inputField"
+              ref={textInput}
+              onKeyUp={(e) => {
+                setMessage(e.target.innerText);
+              }}
+              onPasteCapture={(e) => {
+                setPastedImg(e.clipboardData.files);
+              }}
+              onBlur={leaveTyping}
+              data-placeholder={"Type a Message"}
+              contentEditable={true}
+              spellCheck={true}
+            />
+          </div>
+        </div>
+        <div className="audio__container">
+          <IconButton onClick={handleStartRecording}>
+            <MicIcon />
+          </IconButton>
+        </div>
+      </Box>
+    );
+  };
   return (
     <div
       className="inputAttachContainer"
@@ -283,7 +351,6 @@ function MessageInput({
         attachment.length
           ? {
               background: isNightMode ? DARKLIGHT : "#eee",
-
               height: "40vh",
             }
           : null
@@ -294,72 +361,15 @@ function MessageInput({
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
-          <div className="inputField__container">
-            <div
-              className="qoutMsg__container"
-              style={{
-                background: isNightMode ? DARKLIGHT : "#eeee",
-                color: isNightMode ? "#fff" : "#000",
-              }}
-            >
-              <IconButton
-                style={{ position: "absolute", top: "1%", left: "0%" }}
-                onClick={() => {
-                  setIsEmojiActive(!isEmojiActive);
-                }}
-              >
-                <EmojiEmotionsIcon
-                  color={isEmojiActive ? "primary" : "inherit"}
-                />
-              </IconButton>
-              {quote.message_body ? (
-                <div>
-                  <p className="qcMsg">
-                    {quote.attachment ? "Attachment" : quote.message_body}
-                  </p>
-                  <p className="qcName">{quote.from_username}</p>
-                  <IconButton
-                    style={{ position: "absolute", top: "1%", right: "0%" }}
-                    onClick={() => {
-                      dispatch(setQuote(null));
-                    }}
-                  >
-                    <CloseIcon color="primary" />
-                  </IconButton>
-                </div>
-              ) : null}
-              {isEmojiActive && <Emoji />}
-
-              <div
-                className="inputField"
-                ref={textInput}
-                onKeyUp={(e) => {
-                  setMessage(e.target.innerText);
-                }}
-                onPasteCapture={(e) => {
-                  setPastedImg(e.clipboardData.files);
-                }}
-                onBlur={leaveTyping}
-                data-placeholder={"Type a Message"}
-                contentEditable={true}
-                spellCheck={true}
-              />
-            </div>
-          </div>
-          <div className="audio__container">
-            {!isRecording ? (
-              <IconButton onClick={startRecording}>
-                <MicIcon className={classes.micIcon} />
-              </IconButton>
-            ) : (
-              <IconButton onClick={stopRecording}>
-                <MicIcon className={classes.micIcon} />
-              </IconButton>
-            )}
-          </div>
+          {!isRecording ? (
+            <InputField />
+          ) : (
+            <Recorder onCancelVoice={handleStopRecording} />
+          )}
           {message.length > 0 ||
           attachment.length > 0 ||
-          pastedImg.length > 0 ? (
+          pastedImg.length > 0 ||
+          isRecording ? (
             <IconButton onClick={SendMessage} className={classes.sendBtn}>
               <SendIcon style={{ color: "red !important" }} />
             </IconButton>

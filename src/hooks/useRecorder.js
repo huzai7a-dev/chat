@@ -9,13 +9,14 @@ export const useRecorder = ()=>{
     device.then(stream =>{
         const recorder = new MediaRecorder(stream);
         recorder.ondataavailable = e => {
+            console.log('blob');
             item.push(e.data)
             if (recorder.state == 'inactive') {
                 const blob = new Blob(item,{type:'audio/webm'})
                 setAudio(blob);
             }
         }
-        return {audio,recorder}
+        return recorder
     }).catch(err => {
         console.log(err)        
     })

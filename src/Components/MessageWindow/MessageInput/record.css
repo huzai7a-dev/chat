@@ -1,0 +1,26 @@
+.recorderContainer {
+  width: 100%;
+  background-color: #f1f1f4;
+  border-radius: 30px;
+  margin: 0px 20px;
+  padding: 0px 20px 5px 0px;
+}
+.recorderTimeContainer {
+  height: 10px;
+  width: 100%;
+  background-color: #d5d9de;
+}
+.recorderTime {
+  animation: timer 60s linear normal;
+  height: 10px;
+  background-color: #267396;
+}
+
+@keyframes timer {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
