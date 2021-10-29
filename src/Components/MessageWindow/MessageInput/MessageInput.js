@@ -4,6 +4,7 @@ import SendIcon from "@material-ui/icons/Send";
 import AttachmentIcon from "@material-ui/icons/Attachment";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
+import MicIcon from "@material-ui/icons/Mic";
 import { IconButton, makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -20,7 +21,8 @@ import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
 import Utils from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
-import { DARKLIGHT, DARKMAIN } from "../../../Theme/colorConstant";
+import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
+import { useRecorder } from "../../../hooks/useRecorder";
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -52,6 +54,9 @@ const useStyles = makeStyles({
       color: "#267396",
     },
   },
+  micIcon: {
+    color: (isRecording) => isRecording == "true" && DANGER,
+  },
 });
 function MessageInput({
   inputProps,
@@ -60,14 +65,14 @@ function MessageInput({
   setAttachment,
   setScrollDown,
 }) {
-  const classes = useStyles();
-  const dispatch = useDispatch();
   const [message, setMessage] = useState("");
-
-  const textInput = useRef();
+  const [isRecording, setRecording] = useState(false);
   const [pastedImg, setPastedImg] = useState([]);
   const [isEmojiActive, setIsEmojiActive] = useState(false);
-
+  const textInput = useRef();
+  const classes = useStyles(isRecording);
+  const dispatch = useDispatch();
+  const {file, recorder} = useRecorder();
   const {
     auth_user,
     active_user,
@@ -182,6 +187,15 @@ function MessageInput({
     attachment.splice(index, 1);
     setAttachment([...attachment]);
   };
+
+  const startRecording = ()=>{
+    setRecording(true);
+    recorder.start();
+  }
+  const stopRecording = ()=>{
+    setRecording(false);
+    recorder.stop();
+  }
   // function to set to default
   const setToDefault = () => {
     setMessage("");
@@ -202,7 +216,6 @@ function MessageInput({
   };
   const SendMessage = async () => {
     setToDefault();
-    console.log(attachment);
     const messageParams = {
       data: {
         user_id: auth_user?.elsemployees_empid,
@@ -333,19 +346,28 @@ function MessageInput({
               />
             </div>
           </div>
-
+          <div className="audio__container">
+            {!isRecording ? (
+              <IconButton onClick={startRecording}>
+                <MicIcon className={classes.micIcon} />
+              </IconButton>
+            ) : (
+              <IconButton onClick={stopRecording}>
+                <MicIcon className={classes.micIcon} />
+              </IconButton>
+            )}
+          </div>
           {message.length > 0 ||
           attachment.length > 0 ||
           pastedImg.length > 0 ? (
             <IconButton onClick={SendMessage} className={classes.sendBtn}>
-              <SendIcon />
+              <SendIcon style={{ color: "red !important" }} />
             </IconButton>
           ) : (
             <label className="selectAttachment">
               <div className={classes.attachBtn}>
                 <AttachmentIcon onClick={open} />
               </div>
-
               <input {...inputProps()} />
             </label>
           )}
