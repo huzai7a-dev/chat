@@ -285,11 +285,11 @@ function UserMessage(props) {
          : null
         }
         
-        {props.sender?.message_attachment !== null ? (
+        {/* {props.sender?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
             <RenderSendAttachment />
           </div>
-        ) : null}
+        ) : null} */}
         
         {props.sender.message_body && props.sender.message_body !== "null"  ? (
           <div className="recieverQoutMsg__container">

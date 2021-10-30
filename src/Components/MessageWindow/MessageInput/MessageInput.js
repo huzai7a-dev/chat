@@ -7,23 +7,20 @@ import CloseIcon from "@material-ui/icons/Close";
 import MicIcon from "@material-ui/icons/Mic";
 import { Box, IconButton, makeStyles } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
-
 import moment from "moment";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
-
 import { setQuote } from "../../../Redux/actions/app";
 import { getSocket } from "../../../socket";
-
 import { getContactsUser } from "../../../api/chat";
-
 import { sendMessage } from "../../../api/message";
 import Utils from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Recorder from "./recorder";
+import axios from "axios";
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -130,12 +127,17 @@ function MessageInput({
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
   };
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({
-      video: false,
-      audio: true,
-      echoCancellation: true,
-    });
+  const {
+    status,
+    startRecording,
+    stopRecording,
+    pauseRecording,
+    mediaBlobUrl,
+  } = useReactMediaRecorder({
+    video: false,
+    audio: true,
+    echoCancellation: true,
+  });
 
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
@@ -197,9 +199,11 @@ function MessageInput({
   };
   // function to set to default
   const setToDefault = () => {
+    if (textInput.current) {
+      textInput.current.innerHTML = "";
+    }
     setMessage("");
     setIsEmojiActive(false);
-    textInput.current.innerHTML = "";
     setAttachment([]);
     setPastedImg([]);
     dispatch(setQuote(null));
@@ -214,7 +218,8 @@ function MessageInput({
     }
   };
   const SendMessage = async () => {
-    setToDefault();
+    // setToDefault();
+     const file = await new File([mediaBlobUrl], "fileName");
     const messageParams = {
       data: {
         user_id: auth_user?.elsemployees_empid,
@@ -226,7 +231,7 @@ function MessageInput({
         message_quotebody: quote?.message_body || null,
         message_quoteuser: quote?.from_username || null,
         message_attachment:
-          attachment.length > 0 ? attachment : pastedImg || "",
+        file || "",
       },
     };
     messageParams.data = Utils.getFormData(messageParams.data);
@@ -276,10 +281,12 @@ function MessageInput({
     );
   };
   const handleStartRecording = () => {
+    startRecording();
     setRecording(true);
   };
   const handleStopRecording = () => {
-    setRecording(false);
+    stopRecording();
+    // setRecording(false);
   };
   const InputField = () => {
     return (
@@ -361,6 +368,7 @@ function MessageInput({
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
+          {mediaBlobUrl && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
             <InputField />
           ) : (
