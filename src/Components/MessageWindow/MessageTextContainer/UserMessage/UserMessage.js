@@ -92,7 +92,7 @@ function UserMessage(props) {
           </div>
         );
       }
-      if (
+      else if (
         attachmentType.toLowerCase() === "mp4" ||
         attachmentType.toLowerCase() === "mkv" ||
         attachmentType.toLowerCase() === "wmv" ||
@@ -109,13 +109,17 @@ function UserMessage(props) {
             />
           </div>
         );
-      } else {
-        const fileName = props.sender.message_originalname.split(",")[id];
+      }
+      else if (attachmentType.toLowerCase() === "wav"){
+        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls/>
+      } 
+      else {
+        // const fileName = props.sender.message_originalname.split(",")[id];
         return (
           <div className="attachView" key={id}>
             <div className="file">
               <FileCopyIcon />
-              <Typography variant="caption">{fileName}</Typography>
+              <Typography variant="caption">{"fileName"}</Typography>
               <DownloadButton />
             </div>
           </div>
@@ -285,11 +289,11 @@ function UserMessage(props) {
          : null
         }
         
-        {/* {props.sender?.message_attachment !== null ? (
+        {props.sender?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
             <RenderSendAttachment />
           </div>
-        ) : null} */}
+        ) : null}
         
         {props.sender.message_body && props.sender.message_body !== "null"  ? (
           <div className="recieverQoutMsg__container">

@@ -10,7 +10,7 @@ const appendArray = (formData, key, arrValue) => {
             return appendArray(formData, `${key}[${index}]`, value)
         }
 
-        if (value instanceof File) {
+        if (value instanceof File || value instanceof Blob) {
             return formData.append(`${key}[${index}]`, value, value.name);
         }
 
@@ -33,7 +33,7 @@ const appendObject = (formData, mainKey, obj) => {
             return appendArray(formData, `${mainKey}[${key}]`, value)
         }
 
-        if (value instanceof File) {
+        if (value instanceof File || value instanceof Blob) {
             return formData.append(`${mainKey}[${key}]`, value, value.name);
         }
 
@@ -67,7 +67,7 @@ class Utils {
                 continue;
             }
 
-            if (obj[key] instanceof File) {
+            if (obj[key] instanceof File || obj[key] instanceof Blob) {
                 formData.append(key, obj[key]);
                 continue;
             }

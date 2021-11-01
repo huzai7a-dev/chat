@@ -20,7 +20,7 @@ import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Recorder from "./recorder";
-import axios from "axios";
+
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -98,9 +98,7 @@ function MessageInput({
       textInput.current.focus();
     }
   }, [active_user, quote]);
-  useEffect(() => {
-    startRecording();
-  }, []);
+ 
   useEffect(() => {
     if (message.length > 0) {
       typing();
@@ -133,12 +131,12 @@ function MessageInput({
     stopRecording,
     pauseRecording,
     mediaBlobUrl,
+  
   } = useReactMediaRecorder({
     video: false,
     audio: true,
     echoCancellation: true,
   });
-
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
       const type = item.type.split("/")[0];
@@ -217,9 +215,13 @@ function MessageInput({
       }
     }
   };
+  console.log(status)
+
   const SendMessage = async () => {
-    // setToDefault();
-     const file = await new File([mediaBlobUrl], "fileName");
+    setToDefault();
+    let blob = await fetch(mediaBlobUrl).then(r => r.blob())
+    const file =  new File([blob], "file name.wav", {type:blob.type});``
+    setRecording(false)
     const messageParams = {
       data: {
         user_id: auth_user?.elsemployees_empid,
@@ -230,8 +232,7 @@ function MessageInput({
         message_quoteid: quote?.message_id || null,
         message_quotebody: quote?.message_body || null,
         message_quoteuser: quote?.from_username || null,
-        message_attachment:
-        file || "",
+        message_attachment: file || "",
       },
     };
     messageParams.data = Utils.getFormData(messageParams.data);
@@ -286,7 +287,6 @@ function MessageInput({
   };
   const handleStopRecording = () => {
     stopRecording();
-    // setRecording(false);
   };
   const InputField = () => {
     return (
@@ -368,7 +368,6 @@ function MessageInput({
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
-          {mediaBlobUrl && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
             <InputField />
           ) : (
