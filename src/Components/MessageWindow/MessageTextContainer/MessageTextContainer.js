@@ -160,4 +160,4 @@ function MessageTextContainer({scrollDown}) {
   );
 }
 
-export default MessageTextContainer;
+export default React.memo(MessageTextContainer);

@@ -15,12 +15,12 @@ import { setQuote } from "../../../Redux/actions/app";
 import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
-import Utils from "../../../helper/util";
+import Utils, { getFilefromBlob } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
+import Tooltip from "@material-ui/core/Tooltip";
 import Recorder from "./recorder";
-
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -98,7 +98,7 @@ function MessageInput({
       textInput.current.focus();
     }
   }, [active_user, quote]);
- 
+
   useEffect(() => {
     if (message.length > 0) {
       typing();
@@ -125,18 +125,12 @@ function MessageInput({
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
   };
-  const {
-    status,
-    startRecording,
-    stopRecording,
-    pauseRecording,
-    mediaBlobUrl,
-  
-  } = useReactMediaRecorder({
-    video: false,
-    audio: true,
-    echoCancellation: true,
-  });
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({
+      video: false,
+      audio: true,
+      echoCancellation: true,
+    });
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
       const type = item.type.split("/")[0];
@@ -200,6 +194,7 @@ function MessageInput({
     if (textInput.current) {
       textInput.current.innerHTML = "";
     }
+    setRecording(false);
     setMessage("");
     setIsEmojiActive(false);
     setAttachment([]);
@@ -215,58 +210,69 @@ function MessageInput({
       }
     }
   };
-  console.log(status)
 
   const SendMessage = async () => {
-    setToDefault();
-    let blob = await fetch(mediaBlobUrl).then(r => r.blob())
-    const file =  new File([blob], "file name.wav", {type:blob.type});``
-    setRecording(false)
-    const messageParams = {
-      data: {
-        user_id: auth_user?.elsemployees_empid,
-        loginuser_id: auth_user?.elsemployees_empid,
-        message_to: active_user?.elsemployees_empid,
-        message_body: message || null,
-        message_to: active_user?.elsemployees_empid,
-        message_quoteid: quote?.message_id || null,
-        message_quotebody: quote?.message_body || null,
-        message_quoteuser: quote?.from_username || null,
-        message_attachment: file || "",
-      },
-    };
-    messageParams.data = Utils.getFormData(messageParams.data);
-    await dispatch(sendMessage(messageParams))
-      .then((res) => {
-        setScrollDown(res);
-        const attachments = res.data.data.message_attachment;
-        const socketParams = {
-          message_originalname: auth_user?.elsemployees_name,
-          user_id: auth_user?.elsemployees_empid,
-          message_to: active_user?.elsemployees_empid,
-          message_body: message,
-          from_userpicture: auth_user?.elsemployees_image,
-          message_quoteid: quote?.message_id || null,
-          message_quotebody: quote?.message_body || null,
-          message_quoteuser: quote?.from_username || null,
-          message_attachment: attachments || null,
-          message_id: Date.now(),
-          fullTime: moment().format("Y-MM-D, h:mm:ss"),
-          messageOn: "user",
-        };
+    // setToDefault();
+    
+    const userAttachment = ()=>{
+      if (attachment.length > 0) {
+        return attachment
+      }else if (pastedImg.length > 0){
+        return pastedImg
+      }else if (mediaBlobUrl){
+        const file = getFilefromBlob(mediaBlobUrl);
+        return file
+      }else {
+        return null
+      }
+    }
+    const attachment = userAttachment();
+    console.log(attachment);
+    // const messageParams = {
+    //   data: {
+    //     user_id: auth_user?.elsemployees_empid,
+    //     loginuser_id: auth_user?.elsemployees_empid,
+    //     message_to: active_user?.elsemployees_empid,
+    //     message_body: message || null,
+    //     message_to: active_user?.elsemployees_empid,
+    //     message_quoteid: quote?.message_id || null,
+    //     message_quotebody: quote?.message_body || null,
+    //     message_quoteuser: quote?.from_username || null,
+    //     message_attachment: (mediaBlobUrl && file) || "",
+    //   },
+    // };
+    // messageParams.data = Utils.getFormData(messageParams.data);
+    // await dispatch(sendMessage(messageParams))
+    //   .then((res) => {
+    //     setScrollDown(res);
+    //     const attachments = res.data.data.message_attachment;
+    //     const socketParams = {
+    //       message_originalname: auth_user?.elsemployees_name,
+    //       user_id: auth_user?.elsemployees_empid,
+    //       message_to: active_user?.elsemployees_empid,
+    //       message_body: message,
+    //       from_userpicture: auth_user?.elsemployees_image,
+    //       message_quoteid: quote?.message_id || null,
+    //       message_quotebody: quote?.message_body || null,
+    //       message_quoteuser: quote?.from_username || null,
+    //       message_attachment: attachments || null,
+    //       message_id: Date.now(),
+    //       fullTime: moment().format("Y-MM-D, h:mm:ss"),
+    //       messageOn: "user",
+    //     };
 
-        const socket = getSocket(auth_user?.elsemployees_empid);
-        socket.emit("messaging", socketParams);
-        dispatch(setUserMessages([res.data?.data, ...userMessages]));
-        const getContactsParams = {
-          data: {
-            loginuser_id: auth_user.elsemployees_empid,
-            user_id: auth_user.elsemployees_empid,
-          },
-        };
-        dispatch(getContactsUser(getContactsParams));
-      })
-      .catch((err) => console.warn(err));
+    //     const socket = getSocket(auth_user?.elsemployees_empid);
+    //     socket.emit("messaging", socketParams);
+    //     dispatch(setUserMessages([res.data?.data, ...userMessages]));
+    //     const getContactsParams = {
+    //       data: {
+    //         loginuser_id: auth_user.elsemployees_empid,
+    //         user_id: auth_user.elsemployees_empid,
+    //       },
+    //     };
+    //     dispatch(getContactsUser(getContactsParams));
+    //   })
+    //   .catch((err) => console.warn(err));
   };
 
   const onEmojiClick = (event) => {
@@ -285,8 +291,9 @@ function MessageInput({
     startRecording();
     setRecording(true);
   };
-  const handleStopRecording = () => {
+  const handleCancelVoice = () => {
     stopRecording();
+    setRecording(false);
   };
   const InputField = () => {
     return (
@@ -369,14 +376,79 @@ function MessageInput({
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
           {!isRecording ? (
-            <InputField />
+            <Box display="flex" style={{ width: "100%" }}>
+              <div className="inputField__container">
+                <div
+                  className="qoutMsg__container"
+                  style={{
+                    background: isNightMode ? DARKLIGHT : "#eeee",
+                    color: isNightMode ? "#fff" : "#000",
+                  }}
+                >
+                  <IconButton
+                    style={{ position: "absolute", top: "1%", left: "0%" }}
+                    onClick={() => {
+                      setIsEmojiActive(!isEmojiActive);
+                    }}
+                  >
+                    <EmojiEmotionsIcon
+                      color={isEmojiActive ? "primary" : "inherit"}
+                    />
+                  </IconButton>
+                  {quote.message_body ? (
+                    <div>
+                      <p className="qcMsg">
+                        {quote.attachment ? "Attachment" : quote.message_body}
+                      </p>
+                      <p className="qcName">{quote.from_username}</p>
+                      <IconButton
+                        style={{ position: "absolute", top: "1%", right: "0%" }}
+                        onClick={() => {
+                          dispatch(setQuote(null));
+                        }}
+                      >
+                        <CloseIcon color="primary" />
+                      </IconButton>
+                    </div>
+                  ) : null}
+                  {isEmojiActive && <Emoji />}
+
+                  <div
+                    className="inputField"
+                    ref={textInput}
+                    onKeyUp={(e) => {
+                      setMessage(e.target.innerText);
+                    }}
+                    onPasteCapture={(e) => {
+                      setPastedImg(e.clipboardData.files);
+                    }}
+                    onBlur={leaveTyping}
+                    data-placeholder={"Type a Message"}
+                    contentEditable={true}
+                    spellCheck={true}
+                  />
+                </div>
+              </div>
+              <div className="audio__container">
+                <Tooltip title="Record Voice">
+                  <IconButton onClick={handleStartRecording}>
+                    <MicIcon />
+                  </IconButton>
+                </Tooltip>
+              </div>
+            </Box>
           ) : (
-            <Recorder onCancelVoice={handleStopRecording} />
+            <Recorder
+              onCancelVoice={handleCancelVoice}
+              onStopVoice={stopRecording}
+              onPlayVoice={startRecording}
+              status={status}
+            />
           )}
           {message.length > 0 ||
           attachment.length > 0 ||
           pastedImg.length > 0 ||
-          isRecording ? (
+          (isRecording && status !== "recording") ? (
             <IconButton onClick={SendMessage} className={classes.sendBtn}>
               <SendIcon style={{ color: "red !important" }} />
             </IconButton>
