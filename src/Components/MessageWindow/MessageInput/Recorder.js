@@ -5,7 +5,6 @@ import PauseIcon from "@material-ui/icons/Pause";
 import Tooltip from "@material-ui/core/Tooltip";
 import { SECONDARYMAIN, PRIMARYMAIN } from "../../../Theme/colorConstant";
 import "./record.css";
-import { useTimer } from "../../../hooks/UseTimer";
 const Recorder = ({ onCancelVoice, onStopVoice, status }) => {
   return (
     <Box display="flex" alignItems="center" className="recorderContainer">

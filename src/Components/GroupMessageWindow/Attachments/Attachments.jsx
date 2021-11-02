@@ -73,15 +73,15 @@ function Attachments() {
       </Box>
     )
   }
-  const AttachmentSkeleton = ()=>{
-    return (
-      [1,2,3].map((ele,id)=>{
-        return (
-          <Stack style={{margin:"5px 0px"}}><Skeleton variant="rectangular" width={300} height={118} key={id}/></Stack>
-        )
-      })
-    )
-  }
+  // const AttachmentSkeleton = ()=>{
+  //   return (
+  //     [1,2,3].map((ele,id)=>{
+  //       return (
+  //         <Stack style={{margin:"5px 0px"}}><Skeleton variant="rectangular" width={300} height={118} key={ele}/></Stack>
+  //       )
+  //     })
+  //   )
+  // }
   const filterAttachment = (attachment)=>{
     
     const media = ["jpg","jpeg","gif","jpeg","mp4","mkv","wmv","flv","png"];
@@ -185,12 +185,7 @@ function Attachments() {
     <Box style={{ width: gallery ? "400px" : "0px", transition: "0.2s" }}>
       <AttachmentsHeader />
       <Box className={classes.attachments}>
-        {attachments.length > 0 ? <Attachments /> : 
-        <>
-          <AttachmentSkeleton/>
-          <Typography variant="h5" style={{textAlign:"center"}}>It's Empty Right Now</Typography>
-        </> 
-        }
+        {attachments.length > 0 && <Attachments /> }
       </Box>
       <Modal
         open={open}

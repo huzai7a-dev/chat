@@ -43,7 +43,7 @@ function Message(props) {
     return attachments.split(",").map((attachment, id) => {
       const DownloadButton = () => {
         return (
-          <Button variant="outlined" size="small" color={"primary"}>
+          <Button variant="outlined" size="small" color={"primary"} key={id}>
             <a
               href={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
               download={attachment}

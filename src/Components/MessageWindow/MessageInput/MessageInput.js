@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import "./MessageInput.css";
 import SendIcon from "@material-ui/icons/Send";
 import AttachmentIcon from "@material-ui/icons/Attachment";
@@ -15,7 +21,7 @@ import { setQuote } from "../../../Redux/actions/app";
 import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
-import Utils, { getFilefromBlob } from "../../../helper/util";
+import Utils, { getFileFromBlob } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
@@ -97,7 +103,7 @@ function MessageInput({
     if (searchText.length < 1 && textInput.current) {
       textInput.current.focus();
     }
-  }, [active_user, quote]);
+  }, [active_user, quote, searchText.length]);
 
   useEffect(() => {
     if (message.length > 0) {
@@ -106,8 +112,9 @@ function MessageInput({
     if (message.length < 1) {
       leaveTyping();
     }
-  }, [message]);
-  const typing = () => {
+  }, [leaveTyping, message, typing]);
+
+  const typing = useCallback(() => {
     const paramData = {
       user_id: active_user?.elsemployees_empid,
       tPerson: auth_user?.elsemployees_empid,
@@ -115,8 +122,13 @@ function MessageInput({
     };
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("typing", paramData);
-  };
-  const leaveTyping = () => {
+  }, [
+    active_user?.elsemployees_empid,
+    auth_user?.elsemployees_empid,
+    auth_user.elsemployees_name,
+  ]);
+
+  const leaveTyping = useCallback(() => {
     const paramData = {
       user_id: active_user?.elsemployees_empid,
       tPerson: auth_user?.elsemployees_empid,
@@ -124,7 +136,12 @@ function MessageInput({
     };
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
-  };
+  }, [
+    active_user?.elsemployees_empid,
+    active_user.elsemployees_name,
+    auth_user?.elsemployees_empid,
+  ]);
+
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
       video: false,
@@ -182,15 +199,17 @@ function MessageInput({
           </div>
         );
       }
-      return null;
     });
-  }, [attachment]);
-  const deleteAttachment = (index) => {
-    attachment.splice(index, 1);
-    setAttachment([...attachment]);
-  };
+  }, [attachment, deleteAttachment]);
+  const deleteAttachment = useCallback(
+    (index) => {
+      attachment.splice(index, 1);
+      setAttachment([...attachment]);
+    },
+    [attachment, setAttachment]
+  );
   // function to set to default
-  const setToDefault = () => {
+  const setToDefault = useCallback(() => {
     if (textInput.current) {
       textInput.current.innerHTML = "";
     }
@@ -200,93 +219,111 @@ function MessageInput({
     setAttachment([]);
     setPastedImg([]);
     dispatch(setQuote(null));
-  };
+  }, [dispatch, setAttachment]);
   // send message on enter
   const SendMessageOnEnter = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
+      if (
+        message.length > 0 ||
+        attachment.length > 0 ||
+        pastedImg.length > 0 ||
+        mediaBlobUrl
+      ) {
         SendMessage();
       }
     }
   };
-
-  const SendMessage = async () => {
-    // setToDefault();
-    
-    const userAttachment = ()=>{
+  const SendMessage = useCallback(async () => {
+    setToDefault();
+    const userAttachment = async() => {
       if (attachment.length > 0) {
-        return attachment
-      }else if (pastedImg.length > 0){
-        return pastedImg
-      }else if (mediaBlobUrl){
-        const file = getFilefromBlob(mediaBlobUrl);
-        return file
-      }else {
-        return null
+        return attachment;
+      } else if (pastedImg.length > 0) {
+        return pastedImg;
+      } else if (mediaBlobUrl) {
+        const file = await getFileFromBlob(mediaBlobUrl);
+        return file;
+      } else {
+        return null;
       }
-    }
-    const attachment = userAttachment();
-    console.log(attachment);
-    // const messageParams = {
-    //   data: {
-    //     user_id: auth_user?.elsemployees_empid,
-    //     loginuser_id: auth_user?.elsemployees_empid,
-    //     message_to: active_user?.elsemployees_empid,
-    //     message_body: message || null,
-    //     message_to: active_user?.elsemployees_empid,
-    //     message_quoteid: quote?.message_id || null,
-    //     message_quotebody: quote?.message_body || null,
-    //     message_quoteuser: quote?.from_username || null,
-    //     message_attachment: (mediaBlobUrl && file) || "",
-    //   },
-    // };
-    // messageParams.data = Utils.getFormData(messageParams.data);
-    // await dispatch(sendMessage(messageParams))
-    //   .then((res) => {
-    //     setScrollDown(res);
-    //     const attachments = res.data.data.message_attachment;
-    //     const socketParams = {
-    //       message_originalname: auth_user?.elsemployees_name,
-    //       user_id: auth_user?.elsemployees_empid,
-    //       message_to: active_user?.elsemployees_empid,
-    //       message_body: message,
-    //       from_userpicture: auth_user?.elsemployees_image,
-    //       message_quoteid: quote?.message_id || null,
-    //       message_quotebody: quote?.message_body || null,
-    //       message_quoteuser: quote?.from_username || null,
-    //       message_attachment: attachments || null,
-    //       message_id: Date.now(),
-    //       fullTime: moment().format("Y-MM-D, h:mm:ss"),
-    //       messageOn: "user",
-    //     };
+    };
+    const attachmentFile = await userAttachment();
+  
+    const messageParams = {
+      data: {
+        user_id: auth_user?.elsemployees_empid,
+        loginuser_id: auth_user?.elsemployees_empid,
+        message_to: active_user?.elsemployees_empid,
+        message_body: message || null,
+        message_quoteid: quote?.message_id || null,
+        message_quotebody: quote?.message_body || null,
+        message_quoteuser: quote?.from_username || null,
+        message_attachment: attachmentFile || "",
+      },
+    };
+    messageParams.data = Utils.getFormData(messageParams.data);
+    await dispatch(sendMessage(messageParams))
+      .then((res) => {
+        setScrollDown(res);
+        const attachments = res.data.data.message_attachment;
+        const socketParams = {
+          message_originalname: auth_user?.elsemployees_name,
+          user_id: auth_user?.elsemployees_empid,
+          message_to: active_user?.elsemployees_empid,
+          message_body: message,
+          from_userpicture: auth_user?.elsemployees_image,
+          message_quoteid: quote?.message_id || null,
+          message_quotebody: quote?.message_body || null,
+          message_quoteuser: quote?.from_username || null,
+          message_attachment: attachments || null,
+          message_id: Date.now(),
+          fullTime: moment().format("Y-MM-D, h:mm:ss"),
+          messageOn: "user",
+        };
 
-    //     const socket = getSocket(auth_user?.elsemployees_empid);
-    //     socket.emit("messaging", socketParams);
-    //     dispatch(setUserMessages([res.data?.data, ...userMessages]));
-    //     const getContactsParams = {
-    //       data: {
-    //         loginuser_id: auth_user.elsemployees_empid,
-    //         user_id: auth_user.elsemployees_empid,
-    //       },
-    //     };
-    //     dispatch(getContactsUser(getContactsParams));
-    //   })
-    //   .catch((err) => console.warn(err));
-  };
+        const socket = getSocket(auth_user?.elsemployees_empid);
+        socket.emit("messaging", socketParams);
+        dispatch(setUserMessages([res.data?.data, ...userMessages]));
+        const getContactsParams = {
+          data: {
+            loginuser_id: auth_user.elsemployees_empid,
+            user_id: auth_user.elsemployees_empid,
+          },
+        };
+        dispatch(getContactsUser(getContactsParams));
+      })
+      .catch((err) => console.warn(err));
+  }, [
+    active_user?.elsemployees_empid,
+    attachment,
+    auth_user.elsemployees_empid,
+    auth_user?.elsemployees_image,
+    auth_user?.elsemployees_name,
+    dispatch,
+    mediaBlobUrl,
+    message,
+    pastedImg,
+    quote?.from_username,
+    quote?.message_body,
+    quote?.message_id,
+    setScrollDown,
+    setToDefault,
+    userMessages,
+  ]);
 
   const onEmojiClick = (event) => {
     setMessage(`${message}${event.native}`);
     textInput.current.innerText = `${message}${event.native}`;
   };
 
-  const Emoji = () => {
+  const Emoji = React.memo(() => {
     return (
       <div style={{ position: "absolute", bottom: "100%", left: "0" }}>
         <Picker onSelect={onEmojiClick} native={true} />
       </div>
     );
-  };
+  }, []);
   const handleStartRecording = () => {
     startRecording();
     setRecording(true);
@@ -295,69 +332,7 @@ function MessageInput({
     stopRecording();
     setRecording(false);
   };
-  const InputField = () => {
-    return (
-      <Box display="flex" style={{ width: "100%" }}>
-        <div className="inputField__container">
-          <div
-            className="qoutMsg__container"
-            style={{
-              background: isNightMode ? DARKLIGHT : "#eeee",
-              color: isNightMode ? "#fff" : "#000",
-            }}
-          >
-            <IconButton
-              style={{ position: "absolute", top: "1%", left: "0%" }}
-              onClick={() => {
-                setIsEmojiActive(!isEmojiActive);
-              }}
-            >
-              <EmojiEmotionsIcon
-                color={isEmojiActive ? "primary" : "inherit"}
-              />
-            </IconButton>
-            {quote.message_body ? (
-              <div>
-                <p className="qcMsg">
-                  {quote.attachment ? "Attachment" : quote.message_body}
-                </p>
-                <p className="qcName">{quote.from_username}</p>
-                <IconButton
-                  style={{ position: "absolute", top: "1%", right: "0%" }}
-                  onClick={() => {
-                    dispatch(setQuote(null));
-                  }}
-                >
-                  <CloseIcon color="primary" />
-                </IconButton>
-              </div>
-            ) : null}
-            {isEmojiActive && <Emoji />}
 
-            <div
-              className="inputField"
-              ref={textInput}
-              onKeyUp={(e) => {
-                setMessage(e.target.innerText);
-              }}
-              onPasteCapture={(e) => {
-                setPastedImg(e.clipboardData.files);
-              }}
-              onBlur={leaveTyping}
-              data-placeholder={"Type a Message"}
-              contentEditable={true}
-              spellCheck={true}
-            />
-          </div>
-        </div>
-        <div className="audio__container">
-          <IconButton onClick={handleStartRecording}>
-            <MicIcon />
-          </IconButton>
-        </div>
-      </Box>
-    );
-  };
   return (
     <div
       className="inputAttachContainer"

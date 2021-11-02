@@ -13,7 +13,7 @@ function MessageWindow() {
   const [scrollDown, setScrollDown] = useState("");
   return (
     <Dropzone
-      onDrop={useCallback((acceptedFiles) => setAttachment(acceptedFiles))}
+      onDrop={useCallback((acceptedFiles) => setAttachment(acceptedFiles),[])}
       onDropRejected={()=>{Notify('File Rejected','error')}}
       noClick={true}
       noKeyboard={true}

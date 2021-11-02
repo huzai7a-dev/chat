@@ -7,7 +7,11 @@ import { setAdminGroupMessages, setAdminUserMessages, setContactsTotal, setGroup
 export const sendMessage = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/sendMessage";
   params.method = "POST";
-  return dispatch(apiCall(params, onFailureSendMessage));
+  return dispatch(apiCall(params, onSuccessSendMessage, onFailureSendMessage));
+};
+
+const onSuccessSendMessage = (response, params) => (dispatch) => {
+  console.log("onSuccessSendMessage", response);
 };
 
 const onFailureSendMessage = (error, params) => (dispatch) => {
@@ -22,6 +26,7 @@ export const getUserMessages = (params = {}) => (dispatch) => {
   };
   
   const onSuccessGetUserMessages = (response, params) => (dispatch) => {
+    console.log('getting user messages');
     dispatch(setUserMessages(response.data.messages));
   };
   
@@ -33,9 +38,12 @@ export const getUserMessages = (params = {}) => (dispatch) => {
   export const sendGroupMessage = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/sendMessage";
     params.method = "POST";
-    return dispatch(apiCall(params, onFailureSendGroupMessage));
+    return dispatch(apiCall(params, onSuccessSendGroupMessage, onFailureSendGroupMessage));
   };
   
+  const onSuccessSendGroupMessage = (response, params) => (dispatch) => {
+    console.log("onSuccessSendGroupMessage", response);
+  };
   
   const onFailureSendGroupMessage = (error, params) => (dispatch) => {
     console.log("onFailureSendGroupMessage", error);
@@ -52,6 +60,7 @@ export const getUserMessages = (params = {}) => (dispatch) => {
   
   const onSuccessGetGroupMessages = (response, params) => (dispatch) => {
     dispatch(setGroupMessages(response.data));
+    console.log('onSuccessGetGroupMessages')
   };
   
   const onFailureGetGroupMessages = (error, params) => (dispatch) => {
@@ -66,6 +75,7 @@ export const getUserMessages = (params = {}) => (dispatch) => {
   
   const onSuccessGetContactsTotal = (response, params) => (dispatch) => {
     dispatch(setContactsTotal(response.data));
+    console.log(response);
   };
   
   const onFailureGetContactsTotal = (error, params) => (dispatch) => {
@@ -77,10 +87,12 @@ export const getUserMessages = (params = {}) => (dispatch) => {
 export const getMoreUserMessages = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/fetchMoreMessage";
   params.method = "POST";
-  return dispatch(apiCall(params,onFailureGetMoreUserMessages));
+  return dispatch(apiCall(params, onSuccessGetMoreUserMessages, onFailureGetMoreUserMessages));
 };
 
-
+const onSuccessGetMoreUserMessages = (response, params) => (dispatch) => {
+  console.log("onSuccessGetMoreUserMessages");
+};
 
 const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
   console.log("onFailureGetMoreUserMessages", error);
@@ -90,7 +102,11 @@ const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
   export const getMoreGroupMessages = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/fetchMoreMessageGroup";
     params.method = "POST";
-    return dispatch(apiCall(params, onFailureGetMoreGroupMessages));
+    return dispatch(apiCall(params, onSuccessGetMoreGroupMessages, onFailureGetMoreGroupMessages));
+  };
+  
+  const onSuccessGetMoreGroupMessages = (response, params) => (dispatch) => {
+    console.log("onSuccessGetMoreGroupMessages",response);
   };
   
   const onFailureGetMoreGroupMessages = (error, params) => (dispatch) => {
@@ -105,7 +121,7 @@ const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
   };
   
   const onSuccessGetUserAttachments = (response, params) => (dispatch) => {
-    
+    console.log("onSuccessGetUserAttachments",response);
     return dispatch(setUserAttachments(response.data.attachments))
   };
   
@@ -155,6 +171,7 @@ const onFailureGetMoreUserMessages = (error, params) => (dispatch) => {
     
     const onSuccessGetAdminGroupMessages = (response, params) => (dispatch) => {
       dispatch(setAdminGroupMessages(response.data.messages));
+      console.log('onSuccessGetAdminGroupMessages')
     };
     
     const onFailureGetAdminGroupMessages = (error, params) => (dispatch) => {

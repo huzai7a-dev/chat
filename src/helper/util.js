@@ -51,7 +51,7 @@ export const mergeArray = (arr1 = [], arr2 = [], key = "") =>  {
     return reduced.concat(arr2);
   }
 
-  export const getFilefromBlob = async(blobUrl)=>{
+  export const getFileFromBlob = async(blobUrl)=>{
     const blob = await fetch(blobUrl).then((r) => r.blob());
     const file = new File([blob], "audio.wav", { type: blob.type });
     return file;

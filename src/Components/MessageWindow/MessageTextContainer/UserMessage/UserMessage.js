@@ -34,7 +34,7 @@ function UserMessage(props) {
   const [media, setMedia] = useState("");
   const [option, setOption] = useState(false);
   const menuDiv = useRef();
-  const onClickOutside = useCallback((e) => {
+  const onClickOutside = useCallback(() => {
     setOption(false);
   }, []);
   
@@ -43,7 +43,6 @@ function UserMessage(props) {
     data: {
       user_id: auth_user?.elsemployees_empid,
       loginuser_id: auth_user?.elsemployees_empid,
-      message_to: "",
       message_body: props.sender.message_body || null,
       message_to: active_user?.elsemployees_empid,
       message_quoteid: props.sender?.message_quoteid || null,
@@ -59,7 +58,7 @@ function UserMessage(props) {
     return attachments.split(",").map((attachment, id) => {
       const DownloadButton = () => {
         return (
-          <Button variant="outlined" size="small" color={"primary"}>
+          <Button variant="outlined" size="small" color={"primary"} key={id}>
             <a
               href={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
               download={attachment}
@@ -111,7 +110,7 @@ function UserMessage(props) {
         );
       }
       else if (attachmentType.toLowerCase() === "wav"){
-        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls/>
+        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls style={{margin:"10px 0px"}}/>
       } 
       else {
         // const fileName = props.sender.message_originalname.split(",")[id];
