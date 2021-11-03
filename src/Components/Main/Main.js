@@ -1,3 +1,4 @@
+import React from 'react'
 import ChatWindow from "../ChatWindow/ChatWindow";
 import MessageWindow from "../MessageWindow/MessageWindow";
 import Welcome from "../Welcome/Welcome";
@@ -18,14 +19,14 @@ const Main = React.memo(() => {
   });
   return (
     <div className="main__window" style={{background:isNightMode ? DARKMAIN : "#fff"}}>
-     
-      {!adminPanel && <ChatWindow />}
+     VOice Call
+      {/* {!adminPanel && <ChatWindow />}
       <Switch>
         <Route path="/" component={Welcome} exact />
         <Route path="/user/:id" component={MessageWindow} />
         <Route path="/group/:id" component={GroupMessageWindow} />
         <Route path="/admin" component={AdminPanel} />
-      </Switch>
+      </Switch> */}
     </div>
   );
 });
