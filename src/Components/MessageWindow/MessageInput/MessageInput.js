@@ -26,7 +26,7 @@ import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Tooltip from "@material-ui/core/Tooltip";
-import Recorder from "./recorder";
+import Recorder from "../../Recorder/Recorder";
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -69,6 +69,14 @@ function MessageInput({
   setAttachment,
   setScrollDown,
 }) {
+
+  const { status, startRecording, stopRecording, mediaBlobUrl } =
+    useReactMediaRecorder({
+      video: false,
+      audio: true,
+      echoCancellation: true,
+    });
+    
   const [message, setMessage] = useState("");
   const [isRecording, setRecording] = useState(false);
   const [pastedImg, setPastedImg] = useState([]);
@@ -142,12 +150,6 @@ function MessageInput({
     auth_user?.elsemployees_empid,
   ]);
 
-  const { status, startRecording, stopRecording, mediaBlobUrl } =
-    useReactMediaRecorder({
-      video: false,
-      audio: true,
-      echoCancellation: true,
-    });
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
       const type = item.type.split("/")[0];
@@ -346,7 +348,7 @@ function MessageInput({
       }
     >
       <div className="attachmentPreview">
-        {attachment ? AttachmentPreview : null}
+        {attachment && AttachmentPreview }
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">

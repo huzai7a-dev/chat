@@ -83,8 +83,7 @@ function UserMessage({ chatgroup }) {
             />
           </div>
         );
-      }
-      if (
+      } else if (
         attachmentType.toLowerCase() === "mp4" ||
         attachmentType.toLowerCase() === "mkv" ||
         attachmentType.toLowerCase() === "wmv" ||
@@ -100,6 +99,14 @@ function UserMessage({ chatgroup }) {
               controls
             />
           </div>
+        );
+      } else if (attachmentType.toLowerCase() === "wav") {
+        return (
+          <audio
+            src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
+            controls
+            style={{ margin: "10px 0px" }}
+          />
         );
       } else {
         const fileName = chatgroup.groupmessage_originalname.split(",")[id];
@@ -268,19 +275,30 @@ function UserMessage({ chatgroup }) {
                 <p className="qMsg">{chatgroup.groupmessage_quotebody}</p>
               </a>
             ) : null}
-            {chatgroup.groupmessage_body !== null && chatgroup.groupmessage_body !== "null" && (<div
-              className={
-                user !== admin ? "senderMessage__text" : "recieverMessage__text"
-              }
-            >
-              {chatgroup.groupmessage_body}
-            </div>)}
-            <Box display="flex" style={{float:"right"}}>
-              {seenData.map((seen,id) => {
-               
-                return seen.messageid == chatgroup.groupmessage_id && seen.userid != active_user?.elsemployees_empid  ? <Tooltip title={seen.username}>
-                  <Avatar key={id} style={{height:"20px",width:"20px"}} src={`/bizzportal/public/img/${seen.userpicture}`}/></Tooltip>  : null;
-                
+            {chatgroup.groupmessage_body !== null &&
+              chatgroup.groupmessage_body !== "null" && (
+                <div
+                  className={
+                    user !== admin
+                      ? "senderMessage__text"
+                      : "recieverMessage__text"
+                  }
+                >
+                  {chatgroup.groupmessage_body}
+                </div>
+              )}
+            <Box display="flex" style={{ float: "right" }}>
+              {seenData.map((seen, id) => {
+                return seen.messageid == chatgroup.groupmessage_id &&
+                  seen.userid != active_user?.elsemployees_empid ? (
+                  <Tooltip title={seen.username}>
+                    <Avatar
+                      key={id}
+                      style={{ height: "20px", width: "20px" }}
+                      src={`/bizzportal/public/img/${seen.userpicture}`}
+                    />
+                  </Tooltip>
+                ) : null;
               })}
             </Box>
           </div>

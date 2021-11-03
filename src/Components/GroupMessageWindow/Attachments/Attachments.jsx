@@ -135,7 +135,7 @@ function Attachments() {
             </div>
           );
         }
-        if (
+        else if (
           attachmentType.toLowerCase() === "mp4" ||
           attachmentType.toLowerCase() === "mkv" ||
           attachmentType.toLowerCase() === "wmv" ||
@@ -151,6 +151,15 @@ function Attachments() {
                 controls
               />
             </div>
+          );
+        }
+        else if (attachmentType.toLowerCase() === "wav") {
+          return (
+            <audio
+              src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
+              controls
+              style={{ margin: "10px 0px", width:"100%" }}
+            />
           );
         }
         else {

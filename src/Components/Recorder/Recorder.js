@@ -3,7 +3,7 @@ import { Box, IconButton, Typography } from "@material-ui/core";
 import ClearIcon from "@material-ui/icons/Clear";
 import PauseIcon from "@material-ui/icons/Pause";
 import Tooltip from "@material-ui/core/Tooltip";
-import { SECONDARYMAIN, PRIMARYMAIN } from "../../../Theme/colorConstant";
+import { SECONDARYMAIN, PRIMARYMAIN } from "../../Theme/colorConstant";
 import "./record.css";
 const Recorder = ({ onCancelVoice, onStopVoice, status }) => {
   return (

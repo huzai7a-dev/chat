@@ -1,4 +1,4 @@
-import { Avatar, Typography, Button, Paper } from "@material-ui/core";
+import { Avatar, Typography, Button } from "@material-ui/core";
 import React, { useState, useRef, useCallback, } from "react";
 import "./userMessage.css";
 import { useDispatch, useSelector } from "react-redux";
