@@ -57,6 +57,9 @@ export const mergeArray = (arr1 = [], arr2 = [], key = "") =>  {
     return file;
 }
 
+export const filterList = (value, filterBy)=>{
+    return value?.toLowerCase()?.indexOf(filterBy) >= 0;
+}
 
 class Utils {
     static getFormData(obj = {}) {

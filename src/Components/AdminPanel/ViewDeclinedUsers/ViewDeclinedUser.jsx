@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { approveUser, getDeclineUsers } from '../../../api/admin';
-import User from '../User';
+import { Box, TextField } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { approveUser, getDeclineUsers } from "../../../api/admin";
+import { filterList } from "../../../helper/util";
+import User from "../User";
 
 function ViewDeclinedUser() {
-    const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
   const [userUpdated, setUserUpdated] = React.useState({});
-
+  const [userName, setUserName] = useState("");
   const { auth_user } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
@@ -19,7 +21,7 @@ function ViewDeclinedUser() {
     ).then((res) => {
       setUsers(res.data.contacts);
     });
-  }, [userUpdated]);
+  }, [auth_user.elsemployees_empid, dispatch, userUpdated]);
 
   const onApprove = (declineUserId) => {
     const params = {
@@ -29,27 +31,42 @@ function ViewDeclinedUser() {
         action: 2,
       },
     };
-    dispatch(approveUser(params)).then((response)=>{
-        setUserUpdated(response)
-    })
+    dispatch(approveUser(params)).then((response) => {
+      setUserUpdated(response);
+    });
   };
-  
-    return (
-        <div style={{height:"100%", overflow:"auto",width:"100%"}}>
-            {users.map((user) => {
-        return (
-          <User
-            handleApproved={() => {
-              onApprove(user.elsemployees_empid);
-            }}
-            key={user.elsemployees_empid}
-            name={user.elsemployees_name}
-            profile={user.elsemployees_image}
-          />
-        );
-      })}
-        </div>
-    )
+
+  return (
+    <div style={{ height: "100%", overflow: "auto", width: "100%" }}>
+      <Box
+        p={2}
+        display="flex"
+        justifyContent="center"
+        style={{ width: "100%", margin: "5px 0px" }}
+      >
+        <TextField
+          style={{ width: "50%" }}
+          placeholder="Search User"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+        />
+      </Box>
+      {users
+        .filter((v) => filterList(v.elsemployees_name, userName))
+        .map((user) => {
+          return (
+            <User
+              handleApproved={() => {
+                onApprove(user.elsemployees_empid);
+              }}
+              key={user.elsemployees_empid}
+              name={user.elsemployees_name}
+              profile={user.elsemployees_image}
+            />
+          );
+        })}
+    </div>
+  );
 }
 
-export default ViewDeclinedUser
+export default ViewDeclinedUser;

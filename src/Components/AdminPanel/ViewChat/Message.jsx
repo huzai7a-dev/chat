@@ -65,9 +65,6 @@ function Message(props) {
         return (
           <div className="attachView" key={id}>
             <img
-              onClick={(e) => {
-                openImage(e);
-              }}
               height="auto"
               width="150px"
               src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
@@ -76,12 +73,14 @@ function Message(props) {
           </div>
         );
       }
-      if (
+      else if (
         attachmentType.toLowerCase() === "mp4" ||
         attachmentType.toLowerCase() === "mkv" ||
         attachmentType.toLowerCase() === "wmv" ||
         attachmentType.toLowerCase() === "flv"
-      ) {
+      )
+      
+      {
         return (
           <div className="attachView" key={id}>
             <video
@@ -93,7 +92,11 @@ function Message(props) {
             />
           </div>
         );
-      } else {
+      }
+      else if (attachmentType.toLowerCase() === "wav") {
+        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls style={{margin:"10px 0px"}}/>
+      }
+       else {
         const fileName = props.message.message_originalname.split(",")[id];
         return (
           <div className="attachView" key={id}>

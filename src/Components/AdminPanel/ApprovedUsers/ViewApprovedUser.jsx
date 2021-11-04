@@ -1,12 +1,15 @@
 import React, { useEffect } from "react";
+import { TextField,Box } from '@material-ui/core';
 import { useDispatch, useSelector } from "react-redux";
+
 import { declineUser, getApproveUsers } from "../../../api/admin";
 import User from "../User";
+import { filterList } from "../../../helper/util";
 
 export default function ViewApprovedUsers() {
   const [users, setUsers] = React.useState([]);
   const [userUpdated, setUserUpdated] = React.useState({});
-
+  const [userName,setUserName] = React.useState('');
   const { auth_user } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
@@ -35,8 +38,12 @@ export default function ViewApprovedUsers() {
     })
   };
   return (
-    <div style={{height:"100%", overflow:"auto",width:"100%"}}>
-      {users.map((user) => {
+    <div style={{height:"100%",width:"100%"}}>
+      <Box p={2} display="flex" justifyContent="center" style={{width:"100%",margin:"5px 0px"}}>
+        <TextField  style={{width:"50%"}} placeholder="Search User" value={userName} onChange={(e)=> setUserName(e.target.value)}/>
+      </Box>
+      <Box style={{height:"100%",width:"100%"}}>
+      {users.filter(v => filterList(v.elsemployees_name,userName)).map((user) => {
         return (
           <User
             handleDecline={() => onDecline(user.elsemployees_empid)}
@@ -46,6 +53,7 @@ export default function ViewApprovedUsers() {
           />
         );
       })}
+      </Box>
     </div>
   );
 }

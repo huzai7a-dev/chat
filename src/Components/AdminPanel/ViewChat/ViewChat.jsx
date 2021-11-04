@@ -9,6 +9,7 @@ import { Skeleton } from "@mui/material";
 import FromUser from "./FromUser";
 import { getAdminUserMessages, getUserMessages } from "../../../api/message";
 import MessageContainer from "./MessageContainer";
+import { filterList } from "../../../helper/util";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,13 +72,7 @@ function ViewMessages() {
         setHasMessages(true)
     }
   }
-  const filterToUser = (user) => {
-    return user?.elsemployees_name?.toLowerCase()?.indexOf(to) >= 0;
-  };
-  const filterFromUser = (user) => {
-    return user?.elsemployees_name?.toLowerCase()?.indexOf(from) >= 0;
-  };
-
+  
   const selectToUser = (toUser) => {
     setUserSelected(false);
     setTo(toUser.elsemployees_name);
@@ -106,7 +101,7 @@ function ViewMessages() {
   const FromUserList = () => {
     return (
       <div className={classes.userContainer}>
-        {contacts.filter(filterFromUser).map((user) => {
+        {contacts.filter( v => filterList(v.elsemployees_name,from)).map((user) => {
           return user.elsemployees_name.toLowerCase() ===
             to.toLowerCase() ? null : (
             <FromUser
@@ -122,7 +117,7 @@ function ViewMessages() {
   const ToUserList = () => {
     return (
       <div className={classes.userContainer}>
-        {contacts.filter(filterToUser).map((user) => {
+        {contacts.filter(v =>filterList(v.elsemployees_name,to)).map((user) => {
           return (
             <ToUser
               user={user}

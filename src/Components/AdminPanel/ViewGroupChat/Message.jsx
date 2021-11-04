@@ -76,7 +76,7 @@ function Message(props) {
           </div>
         );
       }
-      if (
+      else if (
         attachmentType.toLowerCase() === "mp4" ||
         attachmentType.toLowerCase() === "mkv" ||
         attachmentType.toLowerCase() === "wmv" ||
@@ -93,7 +93,11 @@ function Message(props) {
             />
           </div>
         );
-      } else {
+      }
+      else if (attachmentType.toLowerCase() === "wav") {
+        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls style={{margin:"10px 0px"}}/>
+      }
+       else {
         const fileName = props.message.groupmessage_originalname.split(",")[id];
         return (
           <div className="attachView" key={id}>

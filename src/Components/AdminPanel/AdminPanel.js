@@ -25,7 +25,6 @@ import PersonAddDisabledIcon from '@material-ui/icons/PersonAddDisabled';
 import ForumIcon from '@material-ui/icons/Forum';
 
 import { setAdminPanel } from "../../Redux/actions/app";
-import GroupIcon from "@material-ui/icons/Group";
 import ViewChat from "./ViewChat/ViewChat";
 import ViewGroupChat from "./ViewGroupChat/ViewGroupChat";
 import WelcomeAdmin from "./WelcomeAdmin";
@@ -68,7 +67,6 @@ const useStyles = makeStyles((theme) => ({
   drawerHeader: {
     display: "flex",
     alignItems: "center",
-    // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: "flex-end",
   },
@@ -81,7 +79,6 @@ const useStyles = makeStyles((theme) => ({
     }),
     marginLeft: -drawerWidth,
     width: (props) => (props ? "100vw" : `calc(100vw - ${drawerWidth}px)`),
-    width: `calc(100vw - ${drawerWidth}px)`,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

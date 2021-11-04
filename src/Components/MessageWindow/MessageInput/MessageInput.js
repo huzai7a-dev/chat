@@ -81,6 +81,7 @@ function MessageInput({
   const [isRecording, setRecording] = useState(false);
   const [pastedImg, setPastedImg] = useState([]);
   const [isEmojiActive, setIsEmojiActive] = useState(false);
+  const [visibleAudio,setVisibleAudio] = useState(false);
   const textInput = useRef();
   const classes = useStyles(isRecording);
   const dispatch = useDispatch();
@@ -216,6 +217,7 @@ function MessageInput({
       textInput.current.innerHTML = "";
     }
     setRecording(false);
+    setVisibleAudio(false);
     setMessage("");
     setIsEmojiActive(false);
     setAttachment([]);
@@ -332,9 +334,14 @@ function MessageInput({
   };
   const handleCancelVoice = () => {
     stopRecording();
+    setVisibleAudio(false)
     setRecording(false);
   };
 
+  const handleStopVoice = ()=>{
+    stopRecording();
+    setVisibleAudio(true);
+  }
   return (
     <div
       className="inputAttachContainer"
@@ -352,6 +359,7 @@ function MessageInput({
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
+          {visibleAudio && <audio src={mediaBlobUrl} controls/>}
           {!isRecording ? (
             <Box display="flex" style={{ width: "100%" }}>
               <div className="inputField__container">
@@ -417,7 +425,7 @@ function MessageInput({
           ) : (
             <Recorder
               onCancelVoice={handleCancelVoice}
-              onStopVoice={stopRecording}
+              onStopVoice={handleStopVoice}
               onPlayVoice={startRecording}
               status={status}
             />
