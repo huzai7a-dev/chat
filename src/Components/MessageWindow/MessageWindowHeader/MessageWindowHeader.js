@@ -2,6 +2,7 @@ import React from "react";
 import "./messageWindowHeader.css";
 import { useDispatch, useSelector } from "react-redux";
 import { IconButton ,Typography} from "@material-ui/core";
+import CallIcon from '@material-ui/icons/Call';
 import { getUserAttachments } from "../../../api/message";
 import { setGallery } from "../../../Redux/actions/message";
 function MessageWindowHeader() {
@@ -33,6 +34,9 @@ function MessageWindowHeader() {
         <div onClick={openGallery}>
           <Typography variant="body2">Gallery</Typography>
       </div>
+        <IconButton>
+          <CallIcon/>
+        </IconButton>
       </div>
     </div>
   );

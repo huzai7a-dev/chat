@@ -47,24 +47,32 @@ function ChatGroup({ groups }) {
       },
     };
 
-    dispatch(seenGroupMessage(seenParams)).then((res) => {
-      const socketParams = {
-        group_id: active_group.group_id,
-        user_id: auth_user?.elsemployees_empid,
-        info: "real time seen",
-      };
-      const socket = getSocket(auth_user?.elsemployees_empid);
-      socket.emit("group-seen", socketParams);
-      const params = {
-        data: {
-          loginuser_id: auth_user?.elsemployees_empid,
+    if (groups.groupunseenmesg.length > 0) {
+      dispatch(seenGroupMessage(seenParams)).then(() => {
+        const socketParams = {
+          group_id: active_group.group_id,
           user_id: auth_user?.elsemployees_empid,
-        },
-      };
-      dispatch(getUserGroups(params));
-    });
-  },[active_group.group_id, auth_user?.elsemployees_empid, dispatch, groups, history]);
-  
+          info: "real time seen",
+        };
+        const socket = getSocket(auth_user?.elsemployees_empid);
+        socket.emit("group-seen", socketParams);
+        const params = {
+          data: {
+            loginuser_id: auth_user?.elsemployees_empid,
+            user_id: auth_user?.elsemployees_empid,
+          },
+        };
+        dispatch(getUserGroups(params));
+      });
+    }
+  }, [
+    active_group.group_id,
+    auth_user?.elsemployees_empid,
+    dispatch,
+    groups,
+    history,
+  ]);
+
   const background = isNightMode && DARKMAIN;
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
   const heading = isNightMode ? "#fff" : "#252423";
@@ -108,7 +116,9 @@ function ChatGroup({ groups }) {
 
         <div className="chatUser__lastMessage">
           <p style={{ fontWeight: groups.groupunseenmesg > 0 && "900" }}>
-            {groups.lastmessage !== "null" && groups.lastmessage !== null ? groups.lastmessage : "Attachment"}
+            {groups.lastmessage !== "null" && groups.lastmessage !== null
+              ? groups.lastmessage
+              : "Attachment"}
           </p>
         </div>
       </div>

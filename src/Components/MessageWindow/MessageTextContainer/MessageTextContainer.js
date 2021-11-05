@@ -1,19 +1,20 @@
 import React, { useEffect, createRef, useState, useCallback } from "react";
-import "./MessageTextContainer.css";
-import { useDispatch, useSelector } from "react-redux";
-import UserMessage from "./UserMessage/UserMessage";
-import { Avatar } from "@material-ui/core";
-import { getMoreUserMessages, getUserMessages } from "../../../api/message";
+import InfiniteScroll from "react-infinite-scroll-component";
 import _ from "lodash";
 import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { Avatar } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
+
 import { DARKLIGHT } from "../../../Theme/colorConstant";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { setUserMessages } from "../../../Redux/actions/message";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import UserMessage from "./UserMessage/UserMessage";
 import { mergeArray } from "../../../helper/util";
+import { getMoreUserMessages, getUserMessages } from "../../../api/message";
+import "./MessageTextContainer.css";
 
-function MessageTextContainer({ scrollDown }) {
+function MessageTextContainer() {
   const [hasMore, setHasMore] = useState(true);
   const { auth_user, active_user, userMessages, isNightMode } = useSelector(
     (store) => {
@@ -52,9 +53,10 @@ function MessageTextContainer({ scrollDown }) {
       messageContainer.current.clientHeight;
     messageContainer.current.scrollTo(0, scroll);
   }, [messageContainer]);
+  
   useEffect(() => {
     scrollToBottom();
-  }, [active_user, scrollDown, scrollToBottom]);
+  }, [active_user, scrollToBottom]);
 
   // if there is no message this component will render
   const NoChat = React.memo(() => {
@@ -174,15 +176,6 @@ function MessageTextContainer({ scrollDown }) {
       </InfiniteScroll>
     );
   });
-
-  // const Typing = React.memo(() => {
-  //   return (
-  //     <Paper elevation={0} style={{ display: "flex", alignItems: "center" }}>
-  //       <Typography variant="caption" color="textSecondary">{isTyping.data?.name} is Typing  </Typography>
-  //       <img src={loading} alt="Loading" height="40px" width="40px" className="loading" />
-  //     </Paper>
-  //   )
-  // })
 
   return (
     <div

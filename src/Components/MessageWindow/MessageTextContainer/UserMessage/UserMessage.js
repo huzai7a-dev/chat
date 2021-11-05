@@ -11,10 +11,9 @@ import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
-
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-
 import { DARKLIGHT } from "../../../../Theme/colorConstant";
+
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
     return {
@@ -24,8 +23,8 @@ function UserMessage(props) {
       isNightMode: store.app.mode || false,
     };
   });
-  const [forwardModel, setForwardModel] = useState(false);
 
+  const [forwardModel, setForwardModel] = useState(false);
   const dispatch = useDispatch();
   const loggedInUser = auth_user?.elsemployees_empid;
   const image = props.sender.from_userpicture;
@@ -116,12 +115,12 @@ function UserMessage(props) {
           />
         );
       } else {
-        // const fileName = props.sender.message_originalname.split(",")[id];
+         const fileName = props.sender.message_originalname.split(",")[id];
         return (
           <div className="attachView" key={id}>
             <div className="file">
               <FileCopyIcon />
-              <Typography variant="caption">{"fileName"}</Typography>
+              <Typography variant="caption">{fileName}</Typography>
               <DownloadButton />
             </div>
           </div>

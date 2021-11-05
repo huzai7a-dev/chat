@@ -99,7 +99,7 @@ function MessageInput({
   const textInput = useRef();
   const dispatch = useDispatch();
   const [pastedImg, setPastedImg] = useState([]);
-  const [visibleAudio,setVisibleAudio] = useState(false);
+  const [visibleAudio, setVisibleAudio] = useState(false);
 
   const onEmojiClick = (event) => {
     setMessage(`${message}${event.native}`);
@@ -185,6 +185,7 @@ function MessageInput({
     if (textInput.current) {
       textInput.current.innerHTML = "";
     }
+    setVisibleAudio(false);
     setRecording(false);
     setMessage("");
     setIsEmojiActive(false);
@@ -200,13 +201,13 @@ function MessageInput({
 
   const handleCancelVoice = () => {
     stopRecording();
-    setVisibleAudio(false)
+    setVisibleAudio(false);
     setRecording(false);
   };
-  const handleStopVoice = ()=>{
-    stopRecording()
+  const handleStopVoice = () => {
+    stopRecording();
     setVisibleAudio(true);
-  }
+  };
   const SendMessageOnEnter = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -215,9 +216,9 @@ function MessageInput({
       }
     }
   };
-  const SendMessage = useCallback(async() => {
+  const SendMessage = useCallback(async () => {
     setToDefault();
-    const userAttachment = async() => {
+    const userAttachment = async () => {
       if (attachment.length > 0) {
         return attachment;
       } else if (pastedImg.length > 0) {
@@ -239,10 +240,9 @@ function MessageInput({
         message_quoteid: quote?.message_id || null,
         message_quotebody: quote?.groupmessage_body || null,
         message_quoteuser: quote.from_username || null,
-        message_attachment: attachmentFile || null
+        message_attachment: attachmentFile || null,
       },
     };
-    setVisibleAudio(false)
     messageParams.data = Utils.getFormData(messageParams.data);
     dispatch(sendGroupMessage(messageParams))
       .then((res) => {
@@ -295,7 +295,24 @@ function MessageInput({
         socket.emit("group-messaging", socketParams);
       })
       .catch((err) => console.warn(err));
-  }, [active_group.group_id, active_group?.group_name, attachment, auth_user?.elsemployees_empid, auth_user?.elsemployees_image, auth_user?.elsemployees_name, dispatch, groupMessages, mediaBlobUrl, message, pastedImg, quote.from_username, quote?.groupmessage_body, quote?.message_id, setScrollDown, setToDefault]);
+  }, [
+    active_group.group_id,
+    active_group?.group_name,
+    attachment,
+    auth_user?.elsemployees_empid,
+    auth_user?.elsemployees_image,
+    auth_user?.elsemployees_name,
+    dispatch,
+    groupMessages,
+    mediaBlobUrl,
+    message,
+    pastedImg,
+    quote.from_username,
+    quote?.groupmessage_body,
+    quote?.message_id,
+    setScrollDown,
+    setToDefault,
+  ]);
   const attachStyle = {
     background: isNightMode ? DARKMAIN : "#eee",
     height: "40vh",
@@ -317,9 +334,9 @@ function MessageInput({
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
         <div className="inputContainer">
-          {visibleAudio && <audio src={mediaBlobUrl} controls/>}
+          {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
-            <Box display="flex" style={{width:"100%"}}>
+            <Box display="flex" style={{ width: "100%" }}>
               <div className="inputField__container">
                 <div
                   className="qoutMsg__container"
@@ -328,7 +345,7 @@ function MessageInput({
                     color: isNightMode ? "#fff" : "#000",
                   }}
                 >
-                  {quote.groupmessage_body ? (
+                  {quote.groupmessage_body && (
                     <div>
                       <p className="qcMsg">
                         {quote.attachment
@@ -345,8 +362,6 @@ function MessageInput({
                         <CloseIcon />
                       </IconButton>
                     </div>
-                  ) : (
-                    ""
                   )}
 
                   {isEmojiActive && <Emoji />}
@@ -384,11 +399,11 @@ function MessageInput({
             </Box>
           ) : (
             <Recorder
-            onCancelVoice={handleCancelVoice}
-            onStopVoice={handleStopVoice}
-            onPlayVoice={startRecording}
-            status={status}
-          />
+              onCancelVoice={handleCancelVoice}
+              onStopVoice={handleStopVoice}
+              onPlayVoice={startRecording}
+              status={status}
+            />
           )}
           {message.length > 0 ||
           attachment.length > 0 ||

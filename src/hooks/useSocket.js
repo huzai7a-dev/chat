@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setActiveGroup, setContactUsers, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
+import { setActiveGroup, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
@@ -49,7 +49,7 @@ const useSocket = () => {
             }
           }
           dispatch(seenMessage(seenParams))
-          .then((res) => {
+          .then(() => {
             const paramData = {
               message_to:data.user_id
              }
@@ -80,6 +80,7 @@ const useSocket = () => {
           groupmessage_attachment:data.groupmessage_attachment
         };  
         
+        // eslint-disable-next-line no-prototype-builtins
         if(!data.hasOwnProperty('group_id') && userMessage.message_from === active_user?.elsemployees_empid) {
           dispatch(setUserMessages([userMessage,...messages]));
           const params = {
@@ -91,6 +92,7 @@ const useSocket = () => {
           
            dispatch(getContactsUser(params));
          } 
+        // eslint-disable-next-line no-prototype-builtins
         else if (data.hasOwnProperty('group_id') && active_group?.group_id === data?.group_id) {
           console.log('reached to group')
           const socketParams = {
@@ -163,7 +165,7 @@ const useSocket = () => {
     return () => {
       socket.off('group-seen')
     }
-  })
+  },[active_group?.group_id, auth_user.elsemployees_empid, dispatch])
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
@@ -181,11 +183,11 @@ const useSocket = () => {
       return () => {
         socket.off('isWindowOpen')
       }
-  });
+  },[active_user?.elsemployees_empid, auth_user.elsemployees_empid, dispatch]);
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
-      socket.on("isGroupWindowOpen", (res) => {
+      socket.on("isGroupWindowOpen", () => {
         const params = {
           data: {
             group_id: active_group?.group_id,
@@ -197,7 +199,7 @@ const useSocket = () => {
       return () => {
         socket.off('isGroupWindowOpen')
       }
-  });
+  },[active_group?.group_id, auth_user.elsemployees_empid, dispatch]);
 
   // useEffect(() => {
   //   const socket = getSocket(auth_user.elsemployees_empid);
@@ -253,6 +255,6 @@ const useSocket = () => {
       return () => {
         socket.off('group-member')
       }
-  });
+  },[active_group?.group_id, auth_user.elsemployees_empid, dispatch, history]);
 };
 export default useSocket;

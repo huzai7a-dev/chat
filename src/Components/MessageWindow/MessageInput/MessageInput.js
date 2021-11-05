@@ -142,14 +142,11 @@ function MessageInput({
       user_id: active_user?.elsemployees_empid,
       tPerson: auth_user?.elsemployees_empid,
       name: active_user.elsemployees_name,
+      msgQty:message,
     };
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
-  }, [
-    active_user?.elsemployees_empid,
-    active_user.elsemployees_name,
-    auth_user?.elsemployees_empid,
-  ]);
+  }, [active_user?.elsemployees_empid, active_user.elsemployees_name, auth_user?.elsemployees_empid, message]);
 
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
@@ -245,7 +242,7 @@ function MessageInput({
         return attachment;
       } else if (pastedImg.length > 0) {
         return pastedImg;
-      } else if (mediaBlobUrl) {
+      } else if (mediaBlobUrl && message.length == 0) {
         const file = await getFileFromBlob(mediaBlobUrl);
         return file;
       } else {
@@ -269,7 +266,7 @@ function MessageInput({
     messageParams.data = Utils.getFormData(messageParams.data);
     await dispatch(sendMessage(messageParams))
       .then((res) => {
-        setScrollDown(res);
+        // setScrollDown(res);
         const attachments = res.data.data.message_attachment;
         const socketParams = {
           message_originalname: auth_user?.elsemployees_name,
@@ -311,7 +308,7 @@ function MessageInput({
     quote?.from_username,
     quote?.message_body,
     quote?.message_id,
-    setScrollDown,
+    // setScrollDown,
     setToDefault,
     userMessages,
   ]);
