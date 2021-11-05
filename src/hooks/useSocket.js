@@ -104,7 +104,7 @@ const useSocket = () => {
             }
           }
           dispatch(seenGroupMessage(seenParams))
-          .then((res)=>{
+          .then(()=>{
             const socket = getSocket(auth_user?.elsemployees_empid);
             socket.emit("isGroupWindowOpen", socketParams);
           })
@@ -130,11 +130,11 @@ const useSocket = () => {
       return () => {
         socket.off('messaging')
       }
-  }, [messages, groupMessages, active_user, active_group,auth_user]);
+  }, [messages, groupMessages, active_user, active_group, auth_user, dispatch, oldMessageGroupId]);
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
-      socket.on("seen", (res) => {
+      socket.on("seen", () => {
         const getMessageParams = {
           data: {
             from_id: auth_user?.elsemployees_empid,
@@ -147,11 +147,11 @@ const useSocket = () => {
       return () => {
         socket.off('seen')
       }
-  }, [active_user,auth_user]);
+  }, [active_user, auth_user, dispatch]);
 
   useEffect(()=>{
     const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("group-seen",(data)=>{
+    socket.on("group-seen",()=>{
       const params = {
         data: {
           group_id: active_group?.group_id,
@@ -167,7 +167,7 @@ const useSocket = () => {
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
-      socket.on("isWindowOpen", (res) => {
+      socket.on("isWindowOpen", () => {
         console.log('widow is open')
         const params = {
           data:{
@@ -199,31 +199,31 @@ const useSocket = () => {
       }
   });
 
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on('typing', (data)=>{
-      dispatch(setIsTyping({
-        data,
-        status:true
-        }));
-    })
-    return () => {
-      socket.off('typing')
-    }
-  },[messages])
+  // useEffect(() => {
+  //   const socket = getSocket(auth_user.elsemployees_empid);
+  //   socket.on('typing', (data)=>{
+  //     dispatch(setIsTyping({
+  //       data,
+  //       status:true
+  //       }));
+  //   })
+  //   return () => {
+  //     socket.off('typing')
+  //   }
+  // },[auth_user.elsemployees_empid, dispatch, messages])
 
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on('leaveTyping', (data)=>{
-      dispatch(setIsTyping({
-        data,
-        status:false
-      }));
-    })
-    return () => {
-      socket.off('leaveTyping')
-    }
-  })
+  // useEffect(() => {
+  //   const socket = getSocket(auth_user.elsemployees_empid);
+  //   socket.on('leaveTyping', (data)=>{
+  //     dispatch(setIsTyping({
+  //       data,
+  //       status:false
+  //     }));
+  //   })
+  //   return () => {
+  //     socket.off('leaveTyping')
+  //   }
+  // },[auth_user.elsemployees_empid, dispatch])
   
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)

@@ -35,4 +35,4 @@ function Welcome() {
   );
 }
 
-export default Welcome;
+export default React.memo(Welcome);

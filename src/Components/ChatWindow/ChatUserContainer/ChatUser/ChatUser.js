@@ -7,12 +7,12 @@ import moment from 'moment'
 import { getSocket } from "../../../../socket";
 import { getContactsUser, seenMessage } from "../../../../api/chat";
 import { setActiveChat } from "../../../../Redux/actions/chat";
-import { useParams } from "react-router-dom";
 import loading from '../../../../Assets/loading.gif';
 import { DARKLIGHT, DARKMAIN, WHITE, } from "../../../../Theme/colorConstant";
 import { setGallery } from "../../../../Redux/actions/message";
+import React, { useCallback } from "react";
 
-  const  ChatUser = (props)=> {
+  const  ChatUser = React.memo((props)=> {
     
   const history = useHistory();
   const dispatch = useDispatch();
@@ -25,10 +25,8 @@ import { setGallery } from "../../../../Redux/actions/message";
       isNightMode:store.app.mode || false
     }
   });
-  const paramData = {
-    message_to: props.users.elsemployees_empid,
-  };
-  const getLastMessage = ()=>{
+  
+  const getLastMessage = useCallback(()=>{
     if (props.users?.last_msg.message_body !== "null") {
       return props.users.last_msg.message_body
     }
@@ -38,10 +36,13 @@ import { setGallery } from "../../../../Redux/actions/message";
     else {
       return null
     }
-  }
+  },[props.users.last_msg.message_attachment, props.users.last_msg.message_body])
   const activeWindow = activeUser.elsemployees_empid == props.users.elsemployees_empid;
   const lastMessage = getLastMessage();
-  const switchToConvo = () => {
+  const switchToConvo = useCallback(() => {
+    const paramData = {
+      message_to: props.users.elsemployees_empid,
+    };
    dispatch(setGallery(false));
     dispatch(setActiveChat(props.users));
     if (props.users.unseen == 1) {
@@ -57,7 +58,7 @@ import { setGallery } from "../../../../Redux/actions/message";
     }
     
     dispatch(seenMessage(seenParams))
-    .then((res) => {
+    .then(() => {
       const contactParams = {
         data: {
           loginuser_id: auth_user.elsemployees_empid,
@@ -70,15 +71,15 @@ import { setGallery } from "../../../../Redux/actions/message";
       })
       .catch(err => console.warn(err));
     dispatch(quote(null));
-  };
-  const Typing = ()=>{
+  },[auth_user.elsemployees_empid, dispatch, history, props.users]);
+  const Typing = React.memo(()=>{
     return (
       <Paper elevation={0} style={{display:"flex"}}> 
         <Typography variant="caption" color="textSecondary">Typing</Typography>
         <img src={loading} alt="Loading" height="20px" width="20px" className="loading" />
       </Paper>
     )
-  }
+  })
   
   const background = isNightMode && DARKMAIN ;
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
@@ -112,6 +113,6 @@ import { setGallery } from "../../../../Redux/actions/message";
       </div>
     </div>  
   );
-}
+})
 
-export default React.memo(ChatUser);
+export default ChatUser;

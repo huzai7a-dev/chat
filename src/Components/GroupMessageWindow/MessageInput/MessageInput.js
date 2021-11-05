@@ -203,7 +203,6 @@ function MessageInput({
     setVisibleAudio(false)
     setRecording(false);
   };
-  console.log(visibleAudio)
   const handleStopVoice = ()=>{
     stopRecording()
     setVisibleAudio(true);
@@ -243,7 +242,7 @@ function MessageInput({
         message_attachment: attachmentFile || null
       },
     };
-
+    setVisibleAudio(false)
     messageParams.data = Utils.getFormData(messageParams.data);
     dispatch(sendGroupMessage(messageParams))
       .then((res) => {
@@ -317,8 +316,8 @@ function MessageInput({
         {attachment ? AttachmentPreview : null}
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
-          {visibleAudio && <audio src={mediaBlobUrl} controls/>}
         <div className="inputContainer">
+          {visibleAudio && <audio src={mediaBlobUrl} controls/>}
           {!isRecording ? (
             <Box display="flex" style={{width:"100%"}}>
               <div className="inputField__container">

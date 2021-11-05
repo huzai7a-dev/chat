@@ -32,7 +32,7 @@ function SearchBar() {
       .catch((err) => {
         console.log(err);
       });
-  }, [users]);
+  }, [auth_user?.elsemployees_empid, dispatch, users]);
   return (
     <div className="searchBar" style={{border: isNightMode ?"1px solid #fff" : `1px solid ${SECONDARYDARK}`, background: isNightMode ? DARKMAIN:WHITE}}>
       <input

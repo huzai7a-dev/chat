@@ -1,5 +1,5 @@
 import { Avatar, Typography, Button } from "@material-ui/core";
-import React, { useState, useRef, useCallback, } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import "./userMessage.css";
 import { useDispatch, useSelector } from "react-redux";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -9,22 +9,22 @@ import Modal from "react-modal";
 import DoneAllIcon from "@material-ui/icons/DoneAll";
 import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
-import moment from 'moment';
+import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
 
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 import { DARKLIGHT } from "../../../../Theme/colorConstant";
 function UserMessage(props) {
-  const { auth_user, active_user,isNightMode } = useSelector((store) => {
+  const { auth_user, active_user, isNightMode } = useSelector((store) => {
     return {
-      auth_user: store.auth.auth_user || { },
+      auth_user: store.auth.auth_user || {},
       // contacts: store.message.contacts.contacts || [],
-      active_user: store.auth.auth_user || { },
-      isNightMode:store.app.mode || false
+      active_user: store.auth.auth_user || {},
+      isNightMode: store.app.mode || false,
     };
   });
-  const [forwardModel, setForwardModel] = useState(false)
+  const [forwardModel, setForwardModel] = useState(false);
 
   const dispatch = useDispatch();
   const loggedInUser = auth_user?.elsemployees_empid;
@@ -37,7 +37,7 @@ function UserMessage(props) {
   const onClickOutside = useCallback(() => {
     setOption(false);
   }, []);
-  
+
   useOutsideAlerter(menuDiv, onClickOutside);
   const forwardMessageParams = {
     data: {
@@ -51,8 +51,8 @@ function UserMessage(props) {
       message_attachment: props.sender.message_attachment,
       message_forwarded: 1,
       message_originalname: props.sender.message_originalname || null,
-    }
-  }
+    },
+  };
   //function to render sent attachment
   const RenderSendAttachment = () => {
     return attachments.split(",").map((attachment, id) => {
@@ -90,8 +90,7 @@ function UserMessage(props) {
             />
           </div>
         );
-      }
-      else if (
+      } else if (
         attachmentType.toLowerCase() === "mp4" ||
         attachmentType.toLowerCase() === "mkv" ||
         attachmentType.toLowerCase() === "wmv" ||
@@ -108,11 +107,15 @@ function UserMessage(props) {
             />
           </div>
         );
-      }
-      else if (attachmentType.toLowerCase() === "wav"){
-        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls style={{margin:"10px 0px"}}/>
-      } 
-      else {
+      } else if (attachmentType.toLowerCase() === "wav") {
+        return (
+          <audio
+            src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
+            controls
+            style={{ margin: "10px 0px" }}
+          />
+        );
+      } else {
         // const fileName = props.sender.message_originalname.split(",")[id];
         return (
           <div className="attachView" key={id}>
@@ -127,12 +130,12 @@ function UserMessage(props) {
     });
   };
   // function to open image/video
-  const openImage = (e) => {
+  const openImage = useCallback((e) => {
     setMedia(e.target.src);
     setOpenModel(true);
-  };
+  }, []);
   // function to collect data for quote messages
-  const quoteData = () => {
+  const quoteData = useCallback(() => {
     const quoteMsg = {
       from_username: props.sender.from_username,
       message_body:
@@ -142,7 +145,14 @@ function UserMessage(props) {
     };
     dispatch(setQuote(quoteMsg));
     setOption(false);
-  };
+  }, [
+    dispatch,
+    props.sender.from_username,
+    props.sender.message_attachment,
+    props.sender.message_body,
+    props.sender.message_id,
+  ]);
+
   const attachmentStyle = {
     display: "flex",
     flexWrap: "wrap",
@@ -150,7 +160,8 @@ function UserMessage(props) {
       props.sender.message_from === loggedInUser ? "flex-end" : "flex-start",
     alignItems: "center",
   };
-  const downloadAttachment = (file) => {
+
+  const downloadAttachment = useCallback((file) => {
     const attachList = file.split(",");
     attachList.forEach((attachment) => {
       const anchor = document.createElement("a");
@@ -158,9 +169,9 @@ function UserMessage(props) {
       anchor.download = attachment;
       anchor.click();
     });
-  };
+  },[]);
 
-  const QuotedMessage = () => {
+  const QuotedMessage = React.memo(() => {
     return (
       <>
         {props.sender.message_quotebody !== "null" ? (
@@ -169,7 +180,9 @@ function UserMessage(props) {
             href={"#" + props.sender.message_quoteid}
             style={{
               borderBottom:
-                props.sender.message_from === loggedInUser ? "1px solid #000" : "none",
+                props.sender.message_from === loggedInUser
+                  ? "1px solid #000"
+                  : "none",
             }}
           >
             <p className="qName">{props.sender.message_quoteuser}</p>
@@ -178,8 +191,9 @@ function UserMessage(props) {
         ) : null}
       </>
     );
-  };
-  const AttachmentModel = () => {
+  });
+
+  const AttachmentModel = React.memo(() => {
     const imgStyle = {
       width: "auto",
       maxWidth: "100%",
@@ -187,6 +201,7 @@ function UserMessage(props) {
       display: "block",
       height: "auto",
     };
+    
     return (
       <Modal
         isOpen={openModel}
@@ -194,15 +209,14 @@ function UserMessage(props) {
           setOpenModel(false);
         }}
         className="mediaModel"
-        >
-        
+      >
         <div className="mediaContainer">
           {props.sender.message_attachment ? (
             <TransformWrapper>
-            <TransformComponent>
-              <img alt="Attachment" src={media} style={imgStyle} />
-            </TransformComponent>
-          </TransformWrapper>
+              <TransformComponent>
+                <img alt="Attachment" src={media} style={imgStyle} />
+              </TransformComponent>
+            </TransformWrapper>
           ) : null}
           <CancelIcon
             className="modelCutIcon"
@@ -213,12 +227,19 @@ function UserMessage(props) {
         </div>
       </Modal>
     );
-  };
-  const MessageOptions = () => {
+  });
+
+  const MessageOptions = React.memo(() => {
     return (
       <div className="optionsContainer">
         <div className="options">
-          <p onClick={() => { setForwardModel(true) }}>Forward</p>
+          <p
+            onClick={() => {
+              setForwardModel(true);
+            }}
+          >
+            Forward
+          </p>
           <p onClick={quoteData}>Quote</p>
           {props.sender.message_attachment ? (
             <p
@@ -232,19 +253,25 @@ function UserMessage(props) {
         </div>
       </div>
     );
-  };
+  });
+
   const messageToBackground = isNightMode ? DARKLIGHT : "##f0f4f8";
 
   return (
     <div
       id={props.sender.message_id}
       className={
-        props.sender.message_from !== loggedInUser ? "senderMessage " : "userMessage"
+        props.sender.message_from !== loggedInUser
+          ? "senderMessage "
+          : "userMessage"
       }
     >
       <div className="userMessage__picture">
         {props.sender.message_from !== loggedInUser ? (
-          <Avatar src={`/bizzportal/public/img/${image}`} style={{width:"50px",height:"50px"}} />
+          <Avatar
+            src={`/bizzportal/public/img/${image}`}
+            style={{ width: "50px", height: "50px" }}
+          />
         ) : null}
       </div>
 
@@ -259,7 +286,7 @@ function UserMessage(props) {
           <div className="userMessage__name" style={{ marginRight: "5px" }}>
             <p>
               {props.sender.message_from !== loggedInUser
-                ? props.sender.from_username+","
+                ? props.sender.from_username + ","
                 : ""}
             </p>
           </div>
@@ -282,36 +309,48 @@ function UserMessage(props) {
             {option ? <MessageOptions /> : null}
           </div>
         </div>
-        {
-          parseInt(props.sender.message_forwarded) == 1 ? 
-            <Typography variant="caption" color={isNightMode ? "primary": "textSecondary"}>Forwarded</Typography>
-         : null
-        }
-        
+        {parseInt(props.sender.message_forwarded) == 1 ? (
+          <Typography
+            variant="caption"
+            color={isNightMode ? "primary" : "textSecondary"}
+          >
+            Forwarded
+          </Typography>
+        ) : null}
+
         {props.sender?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
             <RenderSendAttachment />
           </div>
         ) : null}
-        
-        {props.sender.message_body && props.sender.message_body !== "null"  ? (
+
+        {props.sender.message_body && props.sender.message_body !== "null" ? (
           <div className="recieverQoutMsg__container">
             {props.sender.message_quotebody ? <QuotedMessage /> : null}
             <div
-              style={{background: props.sender.message_from !== loggedInUser ? "#d8ecf7" : messageToBackground, color:isNightMode && props.sender.message_from == loggedInUser ? "#fff": "rgb(37, 36, 35)"}}
+              style={{
+                background:
+                  props.sender.message_from !== loggedInUser
+                    ? "#d8ecf7"
+                    : messageToBackground,
+                color:
+                  isNightMode && props.sender.message_from == loggedInUser
+                    ? "#fff"
+                    : "rgb(37, 36, 35)",
+              }}
               className={
                 props.sender.message_from !== loggedInUser
                   ? "senderMessage__text"
                   : "recieverMessage__text"
               }
             >
-
               {props.sender.message_body}
             </div>
             <div
               style={{ position: "absolute", right: "0", fontSize: ".2rem" }}
             >
-              {props.sender.seen > 0 && props.sender.message_from == loggedInUser ? (
+              {props.sender.seen > 0 &&
+              props.sender.message_from == loggedInUser ? (
                 <DoneAllIcon fontSize="small" color="primary" />
               ) : null}
             </div>
@@ -320,7 +359,9 @@ function UserMessage(props) {
         <AttachmentModel />
         <Modal
           isOpen={forwardModel}
-          onRequestClose={() => { setForwardModel(false) }}
+          onRequestClose={() => {
+            setForwardModel(false);
+          }}
           className="forwardModel"
         >
           <ForwardMessage

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import "./groupName.css";
 
 import { Avatar, Button, IconButton, Input, Typography } from "@material-ui/core";
@@ -21,7 +21,7 @@ function GroupName({
   const [groupPicture, setGroupPicture] = useState("");
   const [groupName, setGroupName] = useState("");
 
-  const handleImageChange = (e) => {
+  const handleImageChange = useCallback((e) => {
     setPassGroupPicture(e.target.files[0]);
     if (e.target.files[0]) {
       let reader = new FileReader();
@@ -30,7 +30,7 @@ function GroupName({
       };
       reader.readAsDataURL(e.target.files[0]);
     }
-  };
+  },[setPassGroupPicture]);
 
   return (
     <div className="groupName" style={{background: isNightMode ? DARKMAIN : "#eee"}} onKeyDown={(e)=>{
@@ -82,4 +82,4 @@ function GroupName({
   );
 }
 
-export default GroupName;
+export default React.memo(GroupName);

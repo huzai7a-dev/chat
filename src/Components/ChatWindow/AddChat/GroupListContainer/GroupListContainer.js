@@ -14,7 +14,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { updateGroup } from "../../../../Redux/Action";
 import { DARKMAIN } from "../../../../Theme/colorConstant";
-function GroupMemebers({ members, userId, setUserId, isChecked }) {
+const GroupMemebers = React.memo(({ members, userId, setUserId, isChecked })=> {
   const [selectMember, setSelectMember] = useState(false);
   const image = members?.elsemployees_image;
   const { user_id,isNightMode } = useSelector((state) => {
@@ -51,14 +51,14 @@ function GroupMemebers({ members, userId, setUserId, isChecked }) {
       </div>
     </div>
   );
-}
+})
 
-function GroupListContainer({
+const GroupListContainer =({
   setGroupModelName,
   setgroupModelListContaier,
   passGroupName,
   passGroupPicture,
-}) {
+})=> {
   const [groupMember, setGroupMember] = useState("");
   const [memberList, setMemberList] = useState([]);
   const dispatch = useDispatch();
@@ -180,4 +180,4 @@ function GroupListContainer({
   );
 }
 
-export default GroupListContainer;
+export default React.memo(GroupListContainer);

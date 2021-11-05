@@ -4,28 +4,16 @@ import "./chatUserContainer.css";
 import {WHITE,SECONDARYMAIN} from '../../../Theme/colorConstant'
 import { useDispatch, useSelector } from "react-redux";
 import ChatGroup from "./ChatGroup/ChatGroup";
-import Paper from "@material-ui/core/Paper";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
+
 import {Button,Box} from "@material-ui/core";
 import SearchedUser from "./SearchedUser/SearchedUser";
 import { getContactsUser, getUserGroups } from "../../../api/chat";
-import { makeStyles } from "@material-ui/core";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
 import { Badge } from "@material-ui/core";
-const useStyles = makeStyles({
-  tabContainer: {
-    height: "35px",
-    borderRadius: "3px",
-    // width:"320px",
-    margin: "10px",
-     background: "#d8ecf7"
-  },
-});
+
 function ChatUserContainer() {
-  const classes = useStyles();
-  const { auth_user, userSearch, searchText, contacts, groupsList,isNightMode } =
+  const { auth_user, userSearch, searchText, contacts, groupsList } =
     useSelector((store) => {
       return {
         auth_user: store.auth?.auth_user || {},
@@ -51,10 +39,10 @@ function ChatUserContainer() {
       };
       dispatch(getContactsUser(params));
     }
-  }, [auth_user]);
+  }, [auth_user, dispatch]);
 
   
-  const changePeopleTab = async () => {
+  const changePeopleTab = useCallback(() => {
     setTabValue("People");
     const params = {
       data: {
@@ -62,10 +50,10 @@ function ChatUserContainer() {
         user_id: auth_user.elsemployees_empid,
       },
     };
-    await dispatch(getContactsUser(params));
-  };
+     dispatch(getContactsUser(params));
+  },[auth_user.elsemployees_empid, dispatch]);
 
-  const changeGroupTab = () => {
+  const changeGroupTab = useCallback(() => {
     setTabValue("Groups");
     const params = {
       data: {
@@ -74,8 +62,9 @@ function ChatUserContainer() {
       },
     };
     dispatch(getUserGroups(params));
-  };
-  const SwitchTabs = ()=>{
+  },[auth_user?.elsemployees_empid, dispatch]);
+  
+  const SwitchTabs = React.memo(()=>{
     const allPeopleUnseenMessages = contacts.reduce((acc, curr, ) => {
       return acc + curr.unseen
     }, 0)
@@ -104,9 +93,9 @@ function ChatUserContainer() {
       </Button>
       </Box>
     )
-  }
+  })
   
-  const ContactList = () => {
+  const ContactList = React.memo(() => {
     return (
       <div className="chatUserList">
         
@@ -120,7 +109,7 @@ function ChatUserContainer() {
         
       </div>
     );
-  };
+  });
   function sortedGroup(a,b){
     if (moment(b.groupmessagetime || b.created_at).isAfter(a.groupmessagetime || a.created_at)) {
       return 1
@@ -128,7 +117,7 @@ function ChatUserContainer() {
       return -1
     }
 } 
-  const GroupList = () => {
+  const GroupList = React.memo(() => {
     return (
       <div className="chatUserList">
         {groupsList.length > 0 ? (
@@ -142,8 +131,8 @@ function ChatUserContainer() {
         )}
       </div>
     );
-  };
-  const SearchedList = () => {
+  });
+  const SearchedList = React.memo(() => {
     return (
       <div className="searchedUser">
         {userSearch?.map((user, id) => (
@@ -151,7 +140,7 @@ function ChatUserContainer() {
         ))}
       </div>
     );
-  };
+  });
   return (
     <div className="container">
       <SwitchTabs />

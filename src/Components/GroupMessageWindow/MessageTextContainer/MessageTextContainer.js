@@ -1,9 +1,9 @@
-import React, { useEffect, createRef, useState } from "react";
+import React, { useEffect, createRef, useState, useCallback } from "react";
 import "./MessageTextContainer.css";
 import UserMessage from "./UserMessage/UserMessage";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
-import InfiniteScroll from 'react-infinite-scroll-component';
+import InfiniteScroll from "react-infinite-scroll-component";
 import { Avatar } from "@material-ui/core";
 
 import Alert from "@material-ui/lab/Alert";
@@ -11,28 +11,35 @@ import { getGroupMessages, getMoreGroupMessages } from "../../../api/message";
 import { setGroupMemInfo } from "../../../Redux/actions/chat";
 import _ from "lodash";
 import moment from "moment";
-import Typography from '@material-ui/core/Typography';
+import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import { DARKLIGHT } from "../../../Theme/colorConstant";
 import { setGroupMessages } from "../../../Redux/actions/message";
 import { mergeArray } from "../../../helper/util";
-function MessageTextContainer({scrollDown}) {
-  const { auth_user, active_group, groupMessages, groupMemInfo, isNightMode,groupMessageData } = useSelector((store) => {
+const MessageTextContainer = React.memo(({ scrollDown }) => {
+  const {
+    auth_user,
+    active_group,
+    groupMessages,
+    groupMemInfo,
+    isNightMode,
+    groupMessageData,
+  } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
       active_group: store.chat.active_group || {},
       groupMessages: store.message.groupMessages.messages || [],
-      groupMessageData:store.message.groupMessages || {},
+      groupMessageData: store.message.groupMessages || {},
       groupMemInfo: store.chat.groupMemInfo || {},
       isNightMode: store.app.mode || false,
     };
   });
-
+  console.log('re render')
   const dispatch = useDispatch();
   const img = active_group?.group_image;
   const messageContainer = createRef();
   const [alertMessage, setAlertMessage] = useState(false);
-  const [hasMore, setHasMore] = useState(true)
+  const [hasMore, setHasMore] = useState(true);
   useEffect(() => {
     const params = {
       data: {
@@ -41,10 +48,10 @@ function MessageTextContainer({scrollDown}) {
       },
     };
     dispatch(getGroupMessages(params));
+  }, [active_group, auth_user?.elsemployees_empid, dispatch]);
+  useEffect(() => {
+    setHasMore(true);
   }, [active_group]);
-  useEffect(()=>{
-    setHasMore(true)
-  },[active_group])
   const MemberAlert = () => {
     return (
       <Alert
@@ -60,8 +67,6 @@ function MessageTextContainer({scrollDown}) {
     );
   };
   useEffect(() => {
-    // const hasObj = Object.keys(groupMemInfo).length;
-
     if (groupMemInfo.event) {
       setAlertMessage(true);
       setTimeout(function () {
@@ -69,50 +74,59 @@ function MessageTextContainer({scrollDown}) {
         dispatch(setGroupMemInfo({}));
       }, 3000);
     }
-  }, [groupMemInfo]);
+  }, [dispatch, groupMemInfo]);
   //function to always scroll on bottom
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     const scroll =
       messageContainer.current.scrollHeight -
       messageContainer.current.clientHeight;
     messageContainer.current.scrollTo(0, scroll);
-  };
+  }, [messageContainer]);
   useEffect(() => {
     scrollToBottom();
-  }, [scrollDown,active_group]);
-  // if there is not message 
-  const fetchMoreMessages = async() => {
-    
-    const lastMsgId = groupMessages[groupMessages.length-1].groupmessage_id
+  }, [scrollDown, active_group, scrollToBottom]);
+  // if there is not message
+  const fetchMoreMessages = useCallback(async () => {
+    const lastMsgId = groupMessages[groupMessages.length - 1].groupmessage_id;
     const params = {
       data: {
         from_id: auth_user?.elsemployees_empid,
         user_id: auth_user?.elsemployees_empid,
-        groupmessage_id:lastMsgId,
+        groupmessage_id: lastMsgId,
         group_id: active_group?.group_id,
-      }
-    }
-    
+      },
+    };
+
     const response = await dispatch(getMoreGroupMessages(params));
     const olderMessages = await response.data.messages;
-    if (olderMessages.length <1) {
+    if (olderMessages.length < 1) {
       setHasMore(false);
     }
-    const mergedArray = mergeArray(groupMessages,olderMessages,"groupmessage_id");
-    dispatch(setGroupMessages({...groupMessageData,messages:mergedArray}));
-  }
+    const mergedArray = mergeArray(
+      groupMessages,
+      olderMessages,
+      "groupmessage_id"
+    );
+    dispatch(setGroupMessages({ ...groupMessageData, messages: mergedArray }));
+  }, [
+    active_group?.group_id,
+    auth_user?.elsemployees_empid,
+    dispatch,
+    groupMessageData,
+    groupMessages,
+  ]);
 
-  const Messages = () => {
+  const Messages = React.memo(() => {
     const groupedByMessages = _.chain(groupMessages)
       // Group the elements of Array based on `date` property
       .groupBy((m) => {
         return moment(m.fullTime).calendar({
-          sameDay: '[Today]',
-          nextDay: '[Tomorrow]',
-          nextWeek: 'dddd',
-          lastDay: '[Yesterday]',
-          lastWeek: 'dddd',
-          sameElse: 'DD/MM/YYYY'
+          sameDay: "[Today]",
+          nextDay: "[Tomorrow]",
+          nextWeek: "dddd",
+          lastDay: "[Yesterday]",
+          lastWeek: "dddd",
+          sameElse: "DD/MM/YYYY",
         });
       })
       // `key` is group's name (date), `value` is the array of objects
@@ -120,44 +134,64 @@ function MessageTextContainer({scrollDown}) {
         result[key] = value;
         return result;
       }, {})
-      .value()
+      .value();
     return (
       <InfiniteScroll
         dataLength={groupMessages.length}
         next={fetchMoreMessages}
         inverse={true}
         hasMore={hasMore}
-        loader={<div style={{ textAlign: "center" }}><CircularProgress /></div>}
+        loader={
+          <div style={{ textAlign: "center" }}>
+            <CircularProgress />
+          </div>
+        }
         scrollableTarget="scrollableDiv"
         style={{ display: "flex", flexDirection: "column-reverse" }}
       >
         {Object.keys(groupedByMessages)?.map((key, id) => {
           const groupedByMessage = groupedByMessages[key];
-          
+
           return (
-            <div key={key} >
-              <div className="dividerContainer" >
-                <div className="divider" style={{ background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)" }} />
-                <Typography variant="body2" align="center" color={isNightMode ? "primary" : "textSecondary"} style={{ padding: "0px 5px" }}>{key}</Typography>
-                <div className="divider" style={{ background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)" }} />
+            <div key={id}>
+              <div className="dividerContainer">
+                <div
+                  className="divider"
+                  style={{
+                    background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                <Typography
+                  variant="body2"
+                  align="center"
+                  color={isNightMode ? "primary" : "textSecondary"}
+                  style={{ padding: "0px 5px" }}
+                >
+                  {key}
+                </Typography>
+                <div
+                  className="divider"
+                  style={{
+                    background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
+                  }}
+                />
               </div>
               <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {
-                  groupedByMessage?.map((message) => (
-                    <UserMessage chatgroup={message} key={message.groupmessage_id} />
-                  ))
-                }
+                {groupedByMessage?.map((message) => (
+                  <UserMessage
+                    chatgroup={message}
+                    key={message.groupmessage_id}
+                  />
+                ))}
               </div>
             </div>
-          )
+          );
         })}
       </InfiniteScroll>
-    )
-  }
+    );
+  });
 
-
-
-  const NoChat = () => {
+  const NoChat = React.memo(() => {
     return (
       <div className="noChat">
         {img ? (
@@ -166,25 +200,28 @@ function MessageTextContainer({scrollDown}) {
             src={`/api/bwccrm/storage/app/public/chat_attachments/${img}`}
           />
         ) : (
-          <Avatar style={{ width: "60px", height: "60px" }}>{active_group.group_name?.toUpperCase()[0]}</Avatar>
+          <Avatar style={{ width: "60px", height: "60px" }}>
+            {active_group.group_name?.toUpperCase()[0]}
+          </Avatar>
         )}
-        <Typography color={isNightMode ? "primary" : "textSecondary"}>Welcome To {`${active_group?.group_name}'s`} Group</Typography>
+        <Typography color={isNightMode ? "primary" : "textSecondary"}>
+          Welcome To {`${active_group?.group_name}'s`} Group
+        </Typography>
       </div>
-    )
-  }
+    );
+  });
 
   return (
-    <div className="messageTextContainer" ref={messageContainer} id="scrollableDiv" style={{ display: "flex", flexDirection: "column-reverse" }}>
+    <div
+      className="messageTextContainer"
+      ref={messageContainer}
+      id="scrollableDiv"
+      style={{ display: "flex", flexDirection: "column-reverse" }}
+    >
       {alertMessage ? MemberAlert() : null}
-      {groupMessages.length === 0 ? (
-        <NoChat />
-      ) : (
-        
-          <Messages />
-        
-      )}
+      {groupMessages.length === 0 ? <NoChat /> : <Messages />}
     </div>
   );
-}
+});
 
 export default MessageTextContainer;

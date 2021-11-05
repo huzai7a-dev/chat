@@ -1,17 +1,17 @@
+import React from 'react';
 import { Avatar } from "@material-ui/core";
 import { useDispatch,useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { setSearchText } from "../../../../Redux/actions/app";
 import { setActiveChat } from "../../../../Redux/actions/chat";
-import { DARKLIGHT, DARKMAIN } from "../../../../Theme/colorConstant";
+import { DARKMAIN } from "../../../../Theme/colorConstant";
 
 function SearchedUser({ users }) {
   const img = users?.elsemployees_image;
   const dispatch = useDispatch();
   const history = useHistory();
-  const {activeUser,isNightMode} = useSelector(state =>{
+  const {isNightMode} = useSelector(state =>{
     return {
-      activeUser: state.chat?.active_user,
       isNightMode:state.app?.mode || false
     }
   })
@@ -39,4 +39,4 @@ function SearchedUser({ users }) {
   );
 }
 
-export default SearchedUser;
+export default React.memo(SearchedUser);

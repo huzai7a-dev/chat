@@ -14,6 +14,7 @@ import {
 import moment from "moment";
 import { getSocket } from "../../../../socket";
 import { setGallery } from "../../../../Redux/actions/message";
+import React, { useCallback } from "react";
 const useStyles = makeStyles({
   group: {
     background: SECONDARYDARK,
@@ -35,7 +36,7 @@ function ChatGroup({ groups }) {
     };
   });
   const active = active_group.group_id == groups.group_id;
-  const switchToGroupChat = () => {
+  const switchToGroupChat = useCallback(() => {
     dispatch(setGallery(false));
     dispatch(setActiveGroup(groups));
     history.push(`/group/${groups.group_name}`);
@@ -62,7 +63,8 @@ function ChatGroup({ groups }) {
       };
       dispatch(getUserGroups(params));
     });
-  };
+  },[active_group.group_id, auth_user?.elsemployees_empid, dispatch, groups, history]);
+  
   const background = isNightMode && DARKMAIN;
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
   const heading = isNightMode ? "#fff" : "#252423";

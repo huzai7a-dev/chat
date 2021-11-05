@@ -316,10 +316,10 @@ function MessageInput({
     userMessages,
   ]);
 
-  const onEmojiClick = (event) => {
+  const onEmojiClick = useCallback((event) => {
     setMessage(`${message}${event.native}`);
     textInput.current.innerText = `${message}${event.native}`;
-  };
+  },[message]);
 
   const Emoji = React.memo(() => {
     return (
@@ -328,20 +328,23 @@ function MessageInput({
       </div>
     );
   }, []);
-  const handleStartRecording = () => {
+
+  const handleStartRecording = useCallback(() => {
     startRecording();
     setRecording(true);
-  };
-  const handleCancelVoice = () => {
+  },[startRecording]);
+
+  const handleCancelVoice = useCallback(() => {
     stopRecording();
     setVisibleAudio(false)
     setRecording(false);
-  };
+  },[stopRecording]);
 
-  const handleStopVoice = ()=>{
+  const handleStopVoice = useCallback(()=>{
     stopRecording();
     setVisibleAudio(true);
-  }
+  },[stopRecording])
+
   return (
     <div
       className="inputAttachContainer"

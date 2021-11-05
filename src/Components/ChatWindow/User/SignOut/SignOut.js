@@ -1,6 +1,5 @@
 import { Button } from "@material-ui/core";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import React from "react";
+import React, { useCallback } from "react";
 import "./signOut.css";
 import { useDispatch, useSelector } from "react-redux";
 import { DARKMAIN } from "../../../../Theme/colorConstant";
@@ -17,15 +16,15 @@ function SignOut({ setMenuOpen }) {
       auth_user: store.auth.auth_user || {},
     }
   });
-  const signOut = async() => {
+  const signOut = useCallback(async() => {
     try {
-      const response = await dispacth(logout({data:{user_id:auth_user.elsemployees_empid}}));
+      dispacth(logout({data:{user_id:auth_user.elsemployees_empid}}));
       history.replace('/');
     }
     catch(err){
-      console.log(error)
+      console.log(err)
     }
-  };
+  },[auth_user.elsemployees_empid, dispacth, history]);
 
   return (
     <div className="signOut"  style={{background: isNightMode ? DARKMAIN: "#eee"}}>

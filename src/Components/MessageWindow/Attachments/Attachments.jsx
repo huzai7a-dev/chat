@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useCallback } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -28,23 +28,21 @@ function Attachments() {
   const [attachSrc, setAttachSrc] = useState("");
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  const { auth_user, active_user, attachments, gallery } = useSelector(
+  const {  attachments, gallery } = useSelector(
     (store) => {
       return {
-        auth_user: store.auth?.auth_user || {},
-        active_user: store.chat?.active_user || {},
         attachments: store.message?.attachments || "",
         gallery: store.message?.gallery || false,
       };
     }
   );
 
-  const openImage = (e) => {
+  const openImage = useCallback((e) => {
     setOpen(true);
     setAttachSrc(e.target.currentSrc);
-  };
-  const handleClose = () => setOpen(false);
-  const DropDown = () => {
+  },[]);
+
+  const DropDown = React.memo(() => {
     const handleChange = (e) => {
       setAttachmentType(e.target.value);
     };
@@ -63,8 +61,8 @@ function Attachments() {
         </Select>
       </FormControl>
     );
-  };
-  const AttachmentsHeader = () => {
+  });
+  const AttachmentsHeader = React.memo(() => {
     return (
       <Box
         display="flex"
@@ -83,18 +81,10 @@ function Attachments() {
         <DropDown />
       </Box>
     );
-  };
-  // const AttachmentSkeleton = ()=>{
-  //   return (
-  //     [1,2,3].map((ele,id)=>{
-  //       return (
-  //         <Stack style={{margin:"5px 0px"}}><Skeleton variant="rectangular" width={300} height={118} key={ele}/></Stack>
-  //       )
-  //     })
-  //   )
-  // }
+  });
 
-  const filterAttachment = (attachment) => {
+
+  const filterAttachment = useCallback((attachment) => {
     const media = [
       "jpg",
       "jpeg",
@@ -124,7 +114,6 @@ function Attachments() {
       "GITIGNORE",
     ];
     const extension = attachment.message_originalname?.split(".").pop();
-    console.log(extension, attachment.message_originalname);
     if (attachmentType == "media") {
       return media.includes(extension.toLowerCase());
     } else if (attachmentType == "files") {
@@ -132,8 +121,9 @@ function Attachments() {
     } else {
       return true;
     }
-  };
-  const Attachments = () => {
+  },[attachmentType]);
+
+  const Attachments = React.memo(() => {
     return attachments.filter(filterAttachment).map((attachmentObj) => {
       return attachmentObj.message_attachment
         .split(",")
@@ -211,7 +201,7 @@ function Attachments() {
           }
         });
     });
-  };
+  });
   const modalStyle = {
     height: "100vh",
     display: "flex",
@@ -233,7 +223,7 @@ function Attachments() {
       </Box>
       <Modal
         open={open}
-        onClose={handleClose}
+        onClose={()=>{setOpen(false)}}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         style={modalStyle}
@@ -246,4 +236,4 @@ function Attachments() {
   );
 }
 
-export default Attachments;
+export default React.memo(Attachments);

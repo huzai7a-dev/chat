@@ -20,7 +20,6 @@ const Main = React.memo(() => {
   });
   return (
     <div className="main__window" style={{background:isNightMode ? DARKMAIN : "#fff"}}>
-     
       {!adminPanel && <ChatWindow />}
       <Switch>
         <Route path="/" component={Welcome} exact />
