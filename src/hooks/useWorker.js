@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 const useWorker = () => {
@@ -12,7 +12,7 @@ const useWorker = () => {
   const urlB64ToUint8Array = (base64String) => {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
-      .replace(/\-/g, "+")
+      .replace(/-/g, "+")
       .replace(/_/g, "/");
 
     const rawData = window.atob(base64);
@@ -24,7 +24,7 @@ const useWorker = () => {
     return outputArray;
   };
 
-  const initWorker = async (user_id) => {
+  const initWorker = useCallback(async (user_id) => {
     if (!("Notification" in window)) {
       throw console.log("This browser does not support desktop notification");
     }
@@ -33,7 +33,7 @@ const useWorker = () => {
       Notification.permission !== "denied" &&
       Notification.permission !== "granted"
     ) {
-      const permission = await Notification.requestPermission().then(
+      await Notification.requestPermission().then(
         (permission) => {
           if (permission !== "granted") {
             throw console.log("permission is denied");
@@ -81,12 +81,12 @@ const useWorker = () => {
     } catch (e) {
       console.log(e);
     }
-  };
+  },[auth_user?.elsemployees_empid]);
   useEffect(() => {
     if (auth_user?.elsemployees_empid) {
       initWorker(auth_user?.elsemployees_empid);
     }
-  }, [auth_user]);
+  }, [auth_user, initWorker]);
 };
 
 export default useWorker;

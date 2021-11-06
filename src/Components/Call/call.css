@@ -1,0 +1,13 @@
+.onCallContainer {
+    height: 100vh;
+    width: 100wv;
+    position: relative;
+    background: rgb(55 71 79 / 41%);
+    backdrop-filter: blur(5px);
+}
+
+.userIconContainer {
+    position:absolute;
+    top: 50%;
+    left: 50%;
+}
