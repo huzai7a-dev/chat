@@ -1,4 +1,5 @@
 import React from "react";
+import useSound from "use-sound";
 import "./messageWindowHeader.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,11 +9,14 @@ import {
   Modal,
   Backdrop,
 } from "@material-ui/core";
-
+import skypeSound from "../../../Assets/sound/skype-ringing.mp3";
 import CallIcon from "@material-ui/icons/Call";
 import { getUserAttachments } from "../../../api/message";
 import { setGallery } from "../../../Redux/actions/message";
 import OnCall from "../../Call/OnCall";
+import { useCalling } from "../../../hooks/useCalling";
+import OnAnswer from "../../Call/OnAnswer";
+
 function MessageWindowHeader() {
   const { active_user, isNightMode, auth_user } = useSelector((store) => {
     return {
@@ -21,10 +25,11 @@ function MessageWindowHeader() {
       auth_user: store.auth.auth_user || {},
     };
   });
+  const {me,call} = useCalling()
   const [openCall, setOpenCall] = React.useState(false);
+  const [play, { stop }] = useSound(skypeSound);
   const dispatch = useDispatch();
   const openGallery = () => {
-    // setGallery(true)
     dispatch(setGallery(true));
     const params = {
       data: {
@@ -34,6 +39,16 @@ function MessageWindowHeader() {
       },
     };
     dispatch(getUserAttachments(params));
+  };
+
+  const startCall = () => {
+     setOpenCall(true);
+     // play();
+    console.log(call)
+  };
+  const endCall = () => {
+    setOpenCall(false);
+    stop();
   };
   return (
     <div className="MessageWindowHeader">
@@ -47,7 +62,7 @@ function MessageWindowHeader() {
       </div>
       <div>
         <Tooltip title="Make a call">
-          <IconButton onClick={() => setOpenCall(true)}>
+          <IconButton onClick={startCall}>
             <CallIcon color="primary" />
           </IconButton>
         </Tooltip>
@@ -62,7 +77,8 @@ function MessageWindowHeader() {
           timeout: 500,
         }}
       >
-        <OnCall callTo={active_user?.elsemployees_name} />
+        <OnAnswer/>
+        {/* <OnCall callTo={active_user?.elsemployees_name} endCall={endCall} /> */}
       </Modal>
     </div>
   );
