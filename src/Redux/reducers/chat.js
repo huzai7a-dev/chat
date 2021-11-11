@@ -9,6 +9,7 @@ import {
   SET_TOTAL_CONTACTS,
   SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
+  SET_IS_CALL_COMING,
 } from "../constant/chat";
 
 const initState = {
@@ -19,7 +20,8 @@ const initState = {
   groupMemInfo: {},
   newMessage: [],
   allContacts: [],
-  allGroups:[]
+  allGroups:[],
+  calling:false
 };
 
 export default (state = initState, action) => {
@@ -74,6 +76,11 @@ export default (state = initState, action) => {
       return (state = {
         ...state,
         allGroups: action.allGroups,
+      });
+    case SET_IS_CALL_COMING:
+      return (state = {
+        ...state,
+        calling: action.calling,
       });
     default:
       return state;

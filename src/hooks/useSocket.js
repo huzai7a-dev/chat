@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setActiveGroup, setGroupMemInfo, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
+import { setActiveGroup, setGroupMemInfo, setIsCallComing, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
@@ -24,7 +24,19 @@ const useSocket = () => {
   useEffect(() => {
     init(auth_user.elsemployees_empid);
   }, [auth_user]);
+  
+  // ********************************* socket for calling *********************************
 
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("callUser",data =>{
+      console.log(`${data.userName} is calling`);
+      dispatch(setIsCallComing(true))
+    })
+  },[auth_user.elsemployees_empid,dispatch])
+
+  // ********************************* socket for calling *********************************
+  
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)
       socket.on("messaging", (data) => {

@@ -6,7 +6,7 @@ import CallEndIcon from "@material-ui/icons/CallEnd";
 import { DANGER, SUCCESS } from "../../Theme/colorConstant";
 
 
-const OnAnswer = () => {
+const ToReceiveCall = ({handleReject}) => {
   const userName =
     "Muhammad Huzaifa".toUpperCase().split(" ")[0][0] +
     "Muhammad Huzaifa".toUpperCase().split(" ")[1][0];
@@ -22,7 +22,7 @@ const OnAnswer = () => {
         <IconButton style={{ backgroundColor: SUCCESS }}>
           <CallIcon  style={{color:"#fff"}}/>
         </IconButton>
-        <IconButton style={{ backgroundColor: DANGER }}>
+        <IconButton style={{ backgroundColor: DANGER }} onClick={handleReject}>
           <CallEndIcon style={{color:"#fff"}}/>
         </IconButton>
       </Box>
@@ -30,4 +30,4 @@ const OnAnswer = () => {
   );
 };
 
-export default OnAnswer;
+export default ToReceiveCall;

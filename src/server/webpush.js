@@ -21,7 +21,7 @@ export const getSubscriptionByUser = (user_id) =>
   new Promise((resolve, reject) => {
     connection.query(
       `SELECT * FROM subscriptions WHERE user_id = ${user_id}`,
-      (error, results, fields) => {
+      (error, results) => {
         if (error) {
           reject(error);
         }
@@ -46,7 +46,7 @@ export const saveSubscription = (user_id, subscription) =>
       `INSERT INTO subscriptions (user_id, endpoint, expirationTime, p256dh, auth)
   VALUES ('${user_id}', '${subscription.endpoint}', '${subscription.expirationTime}', '${subscription.keys.p256dh}','${subscription.keys.auth}') 
   ON DUPLICATE KEY UPDATE endpoint='${subscription.endpoint}', expirationTime='${subscription.expirationTime}', p256dh='${subscription.keys.p256dh}',auth='${subscription.keys.auth}' `,
-      (error, results, fields) => {
+      (error, results) => {
         if (error) {
           reject(error);
         }
@@ -76,5 +76,5 @@ export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification")
 };
 
 export const sendNotification = (payload) => {
-  return webpush.sendNotification(pushSubscription, payload, options);
+  return webpush.sendNotification(pushSubscription, payload);
 };

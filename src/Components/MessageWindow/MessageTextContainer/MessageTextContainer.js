@@ -13,6 +13,7 @@ import UserMessage from "./UserMessage/UserMessage";
 import { mergeArray } from "../../../helper/util";
 import { getMoreUserMessages, getUserMessages } from "../../../api/message";
 import "./MessageTextContainer.css";
+import { getSocket } from "../../../socket";
 
 function MessageTextContainer() {
   const [hasMore, setHasMore] = useState(true);
@@ -34,7 +35,7 @@ function MessageTextContainer() {
   const image = active_user?.elsemployees_image;
   const messageContainer = createRef();
 
-  console.log("re render");
+
   useEffect(() => {
     const params = {
       data: {

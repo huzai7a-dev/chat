@@ -1,5 +1,6 @@
-import Main from "./Components/Main/Main";
+import React from 'react';
 import "./App.css";
+import Main from "./Components/Main/Main";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuthUser } from "../src/Redux/actions/auth";
@@ -14,7 +15,7 @@ import Modal from 'react-modal';
 import { getContactsTotal } from "./api/message";
 import Auth from "./Components/Auth/Auth";
 Modal.setAppElement('#root');
-const App = React.memo(() => {
+const App = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { auth_user } = useSelector((store) => {
@@ -30,7 +31,7 @@ const App = React.memo(() => {
     }
     dispatch(setAuthUser(auth_user));
     history.push("/");
-  }, []);
+  }, [dispatch, history]);
   useSocket();
   useWorker();
   useEffect(() => {
@@ -41,10 +42,10 @@ const App = React.memo(() => {
       }
     }
     dispatch(getContactsTotal(params))
-  }, [])
+  }, [auth_user?.elsemployees_empid, dispatch])
 
   return <div className="App">{auth_user ? <Main /> : <Auth />}</div>;
-})
+}
 export default () => {
   return (
     <Provider store={Store}>

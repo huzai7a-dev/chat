@@ -9,6 +9,7 @@ import {
   SET_TOTAL_CONTACTS,
   SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
+  SET_IS_CALL_COMING,
 } from "../constant/chat";
 
 export const setActiveChat = (active_user) => {
@@ -75,5 +76,11 @@ export const setAllgroups = (allGroups) => {
   return {
     type: SET_ALL_GROUPS,
     allGroups,
+  };
+};
+export const setIsCallComing = (calling) => {
+  return {
+    type: SET_IS_CALL_COMING,
+    calling,
   };
 };

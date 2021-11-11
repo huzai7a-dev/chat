@@ -9,29 +9,21 @@ export const withSocket = (app) => {
   const io = new Server(app);
 
   io.on("connection", (socket) => {
-    console.log("a user connected");
-    
+    console.log("a user connected with id",socket.id);
   });
 
   const workspaces = io.of(/^\/user-\d+$/);
 
   workspaces.on("connection", (socket) => {
-    console.log("Connected", socket.nsp.name);
     socketMappings[socket.nsp.name.split("-")[1]] = socket;
+    // ********************************* socket for calling *********************************
 
-    socket.emit("me", socket.id);
-   
-    // socket.on("disconnect", () => {
-    //   socket.broadcast.emit("callEnded");
-    // });
+    socket.on('callUser',(data)=>{
+      console.log(data);
+      socketMappings[data?.user_id]?.emit("callUser", data);
+    })
 
-    socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-      io.to(userToCall).emit("callUser", { signal: signalData, from, name });
-    });
-
-    socket.on("answerCall", (data) => {
-      io.to(data.to).emit("callAccepted", data.signal);
-    });
+   // ********************************* socket for calling *********************************
 
     socket.on("messaging", async (data) => {
       const notification = {
