@@ -18,9 +18,15 @@ export const withSocket = (app) => {
     socketMappings[socket.nsp.name.split("-")[1]] = socket;
     // ********************************* socket for calling *********************************
 
-    socket.on('callUser',(data)=>{
-      console.log(data);
-      socketMappings[data?.user_id]?.emit("callUser", data);
+    socket.on('startCall',(data)=>{
+      socketMappings[data?.user_id]?.emit("startCall", data);
+    })
+
+    socket.on('endCall',(data)=>{
+      socketMappings[data?.user_id]?.emit("endCall", data);
+    })
+    socket.on('rejectCall',(data)=>{
+      socketMappings[data?.user_id]?.emit("rejectCall", data);
     })
 
    // ********************************* socket for calling *********************************

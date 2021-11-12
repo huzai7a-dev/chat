@@ -48,11 +48,16 @@ function MessageWindowHeader() {
       userName:auth_user?.elsemployees_name
     }
     const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.emit("callUser", socketData);
+    socket.emit("startCall", socketData);
      setOpenCall(true);
      play();
   };
   const onEndCall = () => {
+    const socketData = {
+      user_id:active_user?.elsemployees_empid,
+    }
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.emit("endCall", socketData);
     setOpenCall(false);
     stop();
   };

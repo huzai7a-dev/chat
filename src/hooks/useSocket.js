@@ -2,21 +2,22 @@ import { useEffect } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setActiveGroup, setGroupMemInfo, setIsCallComing, setIsTyping, setNewGroupMessage, } from "../Redux/actions/chat";
+import { onCallComing, setActiveGroup, setGroupMemInfo, setIsTyping, setNewGroupMessage, setOnCallComing, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
 import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
 const useSocket = () => {
-  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId } = useSelector((store) => {
+  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId,onCall } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
       active_group: store.chat?.active_group || {},
       messages:store.message?.userMessages || [],
       groupMessages:store.message?.groupMessages || {},
-      oldMessageGroupId:store.chat.newMessage || []
+      oldMessageGroupId:store.chat.newMessage || [],
+      onCall: store.chat.call || {},
     }
   });
   const dispatch = useDispatch();
@@ -29,11 +30,33 @@ const useSocket = () => {
 
   useEffect(()=>{
     const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("callUser",data =>{
-      console.log(`${data.userName} is calling`);
-      dispatch(setIsCallComing(true))
+    socket.on("startCall",data =>{
+      dispatch(setOnCallComing({
+        isCalling:true,
+        callFrom:data.userName
+      }))
     })
   },[auth_user.elsemployees_empid,dispatch])
+
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("endCall",data =>{
+      dispatch(setOnCallComing({
+        ...onCall,
+        isCalling:false
+      }))
+    })
+  },[auth_user.elsemployees_empid, dispatch, onCall])
+
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("rejectCall",data =>{
+      dispatch(setOnCallComing({
+        ...onCall,
+        isCalling:false
+      }))
+    })
+  },[auth_user.elsemployees_empid, dispatch, onCall])
 
   // ********************************* socket for calling *********************************
   

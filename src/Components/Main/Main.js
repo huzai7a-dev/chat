@@ -10,20 +10,32 @@ import { useSelector, useDispatch } from "react-redux";
 import AdminPanel from "../AdminPanel/AdminPanel";
 import { Backdrop, Modal } from "@material-ui/core";
 import ToReceiveCall from "../Call/ToReceiveCall";
-import { setIsCallComing } from "../../Redux/actions/chat";
+import { setOnCallComing } from "../../Redux/actions/chat";
+import { getSocket } from "../../socket";
 
 const Main = React.memo(() => {
   const dispatch = useDispatch();
-  const { isNightMode, adminPanel, isCallComing } = useSelector((store) => {
+  const { isNightMode, adminPanel,auth_user,active_user, onCall } = useSelector((store) => {
     return {
+      active_user: store.chat.active_user || {},
+      auth_user: store.auth.auth_user || {},
       isNightMode: store.app.mode || false,
       adminPanel: store.app.adminPanel || false,
-      isCallComing: store.chat.calling || false,
+      onCall: store.chat?.call || {},
     };
   });
   const onReject = () => {
-    dispatch(setIsCallComing(false));
+    const socketData = {
+      user_id:active_user?.elsemployees_empid,
+    }
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.emit("rejectCall", socketData);
+    dispatch(setOnCallComing({
+      ...onCall,
+      isComing:false
+    }));
   };
+
   return (
     <div
       className="main__window"
@@ -31,7 +43,7 @@ const Main = React.memo(() => {
     >
       {/* receiving model  */}
       <Modal
-        open={isCallComing}
+        open={onCall?.isCalling}
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         BackdropComponent={Backdrop}
@@ -39,7 +51,7 @@ const Main = React.memo(() => {
           timeout: 500,
         }}
       >
-        <ToReceiveCall handleReject={onReject} />
+        <ToReceiveCall handleReject={onReject} from={onCall?.callFrom} />
       </Modal>
       {!adminPanel && <ChatWindow />}
       <Switch>

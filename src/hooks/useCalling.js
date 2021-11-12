@@ -36,7 +36,7 @@
 //       setMe(id);
 //     });
 
-//     socket.on("callUser", (data) => {
+//     socket.on("startCall", (data) => {
 //       setReceivingCall(true);
 //       setCaller(data.from);
 //       setName(data.name);
@@ -44,7 +44,7 @@
 //     });
 //   }, [auth_user.elsemployees_empid,myAudio]);
 
-//   const callUser = (id) => {
+//   const startCall = (id) => {
 //     const socket = getSocket(auth_user.elsemployees_empid);
 //     const peer = new Peer({
 //       initiator: true,
@@ -52,7 +52,7 @@
 //       stream: stream,
 //     });
 //     peer.on("signal", (data) => {
-//       socket.emit("callUser", {
+//       socket.emit("startCall", {
 //         userToCall: id,
 //         signalData: data,
 //         from: me,
