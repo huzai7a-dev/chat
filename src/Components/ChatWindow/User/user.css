@@ -5,7 +5,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 8px;
-  cursor: pointer;
+  cursor: default;
   position: relative;
 }
 .user__info {

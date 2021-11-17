@@ -10,6 +10,9 @@ import {
   SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
   SET_ON_CALL_COMING,
+  SET_MAKE_CALL,
+  SET_CALL_ACCEPTED,
+  SET_DATA_TO_CALL,
 } from "../constant/chat";
 
 export const setActiveChat = (active_user) => {
@@ -78,9 +81,30 @@ export const setAllgroups = (allGroups) => {
     allGroups,
   };
 };
+export const setMakeCall = (call) => {
+  return {
+    type: SET_MAKE_CALL,
+    call,
+  };
+};
+
+export const setCallAccepted = (call) => {
+  return {
+    type: SET_CALL_ACCEPTED,
+    call,
+  };
+};
+
 export const setOnCallComing = (calling) => {
   return {
     type: SET_ON_CALL_COMING,
     calling,
+  };
+};
+
+export const setDataToCall = (data) => {
+  return {
+    type: SET_DATA_TO_CALL,
+    data,
   };
 };

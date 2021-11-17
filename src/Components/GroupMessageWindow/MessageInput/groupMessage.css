@@ -103,3 +103,7 @@ div:empty:before {
   align-items: "Center";
   cursor: "pointer" !important;
 }
+
+.emoji-mart-preview {
+  display: none;
+}

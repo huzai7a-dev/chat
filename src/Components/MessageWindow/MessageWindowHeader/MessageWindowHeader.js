@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect, useState } from "react";
 import useSound from "use-sound";
 import "./messageWindowHeader.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,20 +15,28 @@ import { getUserAttachments } from "../../../api/message";
 import { setGallery } from "../../../Redux/actions/message";
 import OnCall from "../../Call/OnCall";
 import { getSocket } from "../../../socket";
-
-
-
+import { setMakeCall } from "../../../Redux/actions/chat";
+// const Peer = require('peerjs');
 function MessageWindowHeader() {
-  const { active_user, isNightMode, auth_user } = useSelector((store) => {
+  
+  const [openCall, setOpenCall] = useState(false);
+  const [myCallId,setMyCallId] = useState('');
+  const [stream,setStream] = useState("");
+  const [play, { stop }] = useSound(skypeSound);
+  const { active_user, isNightMode, auth_user,makeCall } = useSelector((store) => {
     return {
       active_user: store.chat.active_user || {},
       isNightMode: store.app.mode || false,
       auth_user: store.auth.auth_user || {},
+      makeCall:store.chat?.makeCall || false,
     };
   });
-  // const call = useCalling();
-  const [openCall, setOpenCall] = React.useState(false);
-  const [play, { stop }] = useSound(skypeSound);
+  useEffect(()=>{
+    const peer = new window.Peer();
+    peer.on('open', id => {
+      setMyCallId(id);
+    });
+  },[])
   const dispatch = useDispatch();
   const openGallery = () => {
     dispatch(setGallery(true));
@@ -37,20 +45,26 @@ function MessageWindowHeader() {
         user_id: auth_user?.elsemployees_empid,
         from_id: auth_user?.elsemployees_empid,
         to_id: active_user?.elsemployees_empid,
+        
       },
     };
     dispatch(getUserAttachments(params));
   };
-
+  
   const onStartCall = () => {
-    const socketData = {
-      user_id:active_user?.elsemployees_empid,
-      userName:auth_user?.elsemployees_name
-    }
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.emit("startCall", socketData);
-     setOpenCall(true);
-     play();
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+			setStream(stream)
+		})
+
+      const socketData = {
+        user_id:active_user?.elsemployees_empid,
+        userName:auth_user?.elsemployees_name,
+        userCallId:myCallId
+      }
+      const socket = getSocket(auth_user?.elsemployees_empid);
+      socket.emit("startCall", socketData);
+      dispatch(setMakeCall(true))
+    //  play();
   };
   const onEndCall = () => {
     const socketData = {
@@ -58,8 +72,8 @@ function MessageWindowHeader() {
     }
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("endCall", socketData);
-    setOpenCall(false);
-    stop();
+    dispatch(setMakeCall(false))
+    // stop();
   };
 
   return (
@@ -82,7 +96,7 @@ function MessageWindowHeader() {
 
       {/* calling model */}
       <Modal
-        open={openCall}
+        open={makeCall}
         onClose={() => setOpenCall(false)}
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"

@@ -10,6 +10,8 @@ import {
   SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
   SET_ON_CALL_COMING,
+  SET_MAKE_CALL,
+  SET_CALL_ACCEPTED,
 } from "../constant/chat";
 
 const initState = {
@@ -21,7 +23,9 @@ const initState = {
   newMessage: [],
   allContacts: [],
   allGroups:[],
-  call:{}
+  call:{},
+  makeCall:false,
+  isCallAccepted:false,
 };
 
 export default (state = initState, action) => {
@@ -81,6 +85,16 @@ export default (state = initState, action) => {
       return (state = {
         ...state,
         call: action.calling,
+      });
+    case SET_MAKE_CALL:
+      return (state = {
+        ...state,
+        makeCall: action.call,
+      });
+    case SET_CALL_ACCEPTED:
+      return (state = {
+        ...state,
+        isCallAccepted: action.call,
       });
     default:
       return state;

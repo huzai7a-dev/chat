@@ -6,7 +6,7 @@ import CallEndIcon from "@material-ui/icons/CallEnd";
 import { DANGER, SECONDARYDARK, SUCCESS } from "../../Theme/colorConstant";
 
 
-const ToReceiveCall = ({handleReject,from}) => {
+const ToReceiveCall = ({handleAccept,handleReject,from}) => {
   const userName =
     from.toUpperCase().split(" ")[0][0] +
     from.toUpperCase().split(" ")[1][0];
@@ -17,10 +17,10 @@ const ToReceiveCall = ({handleReject,from}) => {
           <Typography variant="h5">{userName}</Typography>
         </Avatar>
         <Typography variant="h6" style={{color:"#fff"}}>{from}</Typography>
-        <Typography variant="caption" style={{color:SECONDARYDARK}}>{from}</Typography>
+        <Typography variant="caption" style={{color:SECONDARYDARK}}>Incoming call...</Typography>
       </Box>
       <Box display="flex" justifyContent="space-around" style={{width:"50%"}}>
-        <IconButton style={{ backgroundColor: SUCCESS }}>
+        <IconButton style={{ backgroundColor: SUCCESS }} onClick={handleAccept}>
           <CallIcon  style={{color:"#fff"}}/>
         </IconButton>
         <IconButton style={{ backgroundColor: DANGER }} onClick={handleReject}>

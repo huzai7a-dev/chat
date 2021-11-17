@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { getSocket, init } from "../socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { onCallComing, setActiveGroup, setGroupMemInfo, setIsTyping, setNewGroupMessage, setOnCallComing, } from "../Redux/actions/chat";
+import { onCallComing, setActiveGroup, setGroupMemInfo, setIsTyping, setMakeCall,setCallAccepted, setNewGroupMessage, setOnCallComing, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
 import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
+import { Notify } from "../helper/notify";
 const useSocket = () => {
   const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId,onCall } = useSelector((store) => {
     return {
@@ -33,8 +34,19 @@ const useSocket = () => {
     socket.on("startCall",data =>{
       dispatch(setOnCallComing({
         isCalling:true,
-        callFrom:data.userName
+        callFrom:data.userName,
+        callerId:data.userCallId,
       }))
+    })
+  },[auth_user.elsemployees_empid,dispatch])
+  
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("acceptCall",data =>{
+      const peer = new window.Peer();
+      var call = peer.call(data.callerId, data.mediaStream);
+      dispatch(setMakeCall(false))
+      dispatch(setCallAccepted(true))
     })
   },[auth_user.elsemployees_empid,dispatch])
 
@@ -55,6 +67,8 @@ const useSocket = () => {
         ...onCall,
         isCalling:false
       }))
+      dispatch(setMakeCall(false))
+      Notify('Call Rejected','error')
     })
   },[auth_user.elsemployees_empid, dispatch, onCall])
 

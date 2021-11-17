@@ -21,7 +21,7 @@ import { setQuote } from "../../../Redux/actions/app";
 import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
-import Utils, { getFileFromBlob } from "../../../helper/util";
+import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
@@ -103,6 +103,7 @@ function MessageInput({
       searchText: store.app.searchText || "",
     };
   });
+
   // clear typed messages when chat window changes
   useEffect(() => {
     setMessage("");
@@ -221,9 +222,10 @@ function MessageInput({
     setPastedImg([]);
     dispatch(setQuote(null));
   }, [dispatch, setAttachment]);
+  
   // send message on enter
   const SendMessageOnEnter = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (
         message.length > 0 ||
@@ -234,8 +236,15 @@ function MessageInput({
         SendMessage();
       }
     }
+    if(e.key === "Enter" && e.shiftKey){
+      e.preventDefault()
+      setMessage(`${message}\n`); // jump to next line
+      textInput.current.innerText = `${message}\n`
+      placeCaretAtEnd(textInput.current);
+    }
   };
   const SendMessage = useCallback(async () => {
+    
     setToDefault();
     const userAttachment = async() => {
       if (attachment.length > 0) {
@@ -313,15 +322,16 @@ function MessageInput({
     userMessages,
   ]);
 
-  const onEmojiClick = useCallback((event) => {
+  const onEmojiSelect = useCallback((event) => {
     setMessage(`${message}${event.native}`);
     textInput.current.innerText = `${message}${event.native}`;
+    placeCaretAtEnd(textInput.current);
   },[message]);
 
   const Emoji = React.memo(() => {
     return (
       <div style={{ position: "absolute", bottom: "100%", left: "0" }}>
-        <Picker onSelect={onEmojiClick} native={true} />
+        <Picker showPreview={false} onSelect={onEmojiSelect} native={true} />
       </div>
     );
   }, []);

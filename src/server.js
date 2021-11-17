@@ -66,6 +66,7 @@ server
     <title>Bizz Chat</title>
   </head>
     <body>
+    <script src="/peerjs.min.js"></script>
         <div id="root">${markup}</div>
         ${jsScriptTagsFromAssets(assets, "client", " defer crossorigin")}
     </body>

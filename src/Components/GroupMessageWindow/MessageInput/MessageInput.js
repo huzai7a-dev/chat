@@ -16,7 +16,7 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
 import { getSocket } from "../../../socket";
 import { setQuote } from "../../../Redux/actions/app";
-import Utils, { getFileFromBlob } from "../../../helper/util";
+import Utils, { getFileFromBlob,placeCaretAtEnd } from "../../../helper/util";
 import { sendGroupMessage } from "../../../api/message";
 import { getUserGroups, seenGroupMessage } from "../../../api/chat";
 import "emoji-mart/css/emoji-mart.css";
@@ -104,6 +104,7 @@ function MessageInput({
   const onEmojiClick = (event) => {
     setMessage(`${message}${event.native}`);
     textInput.current.innerText = `${message}${event.native}`;
+    placeCaretAtEnd(textInput.current);
   };
 
   // function to generate Image preview & multiple attachment
@@ -214,6 +215,12 @@ function MessageInput({
       if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
         SendMessage();
       }
+    }
+    if(e.key === "Enter" && e.shiftKey){
+      e.preventDefault()
+      setMessage(`${message}\n`); // jump to next line
+      textInput.current.innerText = `${message}\n`
+      placeCaretAtEnd(textInput.current);
     }
   };
   const SendMessage = useCallback(async () => {

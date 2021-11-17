@@ -10,30 +10,41 @@ import { useSelector, useDispatch } from "react-redux";
 import AdminPanel from "../AdminPanel/AdminPanel";
 import { Backdrop, Modal } from "@material-ui/core";
 import ToReceiveCall from "../Call/ToReceiveCall";
+import OnCalling from "../Call/OnCalling";
 import { setOnCallComing } from "../../Redux/actions/chat";
 import { getSocket } from "../../socket";
 
 const Main = React.memo(() => {
   const dispatch = useDispatch();
-  const { isNightMode, adminPanel,auth_user,active_user, onCall } = useSelector((store) => {
-    return {
-      active_user: store.chat.active_user || {},
-      auth_user: store.auth.auth_user || {},
-      isNightMode: store.app.mode || false,
-      adminPanel: store.app.adminPanel || false,
-      onCall: store.chat?.call || {},
-    };
-  });
-  const onReject = () => {
+  const { isNightMode, adminPanel, auth_user, active_user, onCall } =
+    useSelector((store) => {
+      return {
+        active_user: store.chat.active_user || {},
+        auth_user: store.auth.auth_user || {},
+        isNightMode: store.app.mode || false,
+        adminPanel: store.app.adminPanel || false,
+        onCall: store.chat?.call || {},
+      };
+    });
+  const onCallAccept = () => {
     const socketData = {
-      user_id:active_user?.elsemployees_empid,
-    }
+      user_id: active_user?.elsemployees_empid,
+    };
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.emit("acceptCall", socketData);
+  };
+  const onCallReject = () => {
+    const socketData = {
+      user_id: active_user?.elsemployees_empid,
+    };
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("rejectCall", socketData);
-    dispatch(setOnCallComing({
-      ...onCall,
-      isComing:false
-    }));
+    dispatch(
+      setOnCallComing({
+        ...onCall,
+        isCalling: false,
+      })
+    );
   };
 
   return (
@@ -51,7 +62,12 @@ const Main = React.memo(() => {
           timeout: 500,
         }}
       >
-        <ToReceiveCall handleReject={onReject} from={onCall?.callFrom} />
+        {/* <OnCalling name={'Huzaifa'}/> */}
+        <ToReceiveCall
+          handleAccept={onCallAccept}
+          handleReject={onCallReject}
+          from={onCall?.callFrom}
+        />
       </Modal>
       {!adminPanel && <ChatWindow />}
       <Switch>

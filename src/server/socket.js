@@ -22,6 +22,10 @@ export const withSocket = (app) => {
       socketMappings[data?.user_id]?.emit("startCall", data);
     })
 
+    socket.on('acceptCall',(data)=>{
+      socketMappings[data?.user_id]?.emit("acceptCall", data);
+    })
+
     socket.on('endCall',(data)=>{
       socketMappings[data?.user_id]?.emit("endCall", data);
     })
