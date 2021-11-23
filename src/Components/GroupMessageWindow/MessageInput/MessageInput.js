@@ -14,7 +14,7 @@ import moment from "moment";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
-import { getSocket } from "../../../socket";
+import { getSocket } from "../../../config/socket";
 import { setQuote } from "../../../Redux/actions/app";
 import Utils, { getFileFromBlob,placeCaretAtEnd } from "../../../helper/util";
 import { sendGroupMessage } from "../../../api/message";

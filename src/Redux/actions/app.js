@@ -7,7 +7,11 @@ import {
   SET_QUOTE,
   SET_SEEN,
   SET_NIGHT_MODE,
-  SET_ADMIN_PANEL
+  SET_ADMIN_PANEL,
+  SET_RECEIVING_DATA,
+  SET_CALLING_DATA,
+  SET_REMOTE_STREAM,
+  SET_LOCAL_STREAM
 } from "../constant/app";
 
 export const setUserSearchResult = (userSearch) => {
@@ -69,5 +73,29 @@ export const setAdminPanel = (setAdmin) => {
   return {
     type: SET_ADMIN_PANEL,
     setAdmin,
+  };
+};
+export const setCallerInfo = (callerInfo) => {
+  return {
+    type: SET_RECEIVING_DATA,
+    callerInfo,
+  };
+};
+export const setCallingInfo = (callingInfo) => {
+  return {
+    type: SET_CALLING_DATA,
+    callingInfo,
+  };
+};
+export const setRemoteStream = (remoteStream) => {
+  return {
+    type: SET_REMOTE_STREAM,
+    remoteStream,
+  };
+};
+export const setLocalStream = (localStream) => {
+  return {
+    type: SET_LOCAL_STREAM,
+    localStream,
   };
 };

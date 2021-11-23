@@ -12,11 +12,14 @@ import { Backdrop, Modal } from "@material-ui/core";
 import ToReceiveCall from "../Call/ToReceiveCall";
 import OnCalling from "../Call/OnCalling";
 import { setOnCallComing } from "../../Redux/actions/chat";
-import { getSocket } from "../../socket";
+import { getSocket } from "../../config/socket";
+import { setCallerInfo, setCallingInfo } from "../../Redux/actions/app";
+import { getPeerConnection } from "../../config/peerconnection";
 
 const Main = React.memo(() => {
   const dispatch = useDispatch();
-  const { isNightMode, adminPanel, auth_user, active_user, onCall } =
+  const videoRef = useRef();
+  const { isNightMode, adminPanel, auth_user, active_user, onCall, callerInfo, remoteStream } =
     useSelector((store) => {
       return {
         active_user: store.chat.active_user || {},
@@ -24,15 +27,11 @@ const Main = React.memo(() => {
         isNightMode: store.app.mode || false,
         adminPanel: store.app.adminPanel || false,
         onCall: store.chat?.call || {},
+        callerInfo: store.app.callerInfo,
+        remoteStream : store.app.remoteStream,
       };
     });
-  const onCallAccept = () => {
-    const socketData = {
-      user_id: active_user?.elsemployees_empid,
-    };
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.emit("acceptCall", socketData);
-  };
+
   const onCallReject = () => {
     const socketData = {
       user_id: active_user?.elsemployees_empid,
@@ -45,7 +44,16 @@ const Main = React.memo(() => {
         isCalling: false,
       })
     );
+    dispatch(setCallerInfo({}))
   };
+
+  useEffect(() => {
+    if(videoRef.current && remoteStream) {
+      console.log("Playing Audio",remoteStream)
+      videoRef.current.srcObject = remoteStream;
+      videoRef.current.play()
+    }
+  }, [remoteStream])
 
   return (
     <div
@@ -54,7 +62,7 @@ const Main = React.memo(() => {
     >
       {/* receiving model  */}
       <Modal
-        open={onCall?.isCalling}
+        open={Object.keys(callerInfo).length > 0}
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         BackdropComponent={Backdrop}
@@ -62,9 +70,8 @@ const Main = React.memo(() => {
           timeout: 500,
         }}
       >
-        {/* <OnCalling name={'Huzaifa'}/> */}
+        
         <ToReceiveCall
-          handleAccept={onCallAccept}
           handleReject={onCallReject}
           from={onCall?.callFrom}
         />

@@ -7,7 +7,11 @@ import {
   SET_QUOTE,
   SET_SEEN,
   SET_NIGHT_MODE,
-  SET_ADMIN_PANEL
+  SET_ADMIN_PANEL,
+  SET_RECEIVING_DATA,
+  SET_CALLING_DATA,
+  SET_REMOTE_STREAM,
+  SET_LOCAL_STREAM
 } from "../constant/app";
 const initState = {
   userSearch: null,
@@ -16,7 +20,11 @@ const initState = {
   typedMsg: [],
   seen:false,
   mode:false,
-  adminPanel:false
+  adminPanel:false,
+  callerInfo: {},
+  callingInfo: {},
+  remoteStream: null,
+  localStream: null,
 };
 
 export default (state = initState, action) => {
@@ -25,6 +33,26 @@ export default (state = initState, action) => {
       return (state = {
         ...state,
         userSearch: action.userSearch,
+      });
+    case SET_RECEIVING_DATA:
+      return (state = {
+        ...state,
+        callerInfo: action.callerInfo,
+      });
+    case SET_CALLING_DATA:
+      return (state = {
+        ...state,
+        callingInfo: action.callingInfo,
+      });
+    case SET_REMOTE_STREAM:
+      return (state = {
+        ...state,
+        remoteStream: action.remoteStream,
+      });
+    case SET_LOCAL_STREAM:
+      return (state = {
+        ...state,
+        localStream: action.localStream,
       });
     case SET_SEARCH_TEXT:
       return (state = {
