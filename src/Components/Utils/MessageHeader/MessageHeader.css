@@ -1,0 +1,11 @@
+.message__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.left__options {
+  color: #d1d1d1;
+  cursor: pointer;
+  display: flex;
+}

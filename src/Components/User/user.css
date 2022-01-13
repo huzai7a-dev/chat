@@ -1,0 +1,9 @@
+.user__container {
+  padding: 0.2rem 0.6rem;
+  margin: 0.3rem 0;
+}
+.user__container:hover {
+  background: #d8ecf7;
+  cursor: pointer;
+  color: #267396;
+}

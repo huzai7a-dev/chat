@@ -1,18 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import ChatWindow from "../ChatWindow/ChatWindow";
-import MessageWindow from "../MessageWindow/MessageWindow";
-import Welcome from "../Welcome/Welcome";
-import "./Main.css";
-import GroupMessageWindow from "../GroupMessageWindow/GroupMessageWindow";
 import { Route, Switch } from "react-router-dom";
-import { DARKMAIN } from "../../Theme/colorConstant";
 import { useSelector, useDispatch } from "react-redux";
+
+import MessageWindow from "../../Views/MessageWindow/MessageWindow";
+import Welcome from "../../Views/Welcome/Welcome";
+import GroupMessageWindow from "../../Views/GroupMessageWindow/GroupMessageWindow";
+import { DARKMAIN } from "../../Theme/colorConstant";
 import AdminPanel from "../AdminPanel/AdminPanel";
-import { Backdrop, Modal } from "@material-ui/core";
-import ToReceiveCall from "../Call/ToReceiveCall";
-import OnCalling from "../Call/OnCalling";
-import { setOnCallComing } from "../../Redux/actions/chat";
-import { getSocket } from "../../socket";
+import AppLayout from "../AppLayout/AppLayout";
+import "./Main.css";
 
 const Main = React.memo(() => {
   const dispatch = useDispatch();
@@ -26,55 +22,19 @@ const Main = React.memo(() => {
         onCall: store.chat?.call || {},
       };
     });
-  const onCallAccept = () => {
-    const socketData = {
-      user_id: active_user?.elsemployees_empid,
-    };
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.emit("acceptCall", socketData);
-  };
-  const onCallReject = () => {
-    const socketData = {
-      user_id: active_user?.elsemployees_empid,
-    };
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.emit("rejectCall", socketData);
-    dispatch(
-      setOnCallComing({
-        ...onCall,
-        isCalling: false,
-      })
-    );
-  };
 
   return (
     <div
       className="main__window"
       style={{ background: isNightMode ? DARKMAIN : "#fff" }}
     >
-      {/* receiving model  */}
-      <Modal
-        open={onCall?.isCalling}
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        {/* <OnCalling name={'Huzaifa'}/> */}
-        <ToReceiveCall
-          handleAccept={onCallAccept}
-          handleReject={onCallReject}
-          from={onCall?.callFrom}
-        />
-      </Modal>
-      {!adminPanel && <ChatWindow />}
       <Switch>
-        <Route path="/" component={Welcome} exact />
-        <Route path="/user/:id" component={MessageWindow} />
-        <Route path="/group/:id" component={GroupMessageWindow} />
         <Route path="/admin" component={AdminPanel} />
+        <AppLayout>
+          <Route path="/" component={Welcome} exact />
+          <Route path="/user/:id" component={MessageWindow} />
+          <Route path="/group/:id" component={GroupMessageWindow} />
+        </AppLayout>
       </Switch>
     </div>
   );

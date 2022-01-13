@@ -7,7 +7,8 @@ import {
   SET_QUOTE,
   SET_SEEN,
   SET_NIGHT_MODE,
-  SET_ADMIN_PANEL
+  SET_ADMIN_PANEL,
+  SET_SIDE_BAR,
 } from "../constant/app";
 
 export const setUserSearchResult = (userSearch) => {
@@ -69,5 +70,11 @@ export const setAdminPanel = (setAdmin) => {
   return {
     type: SET_ADMIN_PANEL,
     setAdmin,
+  };
+};
+export const setSideBar = (state) => {
+  return {
+    type: SET_SIDE_BAR,
+    state,
   };
 };

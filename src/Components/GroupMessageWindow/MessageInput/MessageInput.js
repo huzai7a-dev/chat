@@ -16,17 +16,25 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
 import { getSocket } from "../../../socket";
 import { setQuote } from "../../../Redux/actions/app";
-import Utils, { getFileFromBlob,placeCaretAtEnd } from "../../../helper/util";
+import Utils, {
+  filterList,
+  getFileFromBlob,
+  placeCaretAtEnd,
+} from "../../../helper/util";
 import { sendGroupMessage } from "../../../api/message";
-import { getUserGroups, seenGroupMessage } from "../../../api/chat";
+import {
+  getGroupParticipants,
+  getUserGroups,
+  seenGroupMessage,
+} from "../../../api/chat";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { setGroupMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DARKMAIN } from "../../../Theme/colorConstant";
 import MicIcon from "@material-ui/icons/Mic";
-
 import { useReactMediaRecorder } from "react-media-recorder";
 import Recorder from "../../Recorder/Recorder";
+import User from "../../User/User";
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -100,12 +108,26 @@ function MessageInput({
   const dispatch = useDispatch();
   const [pastedImg, setPastedImg] = useState([]);
   const [visibleAudio, setVisibleAudio] = useState(false);
+  const [participants, setParticipants] = useState([]);
+  const [showParticipants, setShowParticipants] = useState([]);
 
   const onEmojiClick = (event) => {
     setMessage(`${message}${event.native}`);
     textInput.current.innerText = `${message}${event.native}`;
     placeCaretAtEnd(textInput.current);
   };
+
+  const getParticipants = useCallback(async () => {
+    const params = {
+      data: {
+        user_id: auth_user?.elsemployees_empid,
+        group_id: active_group?.group_id,
+      },
+    };
+    const response = await dispatch(getGroupParticipants(params));
+    setParticipants(response.data?.participants);
+    setShowParticipants(true);
+  }, [active_group?.group_id, auth_user?.elsemployees_empid, dispatch]);
 
   // function to generate Image preview & multiple attachment
   const AttachmentPreview = useMemo(() => {
@@ -210,33 +232,34 @@ function MessageInput({
     setVisibleAudio(true);
   };
   const SendMessageOnEnter = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      setMessage(`${message}\n`); // jump to next line
+      textInput.current.innerText = `${message}\n`;
+      placeCaretAtEnd(textInput.current);
+    } else if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
         SendMessage();
       }
     }
-    if(e.key === "Enter" && e.shiftKey){
-      e.preventDefault()
-      setMessage(`${message}\n`); // jump to next line
-      textInput.current.innerText = `${message}\n`
-      placeCaretAtEnd(textInput.current);
-    }
   };
+
+  const userAttachment = useCallback(async () => {
+    if (attachment.length > 0) {
+      return attachment;
+    } else if (pastedImg.length > 0) {
+      return pastedImg;
+    } else if (mediaBlobUrl) {
+      const file = await getFileFromBlob(mediaBlobUrl);
+      return file;
+    } else {
+      return null;
+    }
+  }, [attachment, mediaBlobUrl, pastedImg]);
+
   const SendMessage = useCallback(async () => {
     setToDefault();
-    const userAttachment = async () => {
-      if (attachment.length > 0) {
-        return attachment;
-      } else if (pastedImg.length > 0) {
-        return pastedImg;
-      } else if (mediaBlobUrl) {
-        const file = await getFileFromBlob(mediaBlobUrl);
-        return file;
-      } else {
-        return null;
-      }
-    };
     const attachmentFile = await userAttachment();
     const messageParams = {
       data: {
@@ -305,36 +328,52 @@ function MessageInput({
   }, [
     active_group.group_id,
     active_group?.group_name,
-    attachment,
     auth_user?.elsemployees_empid,
     auth_user?.elsemployees_image,
     auth_user?.elsemployees_name,
     dispatch,
     groupMessages,
-    mediaBlobUrl,
     message,
-    pastedImg,
     quote.from_username,
     quote?.groupmessage_body,
     quote?.message_id,
     setScrollDown,
     setToDefault,
+    userAttachment,
   ]);
-  const attachStyle = {
-    background: isNightMode ? DARKMAIN : "#eee",
-    height: "40vh",
-  };
-  const Emoji = () => {
+
+  const Emoji = (onEmojiClick) => {
     return (
       <div style={{ position: "absolute", bottom: "100%", left: "0" }}>
         <Picker onSelect={onEmojiClick} native={true} />
       </div>
     );
   };
+
+  const mentionUser = (e) => {
+    if (e.target.innerText[0] === "@" || e.target.innerText.includes(" @")) {
+      getParticipants();
+    } else {
+      setShowParticipants(false);
+    }
+  };
+
+  const selectMentionUser = (user) => {
+    const span = document.createElement("span");
+    span.innerText = user.elsemployees_name;
+    textInput.current.appendChild(span);
+  };
   return (
     <div
       className="inputAttachContainer"
-      style={attachment.length ? attachStyle : null}
+      style={
+        attachment.length
+          ? {
+              background: isNightMode ? DARKMAIN : "#eee",
+              height: "40vh",
+            }
+          : null
+      }
     >
       <div className="attachmentPreview">
         {attachment ? AttachmentPreview : null}
@@ -370,17 +409,39 @@ function MessageInput({
                       </IconButton>
                     </div>
                   )}
-
+                  {showParticipants && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        bottom: "100%",
+                        left: "0",
+                      }}
+                    >
+                      {participants
+                        .filter((v) =>
+                          filterList(v.elsemployees_name, message.substring(1))
+                        )
+                        .map((user) => (
+                          <User
+                            onClick={() => selectMentionUser(user)}
+                            key={user.elsemployees_empid}
+                            userName={user.elsemployees_name}
+                            userImage={user.elsemployees_image}
+                          />
+                        ))}
+                    </div>
+                  )}
                   {isEmojiActive && <Emoji />}
                   <div
                     className="inputField"
                     ref={textInput}
-                    onKeyUp={(e) => {
+                    onKeyDown={(e) => {
                       setMessage(e.target.innerText);
                     }}
                     onPasteCapture={(e) => {
                       setPastedImg(e.clipboardData.files);
                     }}
+                    onKeyUp={mentionUser}
                     data-placeholder={"Type a Message"}
                     contentEditable={true}
                   />

@@ -1,0 +1,39 @@
+.welcome {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.welcome__container {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+.userName h1 {
+  font-weight: 400;
+}
+
+.user__profession {
+  font-size: 1rem;
+  letter-spacing: 1px;
+  text-transform: capitalize;
+}
+.startConvo__btn .MuiButtonBase-root {
+  color: white !important;
+  background: #000;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.startConvo__btn .MuiButtonBase-root:hover {
+  color: white !important;
+  background: #000 !important;
+}
+.welcomeNav {
+  position: absolute;
+  right: 0;
+  top: 18px;
+}

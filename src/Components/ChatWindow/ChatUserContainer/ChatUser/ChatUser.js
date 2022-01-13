@@ -1,4 +1,4 @@
-import { Avatar,Typography, Badge, Box } from "@material-ui/core";
+import { Avatar, Typography, Badge, Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import { quote } from "../../../../Redux/Action";
 import "./chatUser.css";
@@ -6,15 +6,17 @@ import { useHistory } from "react-router-dom";
 import moment from "moment";
 import { getSocket } from "../../../../socket";
 import { getContactsUser, seenMessage } from "../../../../api/chat";
-import { setActiveChat } from "../../../../Redux/actions/chat";
+import { setActiveChat, setHeaderData } from "../../../../Redux/actions/chat";
 import loading from "../../../../Assets/loading.gif";
 import { DARKLIGHT, DARKMAIN, WHITE } from "../../../../Theme/colorConstant";
 import { setGallery } from "../../../../Redux/actions/message";
 import React, { useCallback } from "react";
+import { setSideBar } from "../../../../Redux/actions/app";
 
 const ChatUser = React.memo((props) => {
   const history = useHistory();
   const dispatch = useDispatch();
+
   const image = props.users?.elsemployees_image;
   const { auth_user, activeUser, isTyping, isNightMode } = useSelector(
     (store) => {
@@ -49,7 +51,17 @@ const ChatUser = React.memo((props) => {
     };
     dispatch(setGallery(false));
     dispatch(quote(null));
+    if (window.innerWidth < 700) {
+      dispatch(setSideBar(true));
+    }
     dispatch(setActiveChat(props.users));
+    dispatch(
+      setHeaderData({
+        activeType: "user",
+        activeName: props.users?.elsemployees_name,
+        activeId: props.users?.elsemployees_empid,
+      })
+    );
     if (props.users.unseen == 1) {
       const socket = getSocket(auth_user?.elsemployees_empid);
       socket.emit("seen", paramData);
@@ -82,7 +94,7 @@ const ChatUser = React.memo((props) => {
 
   const Typing = React.memo(() => {
     return (
-      <Box  display="flex">
+      <Box display="flex">
         <Typography variant="caption" color="textSecondary">
           Typing
         </Typography>

@@ -1,0 +1,96 @@
+.editGroup {
+  width: 100%;
+  height: 100%;
+  background: #eeee;
+}
+.editGroupTop {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 5px;
+}
+.searchMember {
+  display: flex;
+  justify-content: center;
+}
+.membersList {
+  overflow-y: scroll;
+  height: 100%;
+  padding: 10px;
+  margin-top: 10px;
+}
+.member {
+  width: 100%;
+  height: 30px;
+  padding: 20px 10px;
+  margin: 18px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.memberName {
+  flex: 1;
+  margin-left: 10px;
+}
+.pending {
+  height: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.groupInfoHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+.groupInfoPicture {
+  display: flex;
+  justify-content: center;
+}
+.groupInfoName {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: 10px;
+}
+.groupInfoName input {
+  text-align: center;
+  width: 70%;
+  border: none;
+  outline: none;
+  background: transparent;
+  height: 50px;
+  font-size: 1.5rem;
+}
+.groupInfoName .MuiIconButton-root {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.participants {
+  height: 100%;
+  background: #eeee;
+}
+.groupLogo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.participantsContainer {
+  overflow-y: scroll;
+  height: 80%;
+}
+.participantsdetails {
+  display: flex;
+  align-items: center;
+}
+.participantsLoader {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.participant {
+  padding: 10px;
+}

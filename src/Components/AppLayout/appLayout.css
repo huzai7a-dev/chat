@@ -1,0 +1,3 @@
+.appLayout__container {
+  height: calc(100vh - 64px);
+}

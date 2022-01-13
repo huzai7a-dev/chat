@@ -67,7 +67,6 @@ function MessageInput({
   attachment,
   open,
   setAttachment,
-  setScrollDown,
 }) {
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
@@ -222,44 +221,38 @@ function MessageInput({
     setPastedImg([]);
     dispatch(setQuote(null));
   }, [dispatch, setAttachment]);
-  
+  useEffect(()=>{
+    placeCaretAtEnd(textInput.current);
+  },[message])
   // send message on enter
   const SendMessageOnEnter = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      if (
-        message.length > 0 ||
-        attachment.length > 0 ||
-        pastedImg.length > 0 ||
-        mediaBlobUrl
-      ) {
-        SendMessage();
-      }
-    }
     if(e.key === "Enter" && e.shiftKey){
       e.preventDefault()
       setMessage(`${message}\n`); // jump to next line
       textInput.current.innerText = `${message}\n`
-      placeCaretAtEnd(textInput.current);
+  }
+  else if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
+      SendMessage();
     }
+  }
   };
+  const userAttachment = useCallback(async () => {
+    if (attachment.length > 0) {
+      return attachment;
+    } else if (pastedImg.length > 0) {
+      return pastedImg;
+    } else if (mediaBlobUrl) {
+      const file = await getFileFromBlob(mediaBlobUrl);
+      return file;
+    } else {
+      return null;
+    }
+  },[attachment, mediaBlobUrl, pastedImg]);
   const SendMessage = useCallback(async () => {
-    
     setToDefault();
-    const userAttachment = async() => {
-      if (attachment.length > 0) {
-        return attachment;
-      } else if (pastedImg.length > 0) {
-        return pastedImg;
-      } else if (mediaBlobUrl && message.length == 0) {
-        const file = await getFileFromBlob(mediaBlobUrl);
-        return file;
-      } else {
-        return null;
-      }
-    };
     const attachmentFile = await userAttachment();
-  
     const messageParams = {
       data: {
         user_id: auth_user?.elsemployees_empid,
@@ -304,23 +297,7 @@ function MessageInput({
         dispatch(getContactsUser(getContactsParams));
       })
       .catch((err) => console.warn(err));
-  }, [
-    active_user?.elsemployees_empid,
-    attachment,
-    auth_user.elsemployees_empid,
-    auth_user?.elsemployees_image,
-    auth_user?.elsemployees_name,
-    dispatch,
-    mediaBlobUrl,
-    message,
-    pastedImg,
-    quote?.from_username,
-    quote?.message_body,
-    quote?.message_id,
-    // setScrollDown,
-    setToDefault,
-    userMessages,
-  ]);
+  }, [active_user?.elsemployees_empid, auth_user.elsemployees_empid, auth_user?.elsemployees_image, auth_user?.elsemployees_name, dispatch, message, quote?.from_username, quote?.message_body, quote?.message_id, setToDefault, userAttachment, userMessages]);
 
   const onEmojiSelect = useCallback((event) => {
     setMessage(`${message}${event.native}`);

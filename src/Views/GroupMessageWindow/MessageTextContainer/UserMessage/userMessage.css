@@ -1,0 +1,75 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Open+Sans&family=Open+Sans+Condensed:ital,wght@1,300&display=swap");
+.userMessage {
+  max-width: 500px;
+  display: flex;
+  float: right;
+  clear: both;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.senderMessage {
+  max-width: 500px;
+  display: flex;
+  clear: both;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+.userMessage__details {
+  display: flex;
+  justify-content: flex-end;
+  color: #aeaeae;
+  font-family: 'Roboto' sans-serif;
+  font-size: 0.8rem;
+}
+.senderMessage__details {
+  display: flex;
+  color: #aeaeae;
+  font-family: 'Roboto' sans-serif;
+  font-size: 0.8rem;
+  margin-left: 5px;
+}
+.senderMessage__text {
+  font-size: 14px;
+  font-family: "SF Regular", "Segoe System UI Regular", "Segoe UI Regular",
+    sans-serif;
+  width: 100%;
+  background-image: linear-gradient(to right, #d8ecf7, #6ec6ff);
+  color: #fff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.5px;
+  font-size: 0.8rem;
+  padding: 10px;
+  border-radius: 4px !important;
+  margin-left: 5px;
+  border-top-left-radius: 0px;
+}
+
+.recieverMessage__text {
+  font-size: 14px;
+  font-family: "SF Regular", "Segoe System UI Regular", "Segoe UI Regular",
+    sans-serif;
+  color: rgb(37, 36, 35);
+  font-weight: 400;
+  background-image: linear-gradient(to right, #e0e0e0, #e0e0e0);
+  padding: 10px;
+  border-radius: 4px !important;
+  border-bottom-right-radius: 0px;
+  letter-spacing: 0.5px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-weight: 400 !important;
+  width: 100%;
+}
+.mediaModel {
+  width: 100%;
+  height: 100vh;
+  background: #000 !important;
+}
+.mediaContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */

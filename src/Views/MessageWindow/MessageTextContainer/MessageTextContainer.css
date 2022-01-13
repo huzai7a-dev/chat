@@ -1,0 +1,47 @@
+.messageTextContainer {
+  width: 100%;
+  height: 80vh;
+  border-top: 1px solid #d5d9de;
+  border-right: 1px solid #d5d9de;
+  padding: 15px 70px;
+  overflow: auto;
+}
+.noChat {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dividerContainer {
+  padding: 0px 10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.divider {
+  height: 2px;
+  background-color: rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+}
+.typing {
+  width: auto;
+  position: relative;
+  /* margin-left: ; */
+}
+.loading {
+  margin-left: 5px;
+}
+.css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input.css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input.css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input {
+  padding: 0px !important;
+  text-align: center;
+  background-color: #fff;
+  padding-right: 15px !important;
+}
+
+@media only screen and (max-width: 600px) {
+  .messageTextContainer {
+    padding: 15px 20px;
+  }
+}

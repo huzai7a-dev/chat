@@ -1,7 +1,7 @@
-import React, { createRef, useState,useCallback } from "react";
+import React, { createRef, useState, useCallback } from "react";
 import { Box } from "@material-ui/core";
 import Dropzone from "react-dropzone";
-import {Notify} from '../../helper/notify'
+import { Notify } from "../../helper/notify";
 import "./MessageWindow.css";
 import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageWindowHeader from "./MessageWindowHeader/MessageWindowHeader";
@@ -13,8 +13,10 @@ function MessageWindow() {
   const [scrollDown, setScrollDown] = useState("");
   return (
     <Dropzone
-      onDrop={useCallback((acceptedFiles) => setAttachment(acceptedFiles),[])}
-      onDropRejected={()=>{Notify('File Rejected','error')}}
+      onDrop={useCallback((acceptedFiles) => setAttachment(acceptedFiles), [])}
+      onDropRejected={() => {
+        Notify("File Rejected", "error");
+      }}
       noClick={true}
       noKeyboard={true}
       ref={dropzoneRef}
@@ -29,7 +31,7 @@ function MessageWindow() {
           {...getRootProps()}
         >
           <div className="message__window">
-            <MessageWindowHeader />
+            {/* <MessageWindowHeader /> */}
             <MessageTextContainer scrollDown={scrollDown} />
             <MessageInput
               inputProps={getInputProps}

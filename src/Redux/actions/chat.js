@@ -13,6 +13,7 @@ import {
   SET_MAKE_CALL,
   SET_CALL_ACCEPTED,
   SET_DATA_TO_CALL,
+  SET_HEADER_DATA,
 } from "../constant/chat";
 
 export const setActiveChat = (active_user) => {
@@ -105,6 +106,12 @@ export const setOnCallComing = (calling) => {
 export const setDataToCall = (data) => {
   return {
     type: SET_DATA_TO_CALL,
+    data,
+  };
+};
+export const setHeaderData = (data) => {
+  return {
+    type: SET_HEADER_DATA,
     data,
   };
 };

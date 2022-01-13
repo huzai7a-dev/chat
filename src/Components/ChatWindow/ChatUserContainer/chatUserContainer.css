@@ -1,5 +1,6 @@
 .container {
-  height: calc(100vh - 200px);
+  flex: 1;
+  height: 0px;
 }
 .chatUserContainer {
   height: 100%;
@@ -12,7 +13,6 @@
 .chatUserList,
 .searchedUser {
   height: 100%;
-  width: 310px;
   overflow-y: auto;
   overflow-x: hidden;
 }

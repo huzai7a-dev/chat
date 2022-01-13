@@ -2,8 +2,8 @@ import { Avatar, makeStyles, Badge, Box } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
-import { setActiveGroup } from "../../../../Redux/actions/chat";
-import { getUserGroups, seenGroupMessage } from "../../../../api/chat";
+import { setActiveGroup, setHeaderData } from "../../../../Redux/actions/chat";
+import { getUserGroup, seenGroupMessage } from "../../../../api/chat";
 import {
   DARKLIGHT,
   DARKMAIN,
@@ -15,6 +15,7 @@ import moment from "moment";
 import { getSocket } from "../../../../socket";
 import { setGallery } from "../../../../Redux/actions/message";
 import React, { useCallback } from "react";
+import { setSideBar } from "../../../../Redux/actions/app";
 const useStyles = makeStyles({
   group: {
     background: SECONDARYDARK,
@@ -23,10 +24,10 @@ const useStyles = makeStyles({
     fontSize: ".8rem",
   },
 });
-function ChatGroup({ groups }) {
+function ChatGroup({ group }) {
   const classes = useStyles();
   const history = useHistory();
-  const image = groups.group_image;
+  const image = group.group_image;
   const dispatch = useDispatch();
   const { auth_user, active_group, isNightMode } = useSelector((store) => {
     return {
@@ -35,19 +36,32 @@ function ChatGroup({ groups }) {
       isNightMode: store.app.mode || false,
     };
   });
-  const active = active_group.group_id == groups.group_id;
+  const active = active_group.group_id == group.group_id;
   const switchToGroupChat = useCallback(() => {
     dispatch(setGallery(false));
-    dispatch(setActiveGroup(groups));
-    history.push(`/group/${groups.group_name}`);
+    dispatch(setActiveGroup(group));
+    if (window.innerWidth < 700) {
+      dispatch(setSideBar(true));
+    }
+    dispatch(
+      setHeaderData({
+        activeType: "group",
+        activeName: group.group_name,
+        activeId: group.group_id,
+        other: {
+          membersLength: group?.memberid.split("").length,
+        },
+      })
+    );
+    history.push(`/group/${group.group_name}`);
     const seenParams = {
       data: {
-        group_id: groups.group_id,
+        group_id: group.group_id,
         user_id: auth_user?.elsemployees_empid,
       },
     };
 
-    if (groups.groupunseenmesg.length > 0) {
+    if (parseInt(group?.groupunseenmesg) > 0) {
       dispatch(seenGroupMessage(seenParams)).then(() => {
         const socketParams = {
           group_id: active_group.group_id,
@@ -69,7 +83,7 @@ function ChatGroup({ groups }) {
     active_group.group_id,
     auth_user?.elsemployees_empid,
     dispatch,
-    groups,
+    group,
     history,
   ]);
 
@@ -78,10 +92,10 @@ function ChatGroup({ groups }) {
   const heading = isNightMode ? "#fff" : "#252423";
 
   const groupNamePicture =
-    groups.group_name.split(" ").length > 1
-      ? groups.group_name.toUpperCase().split(" ")[0][0] +
-        groups.group_name.toUpperCase().split(" ")[1][0]
-      : groups.group_name.toUpperCase()[0] + groups.group_name.toUpperCase()[1];
+    group.group_name.split(" ").length > 1
+      ? group.group_name.toUpperCase().split(" ")[0][0] +
+        group.group_name.toUpperCase().split(" ")[1][0]
+      : group.group_name.toUpperCase()[0] + group.group_name.toUpperCase()[1];
 
   return (
     <div
@@ -102,28 +116,28 @@ function ChatGroup({ groups }) {
         <Box display="flex" justifyContent="space-between">
           <h3
             style={{
-              color: groups.groupunseenmesg > 0 ? "#267396" : heading,
-              fontWeight: groups.groupunseenmesg ? "600" : "100",
+              color: group.groupunseenmesg > 0 ? "#267396" : heading,
+              fontWeight: group.groupunseenmesg ? "600" : "100",
               flex: "3",
             }}
           >
-            {groups.group_name}
+            {group.group_name}
           </h3>
           <p style={{ flex: "1" }}>
-            {moment(groups?.groupmessagetime).format("LT")}
+            {moment(group?.groupmessagetime).format("LT")}
           </p>
         </Box>
 
         <div className="chatUser__lastMessage">
-          <p style={{ fontWeight: groups.groupunseenmesg > 0 && "900" }}>
-            {groups.lastmessage !== "null" && groups.lastmessage !== null
-              ? groups.lastmessage
+          <p style={{ fontWeight: group.groupunseenmesg > 0 && "900" }}>
+            {group.lastmessage !== "null" && group.lastmessage !== null
+              ? group.lastmessage
               : "Attachment"}
           </p>
         </div>
       </div>
       <div className="unseenMsg">
-        <Badge badgeContent={groups.groupunseenmesg} color="primary"></Badge>
+        <Badge badgeContent={group.groupunseenmesg} color="primary"></Badge>
       </div>
     </div>
   );

@@ -12,3 +12,4 @@ export const SET_MAKE_CALL = "SET_MAKE_CALL";
 export const SET_ON_CALL_COMING = "SET_ON_CALL_COMING";
 export const SET_CALL_ACCEPTED = "SET_CALL_ACCEPTED";
 export const SET_DATA_TO_CALL = "SET_DATA_TO_CALL";
+export const SET_HEADER_DATA = "SET_HEADER_DATA";

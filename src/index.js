@@ -1,7 +1,6 @@
 import express from 'express';
 import { withSocket } from './server/socket';
 import http from 'http';
-
 let app = require('./server').default;
 const server = http.createServer(express().use((req, res) => app.handle(req, res)));
 withSocket(server);

@@ -1,7 +1,7 @@
 .inputAttachContainer {
   position: fixed;
   bottom: 0;
-  width: calc(100% - 310px);
+  /* width: calc(100% - 350px) */
 }
 .messageInput {
   width: 100%;
@@ -11,9 +11,10 @@
   white-space: pre-wrap;
 }
 .inputContainer {
-  padding: 0px 80px;
+  width: 100%;
   display: flex;
   align-items: center;
+  padding: 0px 5rem;
 }
 .inputField__container {
   width: 100%;
@@ -59,7 +60,10 @@
   overflow-y: auto;
   cursor: text;
 }
-
+.inputField span {
+  display: contents;
+  font-weight: 900;
+}
 .attachMedia {
   position: relative;
 }
@@ -106,4 +110,10 @@ div:empty:before {
 
 .emoji-mart-preview {
   display: none;
+}
+
+@media only screen and (max-width: 600px) {
+  .inputContainer {
+    padding: 0 2rem;
+  }
 }

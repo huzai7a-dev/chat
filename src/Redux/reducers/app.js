@@ -7,16 +7,18 @@ import {
   SET_QUOTE,
   SET_SEEN,
   SET_NIGHT_MODE,
-  SET_ADMIN_PANEL
+  SET_ADMIN_PANEL,
+  SET_SIDE_BAR,
 } from "../constant/app";
 const initState = {
   userSearch: null,
   searchText: "",
   editGroupModelState: false,
   typedMsg: [],
-  seen:false,
-  mode:false,
-  adminPanel:false
+  seen: false,
+  mode: false,
+  adminPanel: false,
+  sideBarCollapsed: false,
 };
 
 export default (state = initState, action) => {
@@ -51,22 +53,27 @@ export default (state = initState, action) => {
         ...state,
         quoteData: action.quoteData,
       });
-      case SET_SEEN:
-        return (state = {
-          ...state,
-          quoteData: action.quoteData,
-        });
+    case SET_SEEN:
+      return (state = {
+        ...state,
+        quoteData: action.quoteData,
+      });
 
-        case SET_NIGHT_MODE:
-        return (state = {
-          ...state,
-          mode: action.mode,
-        });
-        case SET_ADMIN_PANEL:
-        return (state = {
-          ...state,
-          adminPanel: action.setAdmin,
-        });
+    case SET_NIGHT_MODE:
+      return (state = {
+        ...state,
+        mode: action.mode,
+      });
+    case SET_ADMIN_PANEL:
+      return (state = {
+        ...state,
+        adminPanel: action.setAdmin,
+      });
+    case SET_SIDE_BAR:
+      return (state = {
+        ...state,
+        sideBarCollapsed: action.state,
+      });
     default:
       return state;
   }

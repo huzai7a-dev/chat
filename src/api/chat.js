@@ -119,3 +119,10 @@ const onSuccessgetAllGroups = (response, params) => (dispatch) => {
 const onFailuregetAllGroups = (error, params) => (dispatch) => {
   console.log("onFailuregetAllGroups", error);
 };
+/****************************************************************************************************************/
+
+export const getGroupParticipants = (params = {}) => (dispatch) => {
+  params.path = "/api/bwccrm/groupparticipants";
+  params.method = "POST";
+  return dispatch(apiCall(params));
+};
