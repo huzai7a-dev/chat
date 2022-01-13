@@ -8,7 +8,14 @@ import {
   SET_SEEN,
   SET_NIGHT_MODE,
   SET_ADMIN_PANEL,
+<<<<<<< HEAD
   SET_SIDE_BAR,
+=======
+  SET_RECEIVING_DATA,
+  SET_CALLING_DATA,
+  SET_REMOTE_STREAM,
+  SET_LOCAL_STREAM
+>>>>>>> c8d5cb4b02aa80a2f0294677cac1cd3ad95f780b
 } from "../constant/app";
 
 export const setUserSearchResult = (userSearch) => {
@@ -72,9 +79,34 @@ export const setAdminPanel = (setAdmin) => {
     setAdmin,
   };
 };
+<<<<<<< HEAD
 export const setSideBar = (state) => {
   return {
     type: SET_SIDE_BAR,
     state,
+=======
+export const setCallerInfo = (callerInfo) => {
+  return {
+    type: SET_RECEIVING_DATA,
+    callerInfo,
+  };
+};
+export const setCallingInfo = (callingInfo) => {
+  return {
+    type: SET_CALLING_DATA,
+    callingInfo,
+  };
+};
+export const setRemoteStream = (remoteStream) => {
+  return {
+    type: SET_REMOTE_STREAM,
+    remoteStream,
+  };
+};
+export const setLocalStream = (localStream) => {
+  return {
+    type: SET_LOCAL_STREAM,
+    localStream,
+>>>>>>> c8d5cb4b02aa80a2f0294677cac1cd3ad95f780b
   };
 };

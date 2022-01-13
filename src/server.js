@@ -68,6 +68,7 @@ server
     <body>
     <script src="/peerjs.min.js"></script>
         <div id="root">${markup}</div>
+        <audio id="remoteVideo" autoPlay></audio>
         ${jsScriptTagsFromAssets(assets, "client", " defer crossorigin")}
     </body>
 </html>`

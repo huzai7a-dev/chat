@@ -127,6 +127,26 @@ export const withSocket = (app) => {
         .catch((err) => console.log(err));
     });
 
+    socket.on("call-user", async data => {
+        socketMappings[data.to]?.emit("call-made", { // request it to receiver
+          offer: data.offer,
+          from: data.from, // who is calling
+          to: data.to, // who is receiving
+        });
+      });
+
+    socket.on("make-answer", async data => {
+        socketMappings[data.from]?.emit('answer-made', {  // request approved from receiver notify caller
+          answer: data.answer,
+          from: data.from, // who is calling
+          to: data.to, // who is receiving
+       })
+      });
+
+    socket.on('request-end-call', async (data) => {
+      socketMappings[data.to]?.emit('end-call', data)
+    });
+
     socket.on("typing", (data) => {
       socketMappings[data?.user_id]?.emit("typing", data);
     });

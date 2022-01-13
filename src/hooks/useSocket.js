@@ -1,16 +1,22 @@
 import { useEffect } from "react";
-import { getSocket, init } from "../socket";
+import { getSocket, init } from "../config/socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { onCallComing, setActiveGroup, setGroupMemInfo, setIsTyping, setMakeCall,setCallAccepted, setNewGroupMessage, setOnCallComing, } from "../Redux/actions/chat";
+import { setActiveGroup, setGroupMemInfo, setMakeCall,setCallAccepted, setNewGroupMessage, setOnCallComing, } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
 import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
 import { Notify } from "../helper/notify";
+import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
+import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
+import { useRTCClient } from "../helper/rtcClient";
+let isAlreadyCalling = false;
+
 const useSocket = () => {
-  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId,onCall } = useSelector((store) => {
+  const { acceptCall, callUser } = useRTCClient()
+  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId,onCall, callerInfo } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
@@ -19,6 +25,7 @@ const useSocket = () => {
       groupMessages:store.message?.groupMessages || {},
       oldMessageGroupId:store.chat.newMessage || [],
       onCall: store.chat.call || {},
+      callerInfo: store.app.callerInfo,
     }
   });
   const dispatch = useDispatch();
@@ -26,8 +33,61 @@ const useSocket = () => {
   useEffect(() => {
     init(auth_user.elsemployees_empid);
   }, [auth_user]);
+
+  useEffect(() => {
+    if(active_user.elsemployees_empid && !isAlreadyCalling) {
+      try {
+        callUser(active_user.elsemployees_empid)
+      } catch(e) {
+        console.log(e)
+      }
+      isAlreadyCalling=true
+    }
+  },[active_user, callUser])
   
   // ********************************* socket for calling *********************************
+
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("call-made", (data) => {
+      console.log("I am getting a call", data);
+      dispatch(setCallerInfo(data));
+      acceptCall(data)
+    });
+    return () => {
+      socket.off("call-made");
+    };
+  }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
+
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("answer-made", async (data) => {
+      dispatch(setCallingInfo(data));
+      console.log("Call Accepted", data)
+      const peerConnection = getPeerConnection();
+      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      // setPeerConnection(peerConnection)
+    });
+    return () => {
+      socket.off("answer-made");
+    };
+  }, [auth_user.elsemployees_empid, dispatch]);
+
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("end-call", async () => {
+      const peerConnection = getPeerConnection();
+      peerConnection.close();
+      setPeerConnection(null);
+      socket.emit("request-end-call", {
+        to: callerInfo,
+        from: auth_user.elsemployees_empid,
+      });
+    });
+    return () => {
+      socket.off("end-call");
+    };
+  }, [auth_user, callerInfo, dispatch]);
 
   useEffect(()=>{
     const socket = getSocket(auth_user.elsemployees_empid)

@@ -8,4 +8,11 @@ export const SET_QUOTE = "SET_QUOTE";
 export const SET_SEEN = "SET_SEEN";
 export const SET_NIGHT_MODE = "SET_NIGHT_MODE";
 export const SET_ADMIN_PANEL = "SET_ADMIN_PANEL";
+<<<<<<< HEAD
 export const SET_SIDE_BAR = "SET_SIDE_BAR";
+=======
+export const SET_RECEIVING_DATA = "SET_RECEIVING_DATA";
+export const SET_CALLING_DATA = "SET_CALLING_DATA";
+export const SET_REMOTE_STREAM = "SET_REMOTE_STREAM";
+export const SET_LOCAL_STREAM = "SET_LOCAL_STREAM";
+>>>>>>> c8d5cb4b02aa80a2f0294677cac1cd3ad95f780b

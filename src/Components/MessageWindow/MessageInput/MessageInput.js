@@ -18,7 +18,7 @@ import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { setQuote } from "../../../Redux/actions/app";
-import { getSocket } from "../../../socket";
+import { getSocket } from "../../../config/socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
 import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
