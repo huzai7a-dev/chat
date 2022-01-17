@@ -14,8 +14,9 @@ import CallIcon from "@material-ui/icons/Call";
 import { getUserAttachments } from "../../../api/message";
 import { setGallery } from "../../../Redux/actions/message";
 import OnCall from "../../Call/OnCall";
-import { getSocket } from "../../../socket";
+// import { getSocket } from "../../../socket";
 import { setMakeCall } from "../../../Redux/actions/chat";
+import { getSocket } from "../../../config/socket";
 // const Peer = require('peerjs');
 function MessageWindowHeader() {
   const [openCall, setOpenCall] = useState(false);

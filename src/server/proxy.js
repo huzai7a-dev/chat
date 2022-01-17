@@ -49,7 +49,6 @@ router.use("/api/*", multer().any(), (req, res, next) => {
       attachmentFile["message_attachment"] = req.files
     }
     const data = Object.assign({}, body, attachmentFile);
-    console.log(data)
     const formData = getFormData(data)
     axiosRoute.headers = formData.getHeaders();
     axiosRoute.data = formData;

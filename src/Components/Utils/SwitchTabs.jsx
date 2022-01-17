@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import React,{ useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Box, Typography, Badge } from "@material-ui/core";
 import { SECONDARYMAIN, WHITE } from "../../Theme/colorConstant";
-import { getContactsUser, getUserGroups } from "../../api/chat";
+
 const SwitchTabs = React.memo(
-  ({ tabValue, setTabValue, setContactsLoaded, setGroupsLoaded }) => {
+  ({ tabValue, setTabValue, }) => {
     const tabRef = useRef();
     const dispatch = useDispatch();
     const { auth_user, contacts, groupsList } = useSelector((store) => {
@@ -17,7 +17,7 @@ const SwitchTabs = React.memo(
     });
     useEffect(() => {
       changePeopleTab();
-    }, [auth_user, dispatch]);
+    }, [auth_user, changePeopleTab, dispatch]);
 
     const allPeopleUnseenMessages = contacts.reduce((acc, curr) => {
       return acc + curr.unseen;
@@ -32,27 +32,11 @@ const SwitchTabs = React.memo(
 
     const changePeopleTab = useCallback(async () => {
       setTabValue("People");
-      const params = {
-        data: {
-          loginuser_id: auth_user.elsemployees_empid,
-          user_id: auth_user.elsemployees_empid,
-        },
-      };
-      await dispatch(getContactsUser(params));
-      setContactsLoaded(true);
-    }, [auth_user.elsemployees_empid, dispatch]);
+    }, [setTabValue]);
 
     const changeGroupTab = useCallback(async () => {
       setTabValue("Groups");
-      const params = {
-        data: {
-          loginuser_id: auth_user?.elsemployees_empid,
-          user_id: auth_user?.elsemployees_empid,
-        },
-      };
-      await dispatch(getUserGroups(params));
-      setGroupsLoaded(true);
-    }, [auth_user?.elsemployees_empid, dispatch]);
+    }, [setTabValue]);
 
     return (
       <Box

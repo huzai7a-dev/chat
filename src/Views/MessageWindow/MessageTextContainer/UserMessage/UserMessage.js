@@ -23,7 +23,7 @@ function UserMessage(props) {
       isNightMode: store.app.mode || false,
     };
   });
-  console.log(props.showDate);
+
   const [forwardModel, setForwardModel] = useState(false);
   const dispatch = useDispatch();
   const loggedInUser = auth_user?.elsemployees_empid;

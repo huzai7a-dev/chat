@@ -13,9 +13,10 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getSocket } from "../../../socket";
+// import { getSocket } from "../../../socket";
 import { setEditGroupModelState, setEditGroupNameToMemberModelState} from "../../../Redux/actions/app";
 import { setUserGroups } from "../../../Redux/actions/chat";
+import { getSocket } from "../../../config/socket";
 function MemberList() {
   
   const { auth_user, active_group,isNightMode } = useSelector((store) => {

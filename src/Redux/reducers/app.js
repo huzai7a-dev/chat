@@ -8,34 +8,25 @@ import {
   SET_SEEN,
   SET_NIGHT_MODE,
   SET_ADMIN_PANEL,
-<<<<<<< HEAD
   SET_SIDE_BAR,
-=======
   SET_RECEIVING_DATA,
   SET_CALLING_DATA,
   SET_REMOTE_STREAM,
   SET_LOCAL_STREAM
->>>>>>> c8d5cb4b02aa80a2f0294677cac1cd3ad95f780b
 } from "../constant/app";
 const initState = {
   userSearch: null,
   searchText: "",
   editGroupModelState: false,
   typedMsg: [],
-<<<<<<< HEAD
   seen: false,
   mode: false,
   adminPanel: false,
   sideBarCollapsed: false,
-=======
-  seen:false,
-  mode:false,
-  adminPanel:false,
   callerInfo: {},
   callingInfo: {},
   remoteStream: null,
   localStream: null,
->>>>>>> c8d5cb4b02aa80a2f0294677cac1cd3ad95f780b
 };
 
 export default (state = initState, action) => {

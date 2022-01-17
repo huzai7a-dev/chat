@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
 import { setActiveGroup, setHeaderData } from "../../../../Redux/actions/chat";
-import { getUserGroup, seenGroupMessage } from "../../../../api/chat";
+import { getUserGroup, getUserGroups, seenGroupMessage } from "../../../../api/chat";
 import {
   DARKLIGHT,
   DARKMAIN,

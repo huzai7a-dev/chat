@@ -14,11 +14,7 @@ import { lightTheme } from "./Theme/customTheme";
 import Modal from "react-modal";
 import { getContactsTotal } from "./api/message";
 import Auth from "./Components/Auth/Auth";
-<<<<<<< HEAD
-import AppLayout from "./Components/AppLayout";
-=======
 
->>>>>>> c8d5cb4b02aa80a2f0294677cac1cd3ad95f780b
 Modal.setAppElement("#root");
 const App = () => {
   const dispatch = useDispatch();

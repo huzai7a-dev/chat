@@ -7,58 +7,78 @@ import ChatGroup from "./ChatGroup/ChatGroup";
 
 import { Button, Box, Typography, Badge } from "@material-ui/core";
 import SearchedUser from "./SearchedUser/SearchedUser";
-import { getContactsUser, getUserGroups, seenMessage } from "../../../api/chat";
+import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../../../api/chat";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import moment from "moment";
 import AppUser from "../../Utils/AppUser/AppUser";
 import { useHistory, useParams } from "react-router-dom";
-import { setActiveChat, setHeaderData } from "../../../Redux/actions/chat";
-import { profile_url } from "../../../constants/apiConstants";
+import { setActiveChat, setActiveGroup, setHeaderData } from "../../../Redux/actions/chat";
+import { attachments_url, profile_url } from "../../../constants/apiConstants";
 import { setGallery } from "../../../Redux/actions/message";
 import { quote } from "../../../Redux/Action";
 import { setSideBar } from "../../../Redux/actions/app";
-import { getSocket } from "../../../socket";
+import { getSocket } from "../../../config/socket";
+// import { getSocket } from "";
 
-function ChatUserContainer({ tabValue, contactsLoaded, groupsLoaded }) {
+function ChatUserContainer({ tabValue }) {
   const {
     active_user,
     auth_user,
     userSearch,
     searchText,
-    contacts,
-    groupsList,
+    active_group
   } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat.active_user || {},
+      active_group:store.chat.active_group||{}, 
       userSearch: store.app?.userSearch || {},
       searchText: store.app?.searchText || "",
-      contacts: store.chat?.contacts || [],
-      groupsList: store.chat?.groups || [],
       isNightMode: store.app.mode || false,
     };
   });
 
   const history = useHistory();
   const dispatch = useDispatch();
+  const [contacts,setContacts] = useState([]);
+  const [groups,setGroups] = useState([]);
+  const [contactsLoaded,setcontactsLoaded] = useState(false)
+  const [groupsLoaded,setGroupsLoaded] = useState(false)
+  const getContactList = useCallback(async ()=> {
+    const params = {
+      data: {
+        loginuser_id: auth_user.elsemployees_empid,
+        user_id: auth_user.elsemployees_empid,
+      },
+    };
+    const response = await dispatch(getContactsUser(params));
+    setcontactsLoaded(true)
+    setContacts(response.data.contacts)
+  },[auth_user.elsemployees_empid, dispatch])
 
+  useEffect(()=>{
+    getContactList()
+  },[auth_user.elsemployees_empid, dispatch, getContactList])
+
+  const getGroupList = useCallback(async()=>{
+      const params = {
+        data: {
+          loginuser_id: auth_user?.elsemployees_empid,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      };
+      const response = await dispatch(getUserGroups(params));
+      setGroupsLoaded(true)
+      setGroups(response.data);
+  },[auth_user?.elsemployees_empid, dispatch])
+
+  useEffect(()=>{
+    getGroupList()
+  },[getGroupList])
+  
   const ContactList = React.memo(() => {
-    if (!contactsLoaded)
-      return (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress />
-        </div>
-      );
 
-    const onClickUser = useCallback((user) => {
+    const onClickUser = (user) => {
       history.push(`/user/${user.elsemployees_empid}`);
       dispatch(setActiveChat(user));
       const paramData = {
@@ -103,7 +123,21 @@ function ChatUserContainer({ tabValue, contactsLoaded, groupsLoaded }) {
           })
           .catch((err) => console.warn(err));
       }
-    }, []);
+    };
+    if (!contactsLoaded)
+      return (
+        <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </div>
+      );
 
     return (
       <div className="chatUserList">
@@ -113,7 +147,7 @@ function ChatUserContainer({ tabValue, contactsLoaded, groupsLoaded }) {
               key={contact?.elsemployees_empid}
               userName={contact?.elsemployees_name}
               lastMessage={
-                !contact?.last_msg.message_body == "null"
+                contact?.last_msg.message_body !== "null"
                   ? contact?.last_msg.message_body
                   : "Attachment"
               }
@@ -122,7 +156,9 @@ function ChatUserContainer({ tabValue, contactsLoaded, groupsLoaded }) {
               }
               date={moment(contact?.last_msg.created_at).format("LT")}
               handleClick={() => onClickUser(contact)}
-              userImage={profile_url + contact?.elsemployees_image}
+              userImage={contact?.elsemployees_image}
+              path={profile_url}
+              unseen={contact.unseen}
             />
           ))
         ) : (
@@ -144,6 +180,50 @@ function ChatUserContainer({ tabValue, contactsLoaded, groupsLoaded }) {
     }
   }
   const GroupList = React.memo(() => {
+    const onClickGroup=(group)=>{
+      history.push(`/group/${group.group_id}`);
+      dispatch(setGallery(false));
+      dispatch(setActiveGroup(group));
+    if (window.innerWidth < 700) {
+      dispatch(setSideBar(true));
+    }
+    dispatch(
+      setHeaderData({
+        activeType: "group",
+        activeName: group.group_name,
+        activeId: group.group_id,
+        other: {
+          membersLength: group?.memberid.split("").length,
+        },
+      })
+    );
+    
+    const seenParams = {
+      data: {
+        group_id: group.group_id,
+        user_id: auth_user?.elsemployees_empid,
+      },
+    };
+
+    if (parseInt(group?.groupunseenmesg) > 0) {
+      dispatch(seenGroupMessage(seenParams)).then(() => {
+        const socketParams = {
+          group_id: active_group.group_id,
+          user_id: auth_user?.elsemployees_empid,
+          info: "real time seen",
+        };
+        const socket = getSocket(auth_user?.elsemployees_empid);
+        socket.emit("group-seen", socketParams);
+        const params = {
+          data: {
+            loginuser_id: auth_user?.elsemployees_empid,
+            user_id: auth_user?.elsemployees_empid,
+          },
+        };
+        dispatch(getUserGroups(params));
+      });
+    }
+    }
     if (!groupsLoaded)
       return (
         <div
@@ -160,7 +240,29 @@ function ChatUserContainer({ tabValue, contactsLoaded, groupsLoaded }) {
       );
     return (
       <div className="chatUserList">
-        
+        {groups?.length > 0 ? (
+          groups.sort(sortedGroup).map((group, id) => (
+            <AppUser
+              key={group?.group_id}
+              userName={group?.group_name}
+              lastMessage={
+                !group?.lastmessage == "null"
+                  ? group?.lastmessage
+                  : "Attachment"
+              }
+              activeUser={
+                active_group?.group_id == group?.group_id
+              }
+              date={moment(group?.groupmessagetime).format("LT")}
+              handleClick={() => onClickGroup(group)}
+              userImage={group?.group_image}
+              path={attachments_url}
+              unseen={group.groupunseenmesg}
+            />
+          ))
+        ) : (
+          <Typography>No Contacts</Typography>
+        )}
       </div>
     );
   });

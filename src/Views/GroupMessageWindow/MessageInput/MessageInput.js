@@ -14,7 +14,7 @@ import moment from "moment";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import CloseIcon from "@material-ui/icons/Close";
-import { getSocket } from "../../../socket";
+// import { getSocket } from "../../../socket";
 import { setQuote } from "../../../Redux/actions/app";
 import Utils, {
   filterList,
@@ -37,6 +37,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 // import User from "../../User/User";
 import Recorder from "../../../Components/Recorder/Recorder";
 import User from "../../../Components/AdminPanel/User";
+import { getSocket } from "../../../config/socket";
 
 const useStyles = makeStyles({
   sendBtn: {

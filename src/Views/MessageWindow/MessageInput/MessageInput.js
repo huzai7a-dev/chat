@@ -18,7 +18,7 @@ import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { setQuote } from "../../../Redux/actions/app";
-import { getSocket } from "../../../socket";
+// import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
 import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
@@ -27,6 +27,7 @@ import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Tooltip from "@material-ui/core/Tooltip";
 import Recorder from "../../../Components/Recorder/Recorder";
+import { getSocket } from "../../../config/socket";
 // import Recorder from "../../Recorder/Recorder";
 
 const useStyles = makeStyles({

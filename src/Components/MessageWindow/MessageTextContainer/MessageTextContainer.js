@@ -13,7 +13,7 @@ import UserMessage from "./UserMessage/UserMessage";
 import { mergeArray } from "../../../helper/util";
 import { getMoreUserMessages, getUserMessages } from "../../../api/message";
 import "./MessageTextContainer.css";
-import { getSocket } from "../../../socket";
+// import { getSocket } from "../../../socket";
 
 function MessageTextContainer() {
   const [hasMore, setHasMore] = useState(true);

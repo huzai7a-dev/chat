@@ -1,7 +1,7 @@
-import { Box, Typography, Avatar } from "@material-ui/core";
+import { Box, Typography, Avatar, Badge } from "@material-ui/core";
 import React from "react";
 import { BACKGROUND } from "../../../Theme/colorConstant";
-import { useParams } from "react-router-dom";
+
 function AppUser({
   userName,
   userImage,
@@ -9,13 +9,15 @@ function AppUser({
   lastMessage,
   date,
   handleClick,
+  path,
+  unseen=0
 }) {
   return (
     <Box
       onClick={handleClick}
       display="flex"
       style={{
-        height: "55px",
+        height: "65px",
         cursor: "pointer",
         backgroundColor: activeUser
           ? BACKGROUND["light"].active
@@ -25,21 +27,32 @@ function AppUser({
       paddingY={1.2}
     >
       <Box display="flex" alignItems="center" marginRight={0.8}>
-        <Avatar src={userImage} />
+        {!(userImage == "null" || userImage == null) ? (
+          <Avatar src={path + userImage} />
+        ) : (
+          <Avatar />
+        )}
       </Box>
-      <Box
-        display="flex"
-        flexDirection="column"
-        flex="1"
-        justifyContent="center"
-      >
-        <Typography variant="h6" style={{ fontSize: "1rem" }}>
-          {userName}
-        </Typography>
-        <Typography variant="caption">{lastMessage}</Typography>
-      </Box>
-      <Box>
-        <Typography variant="caption">{date}</Typography>
+      <Box flex="1" style={{position:'relative',}}>
+        <Box display="flex" justifyContent="space-between">
+          <Typography variant="h6" style={{ fontSize: "1rem" }}>
+            {userName}
+          </Typography>
+          <Typography variant="caption">{date}</Typography>
+        </Box>
+
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          style={{
+            whiteSpace: "nowrap",
+            width: "200px",
+            overflowX: "hidden",
+          }}
+        >
+            <Typography variant="caption">{lastMessage}</Typography>
+            <Badge style={{position:"absolute",right:"0",bottom:"0",marginRight:"8px",marginBottom:"9.6px"}} badgeContent={unseen} color="primary"/>
+        </Box>
       </Box>
     </Box>
   );

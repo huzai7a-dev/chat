@@ -4,7 +4,7 @@ import { quote } from "../../../../Redux/Action";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
 import moment from "moment";
-import { getSocket } from "../../../../socket";
+// import { getSocket } from "../../../../socket";
 import { getContactsUser, seenMessage } from "../../../../api/chat";
 import { setActiveChat, setHeaderData } from "../../../../Redux/actions/chat";
 import loading from "../../../../Assets/loading.gif";
@@ -12,6 +12,7 @@ import { DARKLIGHT, DARKMAIN, WHITE } from "../../../../Theme/colorConstant";
 import { setGallery } from "../../../../Redux/actions/message";
 import React, { useCallback } from "react";
 import { setSideBar } from "../../../../Redux/actions/app";
+import { getSocket } from "../../../../config/socket";
 
 const ChatUser = React.memo((props) => {
   const history = useHistory();

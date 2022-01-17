@@ -3,17 +3,18 @@
   "name": "Bizzworld Chat App",
   "icons": [
     {
-      "src": "favicon.png",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "./images/maskable_icon_x48 (1).png",
+      "sizes": "48x48",
+      "type": "image/x-icon",
+      "purpose": "maskable"
     },
     {
-      "src": "BizzWorldLogo.png",
+      "src": "./images/BizzWorldLogo192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "BizzWorldLogo.png",
+      "src": "./images/BizzWorldLogo512.png",
       "type": "image/png",
       "sizes": "512x512"
     }
@@ -21,5 +22,6 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "background_color": "#ffffff",
+  "prefer_related_applications": true
 }

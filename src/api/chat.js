@@ -8,7 +8,7 @@ export const getContactsUser = (params = {}) => (dispatch) => {
 };
 
 const onSuccessGetContactsUser = (response, params) => (dispatch) => {
-  dispatch(setContactUsers(response.data.contacts));
+  // dispatch(setContactUsers(response.data.contacts));
 };
 
 const onFailureGetContactsUser = (error, params) => (dispatch) => {
@@ -25,7 +25,7 @@ export const getUserGroups = (params = {}) => (dispatch) => {
 
 const onSuccessGetUserGroups = (response, params) => (dispatch) => {
   console.log("OnSuccessGetUserGroups", response);
-  dispatch(setUserGroups(response.data));
+  // dispatch(setUserGroups(response.data));
 };
 
 const onFailureGetUserGroups = (error, params) => (dispatch) => {
