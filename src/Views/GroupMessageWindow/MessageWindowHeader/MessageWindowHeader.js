@@ -8,13 +8,14 @@ import EditGroup from "../EditGroup/EditGroup";
 
 import Participants from "../Participants/Participants";
 import { setEditGroupModelState,setParticipantModelState } from "../../../Redux/actions/app";
-import { setGallery } from "../../../Redux/actions/message";
-import { getGroupAttachments } from "../../../api/message";
+import { useHistory, useLocation } from "react-router-dom";
 
 function MessageWindowHeader() {
-  const {auth_user, active_group, editGroupModelState,participantModelState,isNightMode} = useSelector((store) => {
+  const history = useHistory();
+  const location = useLocation();
+
+  const {active_group, editGroupModelState,participantModelState,isNightMode} = useSelector((store) => {
     return {
-      auth_user: store.auth.auth_user || {},
       active_group: store.chat.active_group || {},
       editGroupModelState: store.app.editGroupModelState || false,
       participantModelState: store.app.participantModelState || false,
@@ -26,16 +27,9 @@ function MessageWindowHeader() {
   const memberLength = active_group?.memberid?.split(",").length;
 
   const openGallery = ()=>{
-    
-    dispatch(setGallery(true))
-    const params = {
-      data:{
-          user_id:auth_user?.elsemployees_empid,
-          group_id:active_group.group_id
-      }
+    history.replace(`${location.pathname}#gallery`)
   }
-   dispatch(getGroupAttachments(params));
-  }
+  
   return (
     <div className="MessageWindowHeader">
       <div className="userName">

@@ -3,9 +3,9 @@ import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageWindowHeader from "./MessageWindowHeader/MessageWindowHeader";
 import MessageInput from "./MessageInput/MessageInput";
 import "./MessageWindow.css";
-import Attachments from "./Attachments/Attachments";
 import Dropzone from "react-dropzone";
 import { Box } from "@material-ui/core";
+import GalleryModal from "../../Components/GalleryModal/GalleryModal";
 
 function GroupMessageWindow() {
   const dropzoneRef = createRef();
@@ -36,7 +36,7 @@ function GroupMessageWindow() {
               setScrollDown={setScrollDown}
             />
           </div>
-          <Attachments />
+          <GalleryModal />
         </Box>
       )}
     </Dropzone>

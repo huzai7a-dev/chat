@@ -73,11 +73,7 @@ export const getMoreUserMessages = (params = {}) => (dispatch) => {
   export const getUserAttachments = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/fetchAttachments";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessGetUserAttachments));
-  };
-  
-  const onSuccessGetUserAttachments = (response) => (dispatch) => {
-    return dispatch(setUserAttachments(response.data.attachments))
+    return dispatch(apiCall(params));
   };
 
 
@@ -85,12 +81,8 @@ export const getMoreUserMessages = (params = {}) => (dispatch) => {
   export const getGroupAttachments = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/fetchGroupAttachments";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessGetGroupAttachments));
-  };
-  
-  const onSuccessGetGroupAttachments = (response, params) => (dispatch) => {
-    return dispatch(setGroupAttachments(response.data.messages))
-  };
+    return dispatch(apiCall(params));
+  }
 
    /****************************************************************************************************************/
 

@@ -1,6 +1,5 @@
 import { Avatar, Box, Button, Tooltip, Typography } from "@material-ui/core";
 import React, { useCallback, useRef, useState } from "react";
-import "./userMessage.css";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "react-modal";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
@@ -123,7 +122,7 @@ function UserMessage({ chatgroup }) {
     });
   };
   const image = chatgroup.from_userpicture;
-  const admin = auth_user?.elsemployees_empid;
+  const loggedInUser = auth_user?.elsemployees_empid;
   const user = chatgroup.from_userid;
   // function to open image/video
   const openImage = (e) => {
@@ -189,10 +188,11 @@ function UserMessage({ chatgroup }) {
   return (
     <div
       id={chatgroup.message_id}
-      className={user !== admin ? "senderMessage " : "userMessage"}
+      className="senderMessage"
+      style={{flexDirection:user == loggedInUser && "row-reverse"}}
     >
       <div className="userMessage__picture">
-        {user !== admin ? (
+        {user !== loggedInUser ? (
           <Avatar
             src={`/bizzportal/public/img/${image}`}
             style={{ width: "50px", height: "50px" }}
@@ -205,11 +205,11 @@ function UserMessage({ chatgroup }) {
       <div className="userMessageBox">
         <div
           className={
-            user !== admin ? "senderMessage__details" : "userMessage__details"
+            user !== loggedInUser ? "senderMessage__details" : "userMessage__details"
           }
         >
           <div className="userMessage__name">
-            <p>{user !== admin ? chatgroup.from_username + "," : ""}</p>
+            <p>{user !== loggedInUser ? chatgroup.from_username + "," : ""}</p>
           </div>
 
           <div className="userMessage__time">
@@ -256,7 +256,7 @@ function UserMessage({ chatgroup }) {
               display: "flex",
               flexWrap: "wrap",
               justifyContent:
-                chatgroup.message_from === admin ? "flex-end" : "flex-start",
+                chatgroup.message_from === loggedInUser ? "flex-end" : "flex-start",
               alignItems: "center",
             }}
           >
@@ -279,7 +279,7 @@ function UserMessage({ chatgroup }) {
               chatgroup.groupmessage_body !== "null" && (
                 <div
                   className={
-                    user !== admin
+                    user !== loggedInUser
                       ? "senderMessage__text"
                       : "recieverMessage__text"
                   }

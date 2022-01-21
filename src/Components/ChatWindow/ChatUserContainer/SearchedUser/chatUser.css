@@ -5,6 +5,7 @@
   margin: 15px 0px;
   padding: 6px;
   cursor: pointer;
+  align-items: center;
 }
 .chatUser:hover {
   background: #f1f1f1;

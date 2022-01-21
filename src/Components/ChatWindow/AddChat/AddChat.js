@@ -5,13 +5,15 @@ import "./addChat.css";
 import GroupListContainer from "./GroupListContainer/GroupListContainer";
 import GroupName from "./GroupName/GroupName";
 import GroupAddIcon from '@material-ui/icons/GroupAdd';
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { DARKMAIN, SECONDARYDARK, WHITE } from "../../../Theme/colorConstant";
+import {setSideBar} from '../../../Redux/actions/app'
 function AddChat() {
   const [groupModelName, setGroupModelName] = useState(false);
   const [groupModelListContaier, setgroupModelListContaier] = useState(false);
   const [passGroupName, setPassGroupName] = useState("");
   const [passGroupPicture, setPassGroupPicture] = useState("");
+  const dispatch = useDispatch();
   const { isNightMode } = useSelector((store) => {
     return {
       
@@ -26,6 +28,9 @@ function AddChat() {
           className="addChat__btn"
           onClick={() => {
             setGroupModelName(true);
+            if(window.innerWidth < 700 ){
+              dispatch(setSideBar(true));
+            }
           }}
         > 
           <GroupAddIcon style={{color:isNightMode ? "#fff": "#267396"}}/>

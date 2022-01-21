@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
 import { setActiveGroup, setHeaderData } from "../../../../Redux/actions/chat";
-import { getUserGroup, getUserGroups, seenGroupMessage } from "../../../../api/chat";
+import { getUserGroups, seenGroupMessage } from "../../../../api/chat";
 import {
   DARKLIGHT,
   DARKMAIN,
@@ -13,7 +13,6 @@ import {
 } from "../../../../Theme/colorConstant";
 import moment from "moment";
 import { getSocket } from "../../../../socket";
-import { setGallery } from "../../../../Redux/actions/message";
 import React, { useCallback } from "react";
 import { setSideBar } from "../../../../Redux/actions/app";
 const useStyles = makeStyles({
@@ -38,7 +37,6 @@ function ChatGroup({ group }) {
   });
   const active = active_group.group_id == group.group_id;
   const switchToGroupChat = useCallback(() => {
-    dispatch(setGallery(false));
     dispatch(setActiveGroup(group));
     if (window.innerWidth < 700) {
       dispatch(setSideBar(true));

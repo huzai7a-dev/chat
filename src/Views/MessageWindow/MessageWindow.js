@@ -5,7 +5,8 @@ import { Notify } from "../../helper/notify";
 import "./MessageWindow.css";
 import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageInput from "./MessageInput/MessageInput";
-import Attachments from "./Attachments/Attachments";
+import GalleryModal from "../../Components/GalleryModal/GalleryModal";
+
 function MessageWindow() {
   const dropzoneRef = createRef();
   const [attachment, setAttachment] = useState([]);
@@ -30,7 +31,6 @@ function MessageWindow() {
           {...getRootProps()}
         >
           <div className="message__window">
-            {/* <MessageWindowHeader /> */}
             <MessageTextContainer scrollDown={scrollDown} />
             <MessageInput
               inputProps={getInputProps}
@@ -39,7 +39,7 @@ function MessageWindow() {
               setScrollDown={setScrollDown}
             />
           </div>
-          <Attachments />
+          <GalleryModal />
         </Box>
       )}
     </Dropzone>

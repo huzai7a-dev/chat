@@ -5,7 +5,6 @@ import {
   SET_USER_GROUPS,
   SET_GROUP_MEM_INFO,
   SET_IS_TYPING,
-  SET_NEW_GROUP_MESSAGE,
   SET_TOTAL_CONTACTS,
   SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
@@ -21,7 +20,6 @@ const initState = {
   contacts: [],
   groups: [],
   groupMemInfo: {},
-  newMessage: [],
   allContacts: [],
   allGroups: [],
   call: {},
@@ -62,11 +60,6 @@ export default (state = initState, action) => {
       return (state = {
         ...state,
         isTyping: action.typing,
-      });
-    case SET_NEW_GROUP_MESSAGE:
-      return (state = {
-        ...state,
-        newMessage: action.newMessage,
       });
     case SET_TOTAL_CONTACTS:
       return (state = {

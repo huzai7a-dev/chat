@@ -15,7 +15,7 @@ import { useRTCClient } from "../helper/rtcClient";
 let isAlreadyCalling = false;
 
 const useSocket = () => {
-  const { acceptCall, callUser } = useRTCClient()
+  // const { acceptCall, callUser } = useRTCClient();
   const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId,onCall, callerInfo } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
@@ -34,30 +34,30 @@ const useSocket = () => {
     init(auth_user.elsemployees_empid);
   }, [auth_user]);
 
-  useEffect(() => {
-    if(active_user.elsemployees_empid && !isAlreadyCalling) {
-      try {
-        callUser(active_user.elsemployees_empid)
-      } catch(e) {
-        console.log(e)
-      }
-      isAlreadyCalling=true
-    }
-  },[active_user, callUser])
+  // useEffect(() => {
+  //   if(active_user.elsemployees_empid && !isAlreadyCalling) {
+  //     try {
+  //       callUser(active_user.elsemployees_empid)
+  //     } catch(e) {
+  //       console.log(e)
+  //     }
+  //     isAlreadyCalling=true
+  //   }
+  // },[active_user, callUser])
   
   // ********************************* socket for calling *********************************
 
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on("call-made", (data) => {
-      console.log("I am getting a call", data);
-      dispatch(setCallerInfo(data));
-      acceptCall(data)
-    });
-    return () => {
-      socket.off("call-made");
-    };
-  }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
+  // useEffect(() => {
+  //   const socket = getSocket(auth_user.elsemployees_empid);
+  //   socket.on("call-made", (data) => {
+  //     console.log("I am getting a call", data);
+  //     dispatch(setCallerInfo(data));
+  //     acceptCall(data)
+  //   });
+  //   return () => {
+  //     socket.off("call-made");
+  //   };
+  // }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid);

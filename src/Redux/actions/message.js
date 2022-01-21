@@ -32,12 +32,6 @@ export const setGroupAttachments = (attachments)=> {
     };
 }
 
-export const setGallery = (gallery)=> {
-    return {
-      type: SET_GALLERY,
-      gallery,
-    };
-}
 export const setAdminUserMessages = (messages)=> {
     return {
       type: SET_ADMIN_USER_MESSAGES,

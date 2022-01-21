@@ -16,7 +16,7 @@ import MessageHeader from "../Utils/MessageHeader/MessageHeader";
 import { useDispatch, useSelector } from "react-redux";
 import "./appLayout.css";
 import { setSideBar } from "../../Redux/actions/app";
-import { PRIMARYMAIN } from "../../Theme/colorConstant";
+import { DARKMAIN, PRIMARYMAIN } from "../../Theme/colorConstant";
 
 const drawerWidth = 350;
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +24,6 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   appBar: {
-    backgroundColor: "#fff !important",
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -33,7 +32,8 @@ const useStyles = makeStyles((theme) => ({
   appBarShift: {
     width: `calc(100% - ${window.innerWidth < 700 ? "100%" : drawerWidth}px)`,
     marginLeft: drawerWidth,
-    backgroundColor: "#fff !important",
+    //  marginTop:'64px',
+    // backgroundColor: "#000 !important",
     boxShadow: "none",
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
@@ -59,8 +59,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: "center",
     padding: theme.spacing(0, 1),
     // necessary for content to be below app bar
-    ...theme.mixins.toolbar,
+    // ...theme.mixins.toolbar,
     justifyContent: "flex-end",
+
   },
   content: {
     flexGrow: 1,
@@ -82,15 +83,16 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AppLayout({ children }) {
   const dispatch = useDispatch();
-  const { header, sideBarCollapsed } = useSelector((store) => {
+  const { header, sideBarCollapsed,isNightMode } = useSelector((store) => {
     return {
       header: store.chat.active || {},
       sideBarCollapsed: store.app.sideBarCollapsed || false,
+      isNightMode: store.app.mode || false,
     };
   });
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
+
 
   const handleDrawerOpen = () => {
     dispatch(setSideBar(false));
@@ -108,6 +110,7 @@ export default function AppLayout({ children }) {
         className={clsx(classes.appBar, {
           [classes.appBarShift]: !sideBarCollapsed,
         })}
+        style={{backgroundColor: isNightMode ? DARKMAIN : "#fff",}}
       >
         <Toolbar>
           <IconButton
@@ -134,9 +137,9 @@ export default function AppLayout({ children }) {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader}>
+        <div className={classes.drawerHeader} style={{backgroundColor: isNightMode ? DARKMAIN : "#fff",}}>
           <User />
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={handleDrawerClose} color="primary">
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (

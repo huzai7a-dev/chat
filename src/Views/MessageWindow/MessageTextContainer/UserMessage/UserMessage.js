@@ -259,17 +259,17 @@ function UserMessage(props) {
   return (
     <div
       id={props.sender.message_id}
-      className={
-        props.sender.message_from !== loggedInUser
-          ? "senderMessage "
-          : "userMessage"
-      }
+      className="senderMessage"
+      style={{
+        flexDirection:
+          props.sender.message_from == loggedInUser && "row-reverse",
+      }}
     >
       <div className="userMessage__picture">
         {props.sender.message_from !== loggedInUser ? (
           <Avatar
             src={`/bizzportal/public/img/${image}`}
-            style={{ width: "50px", height: "50px" }}
+            style={{ width: "40px", height: "40px", visibility:props.head.message_id == props.sender.message_id ? "visible": 'hidden' }}
           />
         ) : null}
       </div>
@@ -283,32 +283,21 @@ function UserMessage(props) {
           }
         >
           <div className="userMessage__name" style={{ marginRight: "5px" }}>
-            <p>
-              {props.sender.message_from !== loggedInUser
+            {/* <p>
+              {props.sender.message_from !== loggedInUser && props.head.message_id == props.sender.message_id
                 ? props.sender.from_username + ","
                 : ""}
-            </p>
+            </p> */}
           </div>
 
-          <div
+          {/* <div
             className="userMessage__time"
             style={{ display: "flex", alignItems: "center" }}
           >
-            {props.showDate && (
-              <p>{moment(props.sender.fullTime).format("LT")}</p>
+            {props.head.message_id == props.sender.message_id && (
+              <p>{moment(props.head.fullTime).format("LT")}</p>
             )}
-          </div>
-
-          <div
-            className="msgOption"
-            ref={menuDiv}
-            onClick={() => {
-              setOption(!option);
-            }}
-          >
-            <MoreVertIcon />
-            {option ? <MessageOptions /> : null}
-          </div>
+          </div> */}
         </div>
         {parseInt(props.sender.message_forwarded) == 1 ? (
           <Typography
@@ -326,7 +315,15 @@ function UserMessage(props) {
         ) : null}
 
         {props.sender.message_body && props.sender.message_body !== "null" ? (
-          <div className="recieverQoutMsg__container">
+          <div
+            className="recieverQoutMsg__container"
+            style={{
+              flexDirection:
+                props.sender.message_from !== loggedInUser
+                  ? "row"
+                  : "row-reverse",
+            }}
+          >
             {props.sender.message_quotebody ? <QuotedMessage /> : null}
             <div
               style={{
@@ -347,16 +344,50 @@ function UserMessage(props) {
             >
               {props.sender.message_body}
             </div>
-            <div
-              style={{ position: "absolute", right: "0", fontSize: ".2rem" }}
+            {/* <div
+              style={{
+                position: "absolute",
+                right: "0",
+                fontSize: ".2rem",
+                bottom: "-1rem",
+              }}
             >
               {props.sender.seen > 0 &&
               props.sender.message_from == loggedInUser ? (
                 <DoneAllIcon fontSize="small" color="primary" />
               ) : null}
+            </div> */}
+            <div
+              className="msgOption"
+              ref={menuDiv}
+              onClick={() => {
+                setOption(!option);
+              }}
+            >
+              <MoreVertIcon />
+              {option ? <MessageOptions /> : null}
             </div>
           </div>
         ) : null}
+        {props.head.message_id == props.sender.message_id && (
+          <div
+            className="userMessage__time"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              alignSelf:
+                props.sender.message_from !== loggedInUser
+                  ? "flex-start"
+                  : "flex-end",
+            }}
+          >
+            <p>{moment(props.head.fullTime).format("LT")}</p>
+            {props.sender.seen > 0 &&
+            props.sender.message_from == loggedInUser ? (
+              <DoneAllIcon fontSize="small" color="primary" />
+            ) : null}
+          </div>
+        )}
         <AttachmentModel />
         <Modal
           isOpen={forwardModel}

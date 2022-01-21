@@ -1,39 +1,25 @@
-import React, { useEffect, useState } from "react";
-import useSound from "use-sound";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import "./MessageHeader.css";
-import {
-  IconButton,
-  Tooltip,
-  Typography,
-  Modal,
-  Backdrop,
-} from "@material-ui/core";
-import GroupAddIcon from '@material-ui/icons/GroupAdd';
-// import { getUserAttachments } from "../../../api/message";
-// import { setGallery } from "../../../Redux/actions/message";
+import { IconButton, Typography } from "@material-ui/core";
+import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import { useHistory, useLocation } from "react-router-dom";
 
 const MessageHeader = () => {
-  const { header, isNightMode, auth_user } = useSelector((store) => {
+  const history = useHistory();
+  const location = useLocation();
+
+  const { header, isNightMode } = useSelector((store) => {
     return {
       header: store.chat.active || {},
       isNightMode: store.app.mode || false,
-      auth_user: store.auth.auth_user || {},
     };
   });
 
-  const dispatch = useDispatch();
-  //   const openGallery = () => {
-  //     dispatch(setGallery(true));
-  //     const params = {
-  //       data: {
-  //         user_id: auth_user?.elsemployees_empid,
-  //         from_id: auth_user?.elsemployees_empid,
-  //         to_id: active_user?.elsemployees_empid,
-  //       },
-  //     };
-  //     dispatch(getUserAttachments(params));
-  //   };
+  const openGallery = (e) => {
+    e.preventDefault();
+    history.replace(`${location.pathname}#gallery`);
+  };
 
   return (
     <div className="message__header">
@@ -44,26 +30,30 @@ const MessageHeader = () => {
         >
           {header?.activeName}
         </Typography>
-        <div className="left__options">
+        <div className="left__options" onClick={openGallery}>
           <Typography variant="body2">Gallery </Typography>
           {header.activeType == "group" && header?.other.membersLength > 0 && (
             <>
-            <Typography variant="body2" style={{margin:"0 5px"}}> | </Typography>
-            <Typography variant="body2">Members</Typography>
+              <Typography variant="body2" style={{ margin: "0 5px" }}>
+                {" "}
+                |{" "}
+              </Typography>
+              <Typography variant="body2">Members</Typography>
             </>
           )}
         </div>
       </div>
       <div className="message__header__right">
-        {
-          header.activeType == "group" && (
-            <div>
-              <IconButton>
-                <GroupAddIcon color="primary" style={{ width: "40px", height: "40px" }} />
-              </IconButton>
-            </div>
-          )
-        }
+        {header.activeType == "group" && (
+          <div>
+            <IconButton>
+              <GroupAddIcon
+                color="primary"
+                style={{ width: "40px", height: "40px" }}
+              />
+            </IconButton>
+          </div>
+        )}
       </div>
     </div>
   );

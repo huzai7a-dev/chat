@@ -41,7 +41,7 @@ const useWorker = () => {
         }
       );
     }
-
+    
     if (!("serviceWorker" in navigator)) {
       throw console.log("serviceWorker is not supported");
     }
@@ -58,7 +58,8 @@ const useWorker = () => {
       const reg =
         (await navigator.serviceWorker.getRegistration()) ||
         (await navigator.serviceWorker.register(
-          `/service-worker?user_id=${auth_user?.elsemployees_empid}`
+          `/service-worker?user_id=${auth_user?.elsemployees_empid}`,
+          {scope: '.' }
         ));
       const sub =
         (await reg.pushManager.getSubscription()) ||

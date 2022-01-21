@@ -7,7 +7,7 @@ const initState = {
     groupMessages: [],
     attachments:[],
     groupAttachments:[],
-    gallery:false
+    gallery:true
 };
 
 export default (state = initState, action) => {

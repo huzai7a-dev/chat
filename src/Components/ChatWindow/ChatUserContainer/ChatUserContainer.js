@@ -1,23 +1,17 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import ChatUser from "./ChatUser/ChatUser";
-import "./chatUserContainer.css";
-import { WHITE, SECONDARYMAIN } from "../../../Theme/colorConstant";
+import React, { useEffect, useState, useCallback } from "react";
+import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import ChatGroup from "./ChatGroup/ChatGroup";
-
-import { Button, Box, Typography, Badge } from "@material-ui/core";
+import { Typography, CircularProgress } from "@material-ui/core";
+import moment from "moment";
 import SearchedUser from "./SearchedUser/SearchedUser";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../../../api/chat";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import moment from "moment";
 import AppUser from "../../Utils/AppUser/AppUser";
-import { useHistory, useParams } from "react-router-dom";
 import { setActiveChat, setActiveGroup, setHeaderData } from "../../../Redux/actions/chat";
 import { attachments_url, profile_url } from "../../../constants/apiConstants";
-import { setGallery } from "../../../Redux/actions/message";
 import { quote } from "../../../Redux/Action";
 import { setSideBar } from "../../../Redux/actions/app";
 import { getSocket } from "../../../config/socket";
+import "./chatUserContainer.css";
 // import { getSocket } from "";
 
 function ChatUserContainer({ tabValue }) {
@@ -26,7 +20,9 @@ function ChatUserContainer({ tabValue }) {
     auth_user,
     userSearch,
     searchText,
-    active_group
+    active_group,
+    contacts,
+    groups
   } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
@@ -35,13 +31,14 @@ function ChatUserContainer({ tabValue }) {
       userSearch: store.app?.userSearch || {},
       searchText: store.app?.searchText || "",
       isNightMode: store.app.mode || false,
+      contacts:store.chat.contacts|| [],
+      groups:store.chat.groups|| [],
     };
   });
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const [contacts,setContacts] = useState([]);
-  const [groups,setGroups] = useState([]);
+
   const [contactsLoaded,setcontactsLoaded] = useState(false)
   const [groupsLoaded,setGroupsLoaded] = useState(false)
   const getContactList = useCallback(async ()=> {
@@ -51,9 +48,8 @@ function ChatUserContainer({ tabValue }) {
         user_id: auth_user.elsemployees_empid,
       },
     };
-    const response = await dispatch(getContactsUser(params));
+    await dispatch(getContactsUser(params));
     setcontactsLoaded(true)
-    setContacts(response.data.contacts)
   },[auth_user.elsemployees_empid, dispatch])
 
   useEffect(()=>{
@@ -67,9 +63,8 @@ function ChatUserContainer({ tabValue }) {
           user_id: auth_user?.elsemployees_empid,
         },
       };
-      const response = await dispatch(getUserGroups(params));
+      await dispatch(getUserGroups(params));
       setGroupsLoaded(true)
-      setGroups(response.data);
   },[auth_user?.elsemployees_empid, dispatch])
 
   useEffect(()=>{
@@ -84,7 +79,6 @@ function ChatUserContainer({ tabValue }) {
       const paramData = {
         message_to: user.elsemployees_empid,
       };
-      dispatch(setGallery(false));
       dispatch(quote(null));
       if (window.innerWidth < 700) {
         dispatch(setSideBar(true));
@@ -142,7 +136,7 @@ function ChatUserContainer({ tabValue }) {
     return (
       <div className="chatUserList">
         {contacts?.length > 0 ? (
-          contacts.map((contact, id) => (
+          contacts.map((contact) => (
             <AppUser
               key={contact?.elsemployees_empid}
               userName={contact?.elsemployees_name}
@@ -182,7 +176,6 @@ function ChatUserContainer({ tabValue }) {
   const GroupList = React.memo(() => {
     const onClickGroup=(group)=>{
       history.push(`/group/${group.group_id}`);
-      dispatch(setGallery(false));
       dispatch(setActiveGroup(group));
     if (window.innerWidth < 700) {
       dispatch(setSideBar(true));
@@ -241,7 +234,7 @@ function ChatUserContainer({ tabValue }) {
     return (
       <div className="chatUserList">
         {groups?.length > 0 ? (
-          groups.sort(sortedGroup).map((group, id) => (
+          groups.sort(sortedGroup).map((group) => (
             <AppUser
               key={group?.group_id}
               userName={group?.group_name}

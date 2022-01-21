@@ -142,6 +142,8 @@ function MessageTextContainer() {
       >
         {Object.keys(groupedByMessages)?.map((key, id) => {
           const groupedByMessage = groupedByMessages[key];
+          let keyMessage = groupedByMessage[0];
+          
           return (
             <div key={id}>
               <div className="dividerContainer">
@@ -167,13 +169,20 @@ function MessageTextContainer() {
                 />
               </div>
               <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {groupedByMessage?.map((message) => (
-                  <UserMessage
-                    sender={message}
-                    key={message?.message_id}
-                    showDate={true}
-                  />
-                ))}
+                {groupedByMessage?.map((message) => {
+                  
+                  if (keyMessage.message_from != message.message_from || moment(keyMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+                    keyMessage = message
+                  }
+                  
+                  return (
+                    <UserMessage
+                      sender={message}
+                      key={message?.message_id}
+                      head={keyMessage}
+                    />
+                  )
+                })}
               </div>
             </div>
           );

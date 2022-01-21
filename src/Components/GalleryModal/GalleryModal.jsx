@@ -1,4 +1,4 @@
-import React, { useState,useCallback } from "react";
+import React, { useState,useCallback, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -6,43 +6,84 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import Select from "@mui/material/Select";
 import { Typography, Box, IconButton, Button } from "@material-ui/core";
 import { makeStyles } from "@mui/styles";
-import { useDispatch, useSelector } from "react-redux";
-import Skeleton from "@mui/material/Skeleton";
-import Stack from "@mui/material/Stack";
+import { useSelector, useDispatch } from "react-redux";
 import Modal from "@mui/material/Modal";
-import { setGallery } from "../../../Redux/actions/message";
-const useStyle = makeStyles({
-  attachmentHeader: {
-    height: "10vh",
-    padding: "0px 5px",
-  },
-  attachments: {
-    height: "90vh",
-    overflowY: "scroll",
-    padding: "0px 5px",
-  },
-});
-function Attachments() {
+import { useHistory, useLocation } from "react-router-dom";
+import { useEffect } from "react";
+import { getUserAttachments, getGroupAttachments } from '../../api/message';
+
+const GalleryModal = React.forwardRef((props) => {
   const classes = useStyle();
   const [attachmentType, setAttachmentType] = useState("all");
   const [attachSrc, setAttachSrc] = useState("");
-  const [open, setOpen] = useState(false);
+  const [showGallery, setShowGallery] = useState();
+  const [modalVisible, setModalVisible] = useState(false);
+  const [attachments, setAttachments] = useState([]);
   const dispatch = useDispatch();
-  const {  attachments, gallery } = useSelector(
-    (store) => {
-      return {
-        attachments: store.message?.attachments || "",
-        gallery: store.message?.gallery || false,
-      };
+
+  const {auth_user, activeId, activeType } = useSelector(store => {
+    return {
+      auth_user: store.auth?.auth_user,
+      activeType: store.chat?.active?.activeType,
+      activeId: store.chat?.active?.activeId,
     }
-  );
+  });
+
+  const location = useLocation();
+  const history = useHistory();
+
+  // USER
+  const getUserGalleryItems = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          user_id: auth_user?.elsemployees_empid,
+          from_id: auth_user?.elsemployees_empid,
+          to_id: activeId,
+        },
+      };
+      const response = await dispatch(getUserAttachments(params));
+      setAttachments(response.data.attachments);
+    } catch(e) {
+      console.log(e)
+    }
+  }, [auth_user, activeId, dispatch])
+   
+  // GROUP
+  const getGroupGalleryItems = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          user_id: auth_user?.elsemployees_empid,
+          group_id: activeId,
+        },
+      };
+      const response = await dispatch(getGroupAttachments(params));
+      console.log(response);
+      setAttachments(response.data.attachments);
+    } catch(e) {
+      console.log(e)
+    }
+  }, [auth_user, activeId, dispatch])
+
+  useEffect(() => {
+    const hash = location.hash.substring(1)
+    setShowGallery(hash.toLowerCase() == "gallery");
+  }, [location.hash]);
+
+  useEffect(() => {
+    if(showGallery) {
+      if(activeType == "user") getUserGalleryItems();
+      else getGroupGalleryItems();
+    }
+  }, [activeType, getGroupGalleryItems, getUserGalleryItems, showGallery])
 
   const openImage = useCallback((e) => {
-    setOpen(true);
+    setModalVisible(true);
     setAttachSrc(e.target.currentSrc);
   },[]);
 
-  const DropDown = React.memo(() => {
+  const renderDropdown = useMemo(() => {
     const handleChange = (e) => {
       setAttachmentType(e.target.value);
     };
@@ -61,8 +102,9 @@ function Attachments() {
         </Select>
       </FormControl>
     );
-  });
-  const AttachmentsHeader = React.memo(() => {
+  }, [attachmentType]);
+  
+  const renderAttachmentsHeader = useMemo(() => {
     return (
       <Box
         display="flex"
@@ -70,19 +112,14 @@ function Attachments() {
         alignItems="center"
         className={classes.attachmentHeader}
       >
-        <IconButton
-          onClick={() => {
-            dispatch(setGallery(false));
-          }}
-        >
+        <IconButton onClick={() => history.replace(location.pathname)}>
           <CloseIcon />
         </IconButton>
         <Typography variant="h5">Gallery</Typography>
-        <DropDown />
+        {renderDropdown}
       </Box>
     );
-  });
-
+  },[classes, renderDropdown, location, history]);
 
   const filterAttachment = useCallback((attachment) => {
     const media = [
@@ -123,8 +160,8 @@ function Attachments() {
     }
   },[attachmentType]);
 
-  const Attachments = React.memo(() => {
-    return attachments.filter(filterAttachment).map((attachmentObj) => {
+  const renderAttachments = useMemo(() => {
+    return attachments?.filter(filterAttachment).map((attachmentObj) => {
       return attachmentObj.message_attachment
         .split(",")
         .map((attachment, id) => {
@@ -201,7 +238,8 @@ function Attachments() {
           }
         });
     });
-  });
+  }, [attachments, filterAttachment, openImage]);
+  
   const modalStyle = {
     height: "100vh",
     display: "flex",
@@ -216,14 +254,14 @@ function Attachments() {
     height: "auto",
   };
   return (
-    <Box style={{ width: gallery ? "400px" : "0px", transition: "0.2s" }}>
-      <AttachmentsHeader />
+    <Box style={{ width: showGallery ? "400px" : "0px", transition: "0.2s" }}>
+      {renderAttachmentsHeader}
       <Box className={classes.attachments}>
-        {attachments.length > 0 && <Attachments />}
+        {attachments.length > 0 && renderAttachments}
       </Box>
       <Modal
-        open={open}
-        onClose={()=>{setOpen(false)}}
+        open={modalVisible}
+        onClose={()=>setModalVisible(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         style={modalStyle}
@@ -234,6 +272,18 @@ function Attachments() {
       </Modal>
     </Box>
   );
-}
+})
 
-export default React.memo(Attachments);
+const useStyle = makeStyles({
+  attachmentHeader: {
+    height: "10vh",
+    padding: "0px 5px",
+  },
+  attachments: {
+    height: "90vh",
+    overflowY: "scroll",
+    padding: "0px 5px",
+  },
+});
+
+export default GalleryModal;

@@ -3,22 +3,18 @@ import useSound from "use-sound";
 import "./messageWindowHeader.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  IconButton,
-  Tooltip,
   Typography,
   Modal,
   Backdrop,
 } from "@material-ui/core";
 import skypeSound from "../../../Assets/sound/skype-ringing.mp3";
-import CallIcon from "@material-ui/icons/Call";
-import { getUserAttachments } from "../../../api/message";
-import { setGallery } from "../../../Redux/actions/message";
 import OnCall from "../../Call/OnCall";
 // import { getSocket } from "../../../socket";
 import { setMakeCall } from "../../../Redux/actions/chat";
 import { getSocket } from "../../../config/socket";
 // const Peer = require('peerjs');
-function MessageWindowHeader() {
+
+function MessageWindowHeader(props) {
   const [openCall, setOpenCall] = useState(false);
   const [myCallId, setMyCallId] = useState("");
   const [stream, setStream] = useState("");
@@ -40,17 +36,10 @@ function MessageWindowHeader() {
     });
   }, []);
   const dispatch = useDispatch();
-  const openGallery = () => {
-    dispatch(setGallery(true));
-    const params = {
-      data: {
-        user_id: auth_user?.elsemployees_empid,
-        from_id: auth_user?.elsemployees_empid,
-        to_id: active_user?.elsemployees_empid,
-      },
-    };
-    dispatch(getUserAttachments(params));
-  };
+    const openGallery = ()=>{
+      history.replace(`${location.pathname}#gallery`)
+    }
+
 
   const onStartCall = () => {
     navigator.mediaDevices
@@ -88,15 +77,6 @@ function MessageWindowHeader() {
           <Typography variant="body2">Gallery</Typography>
         </div>
       </div>
-      {/* <div>
-        <Tooltip title="Make a call">
-          <IconButton onClick={onStartCall}>
-            <CallIcon color="primary" />
-          </IconButton>
-        </Tooltip>
-      </div> */}
-
-      {/* calling model */}
       <Modal
         open={makeCall}
         onClose={() => setOpenCall(false)}
