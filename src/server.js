@@ -4,6 +4,7 @@ import { StaticRouter } from "react-router-dom";
 import express from "express";
 import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
+import { getSubscriptions } from "./server/webpush";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -36,6 +37,7 @@ server
   .use(proxyRoutes)
   .get("/*", (req, res) => {
     const context = {};
+    getSubscriptions();
     const markup = renderToString(
       <StaticRouter context={context} location={req.url}>
         <App />

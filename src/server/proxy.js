@@ -2,29 +2,10 @@ import express from "express";
 import axios from "axios";
 import multer from "multer";
 import env from "../env.json";
-import { saveSubscription } from "./webpush";
+import { getSubscriptions, saveSubscription } from "./webpush";
 import { getFormData } from "./db";
 
 const router = express.Router();
-
-const isValidSaveRequest = (req, res) => {
-  // Check the request body has at least an endpoint.
-  if (!req.body || !req.body.subscription) {
-    // Not a valid subscription.
-    res.status(400);
-    res.setHeader("Content-Type", "application/json");
-    res.send(
-      JSON.stringify({
-        error: {
-          id: "no-endpoint",
-          message: "Subscription must have an endpoint.",
-        },
-      })
-    );
-    return false;
-  }
-  return true;
-};
 
 router.use("/api/*", multer().any(), (req, res, next) => {
   const contentType = req.get("content-type") || "application/json";
@@ -117,5 +98,13 @@ router.post("/worker/save-subs", async (req, res) => {
   res.setHeader("Content-Type", "application/json");
   res.send(JSON.stringify({ data: { success: true } }));
 });
+
+router.get("/subscription", async(req, res) => {
+  try {
+    res.status(200).send(await getSubscriptions());
+  } catch(e) {
+    res.send(500).send(e);
+  }
+})
 
 export default router;

@@ -1,16 +1,14 @@
-import React, { useState,useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
-import Select from "@mui/material/Select";
 import { Typography, Box, IconButton, Button } from "@material-ui/core";
 import { makeStyles } from "@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "@mui/material/Modal";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { getUserAttachments, getGroupAttachments } from '../../api/message';
+import { getUserAttachments, getGroupAttachments } from "../../api/message";
+import "./gallerymodal.style.css";
 
 const GalleryModal = React.forwardRef((props) => {
   const classes = useStyle();
@@ -21,12 +19,12 @@ const GalleryModal = React.forwardRef((props) => {
   const [attachments, setAttachments] = useState([]);
   const dispatch = useDispatch();
 
-  const {auth_user, activeId, activeType } = useSelector(store => {
+  const { auth_user, activeId, activeType } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user,
       activeType: store.chat?.active?.activeType,
       activeId: store.chat?.active?.activeId,
-    }
+    };
   });
 
   const location = useLocation();
@@ -44,11 +42,11 @@ const GalleryModal = React.forwardRef((props) => {
       };
       const response = await dispatch(getUserAttachments(params));
       setAttachments(response.data.attachments);
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
-  }, [auth_user, activeId, dispatch])
-   
+  }, [auth_user, activeId, dispatch]);
+
   // GROUP
   const getGroupGalleryItems = useCallback(async () => {
     try {
@@ -61,104 +59,108 @@ const GalleryModal = React.forwardRef((props) => {
       const response = await dispatch(getGroupAttachments(params));
       console.log(response);
       setAttachments(response.data.attachments);
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
-  }, [auth_user, activeId, dispatch])
+  }, [auth_user, activeId, dispatch]);
 
   useEffect(() => {
-    const hash = location.hash.substring(1)
+    const hash = location.hash.substring(1);
     setShowGallery(hash.toLowerCase() == "gallery");
   }, [location.hash]);
 
   useEffect(() => {
-    if(showGallery) {
-      if(activeType == "user") getUserGalleryItems();
+    if (showGallery) {
+      if (activeType == "user") getUserGalleryItems();
       else getGroupGalleryItems();
     }
-  }, [activeType, getGroupGalleryItems, getUserGalleryItems, showGallery])
+  }, [activeType, getGroupGalleryItems, getUserGalleryItems, showGallery]);
 
   const openImage = useCallback((e) => {
     setModalVisible(true);
     setAttachSrc(e.target.currentSrc);
-  },[]);
+  }, []);
 
-  const renderDropdown = useMemo(() => {
-    const handleChange = (e) => {
-      setAttachmentType(e.target.value);
-    };
-    return (
-      <FormControl sx={{ minWidth: 80 }}>
-        <Select
-          value={attachmentType}
-          onChange={handleChange}
-          displayEmpty
-          variant="filled"
-          inputProps={{ "aria-label": "Without label" }}
-        >
-          <MenuItem value="all">All</MenuItem>
-          <MenuItem value="media">Media</MenuItem>
-          <MenuItem value="files">Files</MenuItem>
-        </Select>
-      </FormControl>
-    );
-  }, [attachmentType]);
-  
+  // const renderDropdown = useMemo(() => {
+  //   const handleChange = (e) => {
+  //     setAttachmentType(e.target.value);
+  //   };
+  //   return (
+  //     <FormControl sx={{ minWidth: 80 }}>
+  //       <Select
+  //         value={attachmentType}
+  //         onChange={handleChange}
+  //         displayEmpty
+  //         variant="filled"
+  //         inputProps={{ "aria-label": "Without label" }}
+  //       >
+  //         <MenuItem value="all">All</MenuItem>
+  //         <MenuItem value="media">Media</MenuItem>
+  //         <MenuItem value="files">Files</MenuItem>
+  //       </Select>
+  //     </FormControl>
+  //   );
+  // }, [attachmentType]);
+
   const renderAttachmentsHeader = useMemo(() => {
     return (
       <Box
         display="flex"
-        justifyContent="space-between"
         alignItems="center"
         className={classes.attachmentHeader}
       >
         <IconButton onClick={() => history.replace(location.pathname)}>
           <CloseIcon />
         </IconButton>
-        <Typography variant="h5">Gallery</Typography>
-        {renderDropdown}
+        <Typography variant="h5" style={{ flex: "1", textAlign: "center" }}>
+          Gallery
+        </Typography>
+        {/* {renderDropdown} */}
       </Box>
     );
-  },[classes, renderDropdown, location, history]);
+  }, [classes, location, history]);
 
-  const filterAttachment = useCallback((attachment) => {
-    const media = [
-      "jpg",
-      "jpeg",
-      "gif",
-      "jpeg",
-      "mp4",
-      "mkv",
-      "wmv",
-      "flv",
-      "png",
-      "wav",
-    ];
-    const files = [
-      "DOC",
-      "DOCX",
-      "HTML",
-      "HTM",
-      "ODT",
-      "PDF",
-      "XLS",
-      "XLSX",
-      "ODS",
-      "PPT",
-      "PPTX",
-      "TXT",
-      "ZIP",
-      "GITIGNORE",
-    ];
-    const extension = attachment.message_originalname?.split(".").pop();
-    if (attachmentType == "media") {
-      return media.includes(extension.toLowerCase());
-    } else if (attachmentType == "files") {
-      return files.includes(extension.toUpperCase());
-    } else {
-      return true;
-    }
-  },[attachmentType]);
+  const filterAttachment = useCallback(
+    (attachment) => {
+      const media = [
+        "jpg",
+        "jpeg",
+        "gif",
+        "jpeg",
+        "mp4",
+        "mkv",
+        "wmv",
+        "flv",
+        "png",
+        "wav",
+      ];
+      const files = [
+        "DOC",
+        "DOCX",
+        "HTML",
+        "HTM",
+        "ODT",
+        "PDF",
+        "XLS",
+        "XLSX",
+        "ODS",
+        "PPT",
+        "PPTX",
+        "TXT",
+        "ZIP",
+        "GITIGNORE",
+      ];
+      const extension = attachment.message_originalname?.split(".").pop();
+      if (attachmentType == "media") {
+        return media.includes(extension.toLowerCase());
+      } else if (attachmentType == "files") {
+        return files.includes(extension.toUpperCase());
+      } else {
+        return true;
+      }
+    },
+    [attachmentType]
+  );
 
   const renderAttachments = useMemo(() => {
     return attachments?.filter(filterAttachment).map((attachmentObj) => {
@@ -221,7 +223,7 @@ const GalleryModal = React.forwardRef((props) => {
               <audio
                 src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
                 controls
-                style={{ margin: "10px 0px", width:"100%" }}
+                style={{ margin: "10px 0px", width: "100%" }}
               />
             );
           } else {
@@ -239,7 +241,7 @@ const GalleryModal = React.forwardRef((props) => {
         });
     });
   }, [attachments, filterAttachment, openImage]);
-  
+
   const modalStyle = {
     height: "100vh",
     display: "flex",
@@ -253,15 +255,23 @@ const GalleryModal = React.forwardRef((props) => {
     display: "block",
     height: "auto",
   };
+  const galleryWidth = window.innerWidth < 700 ? "100%" : "400px";
   return (
-    <Box style={{ width: showGallery ? "400px" : "0px", transition: "0.2s" }}>
+    <Box
+      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth }}
+      className="gallery__container"
+    >
       {renderAttachmentsHeader}
       <Box className={classes.attachments}>
-        {attachments.length > 0 && renderAttachments}
+        {attachments?.length > 0 ? (
+          renderAttachments
+        ) : (
+          <Typography align="center">No Attachments</Typography>
+        )}
       </Box>
       <Modal
         open={modalVisible}
-        onClose={()=>setModalVisible(false)}
+        onClose={() => setModalVisible(false)}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         style={modalStyle}
@@ -272,7 +282,7 @@ const GalleryModal = React.forwardRef((props) => {
       </Modal>
     </Box>
   );
-})
+});
 
 const useStyle = makeStyles({
   attachmentHeader: {

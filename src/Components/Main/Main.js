@@ -9,6 +9,7 @@ import { DARKMAIN } from "../../Theme/colorConstant";
 import AdminPanel from "../AdminPanel/AdminPanel";
 import AppLayout from "../AppLayout/AppLayout";
 import "./Main.css";
+import GalleryModal from "../GalleryModal/GalleryModal";
 
 const Main = React.memo(() => {
   const videoRef = useRef();
@@ -40,7 +41,7 @@ const Main = React.memo(() => {
           <Route path="/group/:id" component={GroupMessageWindow} />
         </AppLayout>
       </Switch>
-
+      <GalleryModal />
     </div>
   );
 });

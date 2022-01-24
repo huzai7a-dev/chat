@@ -34,6 +34,8 @@ const useStyles = makeStyles((theme) => ({
     marginLeft: drawerWidth,
     //  marginTop:'64px',
     // backgroundColor: "#000 !important",
+    height:"64px !important",
+    overflow:"hidden",
     boxShadow: "none",
     transition: theme.transitions.create(["margin", "width"], {
       easing: theme.transitions.easing.easeOut,
@@ -104,13 +106,13 @@ export default function AppLayout({ children }) {
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
           [classes.appBarShift]: !sideBarCollapsed,
         })}
-        style={{backgroundColor: isNightMode ? DARKMAIN : "#fff",}}
+        style={{backgroundColor: isNightMode ? DARKMAIN : "#fff"}}
       >
         <Toolbar>
           <IconButton

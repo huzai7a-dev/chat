@@ -36,7 +36,7 @@ function GroupMessageWindow() {
               setScrollDown={setScrollDown}
             />
           </div>
-          <GalleryModal />
+          
         </Box>
       )}
     </Dropzone>

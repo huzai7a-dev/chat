@@ -28,7 +28,6 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #82bfdc;
 }
-
-.jss2 {
-  height: 100vh !important;
+.MuiAppBar-root {
+  height:64px !important;
 }

@@ -19,7 +19,7 @@ const pushSubscription = {
 
 export const getSubscriptionByUser = (user_id) =>
   new Promise((resolve, reject) => {
-    connection.run(
+    connection.get(
       `SELECT * FROM Subscription WHERE user_id = ${user_id}`,
       (results, error) => {
         if (error) {
@@ -42,19 +42,32 @@ export const getSubscriptionByUser = (user_id) =>
 
 export const saveSubscription = (user_id, subscription) =>
   new Promise((resolve, reject) => {
+    // console.log(user_id, subscription)
     connection.run(
-      `INSERT OR REPLACE INTO Subscription (user_id, endpoint, expirationTime, p256dh, auth)
-  VALUES (?,?,?,?,?)`,
-  [user_id, subscription.endpoint, subscription.expirationTime, subscription.keys.p256dh, subscription.keys.auth],
+      `INSERT INTO Subscription(user_id,endpoint,expirationTime,p256dh,auth)
+  VALUES('${user_id}','${subscription.endpoint}','${subscription.expirationTime}','${subscription.keys.p256dh}','${subscription.keys.auth}')
+  ON CONFLICT(user_id)
+  DO UPDATE SET endpoint='${subscription.endpoint}',expirationTime='${subscription.expirationTime}',p256dh='${subscription.keys.p256dh}',auth='${subscription.keys.auth}'`,
+  // [user_id, subscription.endpoint, subscription.expirationTime, subscription.keys.p256dh, subscription.keys.auth],
   (results, error) => {
         if (error) {
           return reject(error);
         }
-        console.log("Subscription saved", results);
+        console.log("Subscription saved", results, error);
         resolve(results);
       }
     );
   });
+
+  export const getSubscriptions = () => new Promise((resolve, reject) => {
+    connection.all(`SELECT * FROM Subscription`, (error, rows)=> {
+      if(error) {
+        reject(error);
+      } else {
+        resolve(rows);
+      }
+    })
+})
 
 export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification") => {
   const subscription = await getSubscriptionByUser(user_id);

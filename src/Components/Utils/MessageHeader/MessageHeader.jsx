@@ -30,8 +30,8 @@ const MessageHeader = () => {
         >
           {header?.activeName}
         </Typography>
-        <div className="left__options" onClick={openGallery}>
-          <Typography variant="body2">Gallery </Typography>
+        <div className="left__options">
+          <Typography variant="body2" onClick={openGallery}>Gallery </Typography>
           {header.activeType == "group" && header?.other.membersLength > 0 && (
             <>
               <Typography variant="body2" style={{ margin: "0 5px" }}>

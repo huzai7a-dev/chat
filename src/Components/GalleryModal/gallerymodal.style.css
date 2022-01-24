@@ -1,0 +1,11 @@
+.gallery__container {
+    transition: 0.2s; 
+    position:absolute;
+    top:0;
+    bottom:0;
+    z-index: 1100;
+    box-shadow: -6px 6px 17px -6px rgba(43,43,43,0.55);
+    -webkit-box-shadow: -6px 6px 17px -6px rgba(43,43,43,0.55);
+    -moz-box-shadow: -6px 6px 17px -6px rgba(43,43,43,0.55);;
+    background-color: white;
+}

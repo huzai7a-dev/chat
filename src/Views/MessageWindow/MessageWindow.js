@@ -39,7 +39,6 @@ function MessageWindow() {
               setScrollDown={setScrollDown}
             />
           </div>
-          <GalleryModal />
         </Box>
       )}
     </Dropzone>
