@@ -21,19 +21,19 @@ export const getSubscriptionByUser = (user_id) =>
   new Promise((resolve, reject) => {
     connection.get(
       `SELECT * FROM Subscription WHERE user_id = ${user_id}`,
-      (results, error) => {
+      (error, result) => {
         if (error) {
           reject(error);
         }
 
-        const subscription = results?.length > 0 ? {
-          endpoint: results[0]?.endpoint,
-          expirationTime: results[0]?.expirationTime,
+        const subscription = {
+          endpoint: result?.endpoint,
+          expirationTime: result?.expirationTime,
           keys: {
-            p256dh: results[0]?.p256dh,
-            auth: results[0]?.auth,
+            p256dh: result?.p256dh,
+            auth: result?.auth,
           },
-        }: null;
+        };
 
         resolve(subscription);
       }
@@ -88,6 +88,3 @@ export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification")
   return null;
 };
 
-export const sendNotification = (payload) => {
-  return webpush.sendNotification(pushSubscription, payload);
-};

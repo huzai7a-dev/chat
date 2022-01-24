@@ -2,7 +2,7 @@ import express from "express";
 import axios from "axios";
 import multer from "multer";
 import env from "../env.json";
-import { getSubscriptions, saveSubscription } from "./webpush";
+import { getSubscriptions, saveSubscription, triggerPushMsg } from "./webpush";
 import { getFormData } from "./db";
 
 const router = express.Router();
@@ -104,6 +104,19 @@ router.get("/subscription", async(req, res) => {
     res.status(200).send(await getSubscriptions());
   } catch(e) {
     res.send(500).send(e);
+  }
+})
+
+router.get("/worker/trigger/:user_id", async(req, res) => {
+  try {
+    const notification = {
+      title: "John Doe",
+      text: "You are next",
+      image: null,
+    };
+    res.status(200).send(await triggerPushMsg(req.params.user_id, notification))
+  } catch(e) {
+    res.status(500).send(e)
   }
 })
 
