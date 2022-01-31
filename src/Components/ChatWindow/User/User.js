@@ -11,6 +11,7 @@ import SignOut from "./SignOut/SignOut";
 import { useHistory } from "react-router-dom";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import {ADMIN} from '../../../Role/index';
+import { PRIMARYMAIN } from "../../../Theme/colorConstant";
 Modal.setAppElement("#root");
   
 const User = React.memo(() => {
@@ -38,13 +39,13 @@ const User = React.memo(() => {
           src={`/bizzportal/public/img/${image}`}
           className="userImg"
         />
-        <Typography variant="caption" style={{color:isNightMode ? "#fff": "#267396"}} className="userName">{auth_user?.elsemployees_name}</Typography>
+        <Typography variant="caption" style={{color:isNightMode ? "#fff": PRIMARYMAIN}} className="userName">{auth_user?.elsemployees_name}</Typography>
         <div className="onlineStatus"></div>
       </div>
       { role == ADMIN ? (
         <Tooltip title={"Admin Panel"}>
         <IconButton onClick={switchToAdmin}>
-          <AdminPanelSettingsIcon style={{color:isNightMode ? "#fff": "#267396"}}/>
+          <AdminPanelSettingsIcon style={{color:isNightMode ? "#fff": PRIMARYMAIN}}/>
         </IconButton>
       </Tooltip>
       ): null

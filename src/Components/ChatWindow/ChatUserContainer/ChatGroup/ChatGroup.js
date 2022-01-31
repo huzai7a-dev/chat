@@ -114,7 +114,7 @@ function ChatGroup({ group }) {
         <Box display="flex" justifyContent="space-between">
           <h3
             style={{
-              color: group.groupunseenmesg > 0 ? "#267396" : heading,
+              color: group.groupunseenmesg > 0 ? PRIMARYMAIN : heading,
               fontWeight: group.groupunseenmesg ? "600" : "100",
               flex: "3",
             }}

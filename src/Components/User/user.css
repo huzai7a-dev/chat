@@ -5,5 +5,5 @@
 .user__container:hover {
   background: #d8ecf7;
   cursor: pointer;
-  color: #267396;
+  color: var(--chat-primary);
 }

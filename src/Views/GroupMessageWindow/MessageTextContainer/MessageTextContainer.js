@@ -151,6 +151,7 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
       >
         {Object.keys(groupedByMessages)?.map((key, id) => {
           const groupedByMessage = groupedByMessages[key];
+          let keyMessage = groupedByMessage[0];
 
           return (
             <div key={id}>
@@ -177,7 +178,13 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
                 />
               </div>
               <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {groupedByMessage?.map((message) => (
+                {groupedByMessage?.map((message) => {
+                  
+                  if (keyMessage.from_userid != message.from_userid || moment(keyMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+                    keyMessage = message
+                  }
+
+                  return (
                   <UserMessage
                     chatgroup={message}
                     key={message.groupmessage_id}
@@ -185,8 +192,9 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
                       groupedByMessage[groupedByMessage.length - 1]
                         .groupmessage_id === message.groupmessage_id
                     }
+                    head={keyMessage}
                   />
-                ))}
+                )})}
               </div>
             </div>
           );

@@ -1,6 +1,6 @@
 .recorderContainer {
   width: 100%;
-  background-color: #f1f1f4;
+  background-color: var(--chat-secondary);
   border-radius: 30px;
   margin: 0px 20px;
   padding: 0px 20px 5px 0px;
@@ -13,7 +13,7 @@
 .recorderTime {
   animation: timer 60s linear normal;
   height: 10px;
-  background-color: #267396;
+  background-color: var(--chat-primary);
 }
 
 @keyframes timer {

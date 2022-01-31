@@ -21,7 +21,7 @@ import { setQuote } from "../../../Redux/actions/app";
 // import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
-import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
+import Utils, { getCSSColor, getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
@@ -34,14 +34,14 @@ const useStyles = makeStyles({
   sendBtn: {
     width: "50px",
     height: "50px",
-    background: "#267396",
+    background: getCSSColor("--chat-primary"),
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
       background: "#d8ecf7",
-      color: "#267396",
+      color: getCSSColor("--chat-primary"),
     },
   },
   attachBtn: {
@@ -50,14 +50,14 @@ const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "#267396",
+    background: getCSSColor("--chat-primary"),
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
       background: "#d8ecf7",
-      color: "#267396",
+      color: getCSSColor("--chat-primary"),
     },
   },
   micIcon: {

@@ -1,9 +1,10 @@
 import { green, red } from "@material-ui/core/colors";
+import { getCSSColor } from "../helper/util";
 
 // light
-export const PRIMARYMAIN = "#267396";
-export const PRIMARYLIGHT = "#d8ecf7";
-export const SECONDARYMAIN = "#f1f1f4";
+export const PRIMARYMAIN = getCSSColor("--chat-primary");
+export const PRIMARYLIGHT = getCSSColor("--chat-primary-light");
+export const SECONDARYMAIN = getCSSColor("--chat-secondary");
 export const SECONDARYDARK = "#d5d9de";
 export const WHITE = "#fff";
 // dark

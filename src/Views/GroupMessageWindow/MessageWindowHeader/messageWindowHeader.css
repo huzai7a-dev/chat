@@ -13,7 +13,7 @@
   margin-top: 2px;
 }
 .userName p {
-  color: #d1d1d1;
+  color: var(--chat-grey);
   font-weight: bold;
   font-size: small;
   cursor: pointer;

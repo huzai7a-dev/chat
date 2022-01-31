@@ -10,7 +10,7 @@ import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import ForwardMessage from "./ForwardMessage";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-function UserMessage({ chatgroup }) {
+function UserMessage({ chatgroup, ...props }) {
   const { auth_user, active_user, seenData } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
@@ -167,7 +167,7 @@ function UserMessage({ chatgroup }) {
   const quoteData = () => {
     const quoteMsg = {
       from_username: chatgroup.from_username,
-      message_id: chatgroup.message_id,
+      message_id: chatgroup.groupmessage_id,
       groupmessage_body:
         chatgroup.groupmessage_attachment || chatgroup.groupmessage_body,
       attachment: chatgroup.groupmessage_attachment,
@@ -187,15 +187,22 @@ function UserMessage({ chatgroup }) {
 
   return (
     <div
-      id={chatgroup.message_id}
+      id={chatgroup.groupmessage_id}
       className="senderMessage"
-      style={{flexDirection:user == loggedInUser && "row-reverse"}}
+      style={{ flexDirection: user == loggedInUser && "row-reverse" }}
     >
       <div className="userMessage__picture">
         {user !== loggedInUser ? (
           <Avatar
             src={`/bizzportal/public/img/${image}`}
-            style={{ width: "50px", height: "50px" }}
+            style={{
+              width: "40px",
+              height: "40px",
+              visibility:
+                props.head?.groupmessage_id == chatgroup?.groupmessage_id
+                  ? "visible"
+                  : "hidden",
+            }}
           />
         ) : (
           ""
@@ -205,49 +212,12 @@ function UserMessage({ chatgroup }) {
       <div className="userMessageBox">
         <div
           className={
-            user !== loggedInUser ? "senderMessage__details" : "userMessage__details"
+            user !== loggedInUser
+              ? "senderMessage__details"
+              : "userMessage__details"
           }
         >
-          <div className="userMessage__name">
-            <p>{user !== loggedInUser ? chatgroup.from_username + "," : ""}</p>
-          </div>
-
-          <div className="userMessage__time">
-            <p>{moment(chatgroup.fullTime).format("LT")}</p>
-          </div>
-
-          <div
-            ref={menuDiv}
-            className="msgOption"
-            onClick={() => {
-              setOption(!option);
-            }}
-          >
-            <MoreVertIcon />
-            {option ? (
-              <div className="optionsContainer">
-                <div className="options">
-                  <p
-                    onClick={() => {
-                      setForwardModel(true);
-                    }}
-                  >
-                    Forward
-                  </p>
-                  <p onClick={quoteData}>Quote</p>
-                  {chatgroup.groupmessage_attachment ? (
-                    <p
-                      onClick={() =>
-                        downloadAttachment(chatgroup.groupmessage_attachment)
-                      }
-                    >
-                      Download
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            ) : null}
-          </div>
+          
         </div>
         {chatgroup.groupmessage_attachment ? (
           <div
@@ -256,7 +226,9 @@ function UserMessage({ chatgroup }) {
               display: "flex",
               flexWrap: "wrap",
               justifyContent:
-                chatgroup.message_from === loggedInUser ? "flex-end" : "flex-start",
+                chatgroup.from_userid === loggedInUser
+                  ? "flex-end"
+                  : "flex-start",
               alignItems: "center",
             }}
           >
@@ -287,22 +259,75 @@ function UserMessage({ chatgroup }) {
                   {chatgroup.groupmessage_body}
                 </div>
               )}
-            <Box display="flex" style={{ float: "right" }}>
-              {seenData.map((seen, id) => {
-                return seen.messageid == chatgroup.groupmessage_id &&
-                  seen.userid != active_user?.elsemployees_empid ? (
-                  <Tooltip title={seen.username}>
-                    <Avatar
-                      key={id}
-                      style={{ height: "20px", width: "20px" }}
-                      src={`/bizzportal/public/img/${seen.userpicture}`}
-                    />
-                  </Tooltip>
-                ) : null;
-              })}
-            </Box>
+              <div
+            ref={menuDiv}
+            className="msgOption"
+            style={option ? {display:"flex"} : null}
+            onClick={() => {
+              setOption(!option);
+            }}
+          >
+            <MoreVertIcon />
+            {option ? (
+              <div className="optionsContainer" style={{[chatgroup?.from_userid === loggedInUser ? "right": "left"]: "100%"}}>
+                <div className="options">
+                  <p
+                    onClick={() => {
+                      setForwardModel(true);
+                    }}
+                  >
+                    Forward
+                  </p>
+                  <p onClick={quoteData}>Quote</p>
+                  {chatgroup.groupmessage_attachment ? (
+                    <p
+                      onClick={() =>
+                        downloadAttachment(chatgroup.groupmessage_attachment)
+                      }
+                    >
+                      Download
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            ) : null}
+          </div>
           </div>
         ) : null}
+        {props.head?.groupmessage_id == chatgroup?.groupmessage_id && (
+          <div className="userMessage__name">
+            <p>{user !== loggedInUser ? chatgroup.from_username + "," : ""}</p>
+          </div>
+        )}
+        <Box display="flex" style={{ float: "right" }}>
+          {seenData.map((seen, id) => {
+            return seen.messageid == chatgroup.groupmessage_id &&
+              seen.userid != active_user?.elsemployees_empid ? (
+              <Tooltip title={seen.username}>
+                <Avatar
+                  key={id}
+                  style={{ height: "20px", width: "20px" }}
+                  src={`/bizzportal/public/img/${seen.userpicture}`}
+                />
+              </Tooltip>
+            ) : null;
+          })}
+        </Box>
+        {props.head?.groupmessage_id == chatgroup?.groupmessage_id && (
+          <div
+            className="userMessage__time"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              alignSelf:
+                chatgroup.from_userid !== loggedInUser
+                  ? "flex-start"
+                  : "flex-end",
+            }}
+          >
+            <p>{moment(props.head?.fullTime).format("LT")}</p>
+          </div>
+        )}
         <AttachmentModel />
         <Modal
           isOpen={forwardModel}

@@ -2,8 +2,8 @@ import { Avatar, IconButton, Typography } from "@material-ui/core";
 import React from "react";
 import "./Welcome.css";
 import { useSelector } from "react-redux";
+import { getCSSColor } from "../../helper/util";
 
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 function Welcome() {
   const avatarStyle = {
     width:"120px",
@@ -17,7 +17,7 @@ function Welcome() {
   });
   const image = auth_user?.elsemployees_image;
   return (
-    <div className="welcome" style={{color: isNightMode ? "#267396": "#000"}}>
+    <div className="welcome" style={{color: isNightMode ? getCSSColor("--chat-primary"): "#000"}}>
       
       <div className="welcome__container">
         <div className="userName">

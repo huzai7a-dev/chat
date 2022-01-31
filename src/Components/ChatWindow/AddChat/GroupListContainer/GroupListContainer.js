@@ -13,7 +13,7 @@ import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
 import { updateGroup } from "../../../../Redux/Action";
-import { DARKMAIN } from "../../../../Theme/colorConstant";
+import { DARKMAIN, PRIMARYMAIN } from "../../../../Theme/colorConstant";
 const GroupMemebers = React.memo(({ members, userId, setUserId, isChecked })=> {
   const [selectMember, setSelectMember] = useState(false);
   const image = members?.elsemployees_image;
@@ -135,7 +135,7 @@ const GroupListContainer =({
             setgroupModelListContaier(false);
           }}
         >
-          <ArrowBackIcon style={{color: isNightMode && "#267396"}} />
+          <ArrowBackIcon style={{color: isNightMode && PRIMARYMAIN}} />
         </Button>
         <Typography variant="h6" color={isNightMode ? "primary" : "textSecondary"}>Create New Group</Typography>
         <Button
@@ -144,7 +144,7 @@ const GroupListContainer =({
             setgroupModelListContaier(false);
             HandleGroup();
           }}
-          style={{color: isNightMode && "#267396"}}
+          style={{color: isNightMode && PRIMARYMAIN}}
         >
           Done
         </Button>

@@ -141,7 +141,7 @@ function ChatUserContainer({ tabValue }) {
               key={contact?.elsemployees_empid}
               userName={contact?.elsemployees_name}
               lastMessage={
-                contact?.last_msg.message_body !== "null"
+                contact?.last_msg.message_body && contact?.last_msg.message_body !== "null"
                   ? contact?.last_msg.message_body
                   : "Attachment"
               }
@@ -239,7 +239,7 @@ function ChatUserContainer({ tabValue }) {
               key={group?.group_id}
               userName={group?.group_name}
               lastMessage={
-                !group?.lastmessage == "null"
+                group?.lastmessage && group?.lastmessage != "null"
                   ? group?.lastmessage
                   : "Attachment"
               }

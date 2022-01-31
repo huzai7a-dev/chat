@@ -28,13 +28,13 @@
 } */
 
 /* .chatUserContainer .Mui-selected {
-  background-color: #267396;
+  background-color: var(--chat-primary);
   color: #fff;
   font-weight: bold;
   box-shadow: none !important;
 }
 .chatUserContainer .MuiTabs-indicator {
-  background-color: #267396;
+  background-color: var(--chat-primary);
 } */
 .tabBtn {
   border-radius: 20px !important;

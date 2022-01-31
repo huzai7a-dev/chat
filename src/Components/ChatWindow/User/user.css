@@ -14,7 +14,7 @@
 }
 .user__info .userName {
   font-weight: 400;
-  color: #267396;
+  color: var(--chat-primary);
   margin-left: 10px;
 }
 
@@ -42,7 +42,7 @@
   width: 30%;
   height: 300px;
   border: 0px;
-  color: #267396;
+  color: var(--chat-primary);
 }
 .navBtn {
   display: none;

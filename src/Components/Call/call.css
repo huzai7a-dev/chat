@@ -26,6 +26,6 @@
   transform: translate(-50%, -50%);
   width: 300px;
   height: 400px;
-  background-color: #161616;
+  background-color: var(--chat-black);
   padding: 20px;
 }

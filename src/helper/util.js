@@ -78,6 +78,14 @@ export const placeCaretAtEnd =(el)=> {
     }
 }
 
+export const getCSSColor = (key) => {
+    try {
+        return window.getComputedStyle(document.querySelector(':root'))?.getPropertyValue(key)?.trimEnd()?.trimStart();
+    } catch(e) {
+        return "";
+    }
+}
+
 class Utils {
     static getFormData(obj = {}) {
         const formData = new FormData();

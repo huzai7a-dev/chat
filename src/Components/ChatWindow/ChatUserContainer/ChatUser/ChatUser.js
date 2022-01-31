@@ -8,7 +8,7 @@ import moment from "moment";
 import { getContactsUser, seenMessage } from "../../../../api/chat";
 import { setActiveChat, setHeaderData } from "../../../../Redux/actions/chat";
 import loading from "../../../../Assets/loading.gif";
-import { DARKLIGHT, DARKMAIN, WHITE } from "../../../../Theme/colorConstant";
+import { DARKLIGHT, DARKMAIN, PRIMARYMAIN, WHITE } from "../../../../Theme/colorConstant";
 import React, { useCallback } from "react";
 import { setSideBar } from "../../../../Redux/actions/app";
 import { getSocket } from "../../../../config/socket";
@@ -129,7 +129,7 @@ const ChatUser = React.memo((props) => {
         <Box display="flex" justifyContent="space-between">
           <h3
             style={{
-              color: props.users?.unseen ? "#267396" : heading,
+              color: props.users?.unseen ? PRIMARYMAIN : heading,
               fontWeight: props.users?.unseen ? "600" : "100",
               flex: "3",
             }}

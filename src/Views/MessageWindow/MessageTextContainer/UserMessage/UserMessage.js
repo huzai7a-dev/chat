@@ -230,7 +230,7 @@ function UserMessage(props) {
 
   const MessageOptions = React.memo(() => {
     return (
-      <div className="optionsContainer">
+      <div className="optionsContainer" style={{[props.sender?.message_from === loggedInUser ? "right": "left"]: "100%"}}>
         <div className="options">
           <p
             onClick={() => {
@@ -240,10 +240,10 @@ function UserMessage(props) {
             Forward
           </p>
           <p onClick={quoteData}>Quote</p>
-          {props.sender.message_attachment ? (
+          {props.sender?.message_attachment ? (
             <p
               onClick={() =>
-                downloadAttachment(props.sender.message_attachment)
+                downloadAttachment(props.sender?.message_attachment)
               }
             >
               Download
@@ -262,11 +262,11 @@ function UserMessage(props) {
       className="senderMessage"
       style={{
         flexDirection:
-          props.sender.message_from == loggedInUser && "row-reverse",
+          props.sender?.message_from == loggedInUser && "row-reverse",
       }}
     >
       <div className="userMessage__picture">
-        {props.sender.message_from !== loggedInUser ? (
+        {props.sender?.message_from !== loggedInUser ? (
           <Avatar
             src={`/bizzportal/public/img/${image}`}
             style={{ width: "40px", height: "40px", visibility:props.head.message_id == props.sender.message_id ? "visible": 'hidden' }}
@@ -277,7 +277,7 @@ function UserMessage(props) {
       <div className="userMessageBox">
         <div
           className={
-            props.sender.message_from !== loggedInUser
+            props.sender?.message_from !== loggedInUser
               ? "senderMessage__details"
               : "userMessage__details"
           }
@@ -319,7 +319,7 @@ function UserMessage(props) {
             className="recieverQoutMsg__container"
             style={{
               flexDirection:
-                props.sender.message_from !== loggedInUser
+                props.sender?.message_from !== loggedInUser
                   ? "row"
                   : "row-reverse",
             }}
@@ -328,16 +328,16 @@ function UserMessage(props) {
             <div
               style={{
                 background:
-                  props.sender.message_from !== loggedInUser
+                  props.sender?.message_from !== loggedInUser
                     ? "#d8ecf7"
                     : messageToBackground,
                 color:
-                  isNightMode && props.sender.message_from == loggedInUser
+                  isNightMode && props.sender?.message_from == loggedInUser
                     ? "#fff"
                     : "rgb(37, 36, 35)",
               }}
               className={
-                props.sender.message_from !== loggedInUser
+                props.sender?.message_from !== loggedInUser
                   ? "senderMessage__text"
                   : "recieverMessage__text"
               }
@@ -360,6 +360,7 @@ function UserMessage(props) {
             <div
               className="msgOption"
               ref={menuDiv}
+              style={option ? {display:"flex"} : null}
               onClick={() => {
                 setOption(!option);
               }}
@@ -376,14 +377,14 @@ function UserMessage(props) {
               display: "flex",
               alignItems: "center",
               alignSelf:
-                props.sender.message_from !== loggedInUser
+                props.sender?.message_from !== loggedInUser
                   ? "flex-start"
                   : "flex-end",
             }}
           >
             <p>{moment(props.head.fullTime).format("LT")}</p>
             {props.sender.seen > 0 &&
-            props.sender.message_from == loggedInUser ? (
+            props.sender?.message_from == loggedInUser ? (
               <DoneAllIcon fontSize="small" color="primary" />
             ) : null}
           </div>

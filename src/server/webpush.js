@@ -1,5 +1,4 @@
 import webpush from "web-push";
-import fcmKey from "./fcmKey.json";
 import connection from "./db";
 
 webpush.setGCMAPIKey("AIzaSyDQDWntetf2pfy6AHD2aCElQ19byjRYhew");
@@ -8,14 +7,6 @@ webpush.setVapidDetails(
   "BCGDIfnAeJn_Pkpz9nFdOjbLNDsGE15JKZbVwNMlJquDYx5DtmVyJWuRXBDUmB2qhakY43zrEOrc5VgL_7VFcvY",
   "xhtf5iVxz1x8ILcTYdglXca-FQfVIk39T_cJvHCYGLE"
 );
-
-const pushSubscription = {
-  endpoint: fcmKey.endpoint,
-  keys: {
-    auth: fcmKey.keys.auth,
-    p256dh: fcmKey.keys.p256dh,
-  },
-};
 
 export const getSubscriptionByUser = (user_id) =>
   new Promise((resolve, reject) => {

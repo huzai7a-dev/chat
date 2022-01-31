@@ -18,6 +18,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { setQuote } from "../../../Redux/actions/app";
 import Utils, {
   filterList,
+  getCSSColor,
   getFileFromBlob,
   placeCaretAtEnd,
 } from "../../../helper/util";
@@ -43,14 +44,14 @@ const useStyles = makeStyles({
   sendBtn: {
     width: "50px",
     height: "50px",
-    background: "#267396",
+    background: getCSSColor("--chat-primary"),
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
       background: "#d8ecf7",
-      color: "#267396",
+      color: getCSSColor("--chat-primary"),
     },
   },
   attachBtn: {
@@ -59,14 +60,14 @@ const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "#267396",
+    background: getCSSColor("--chat-primary"),
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
       background: "#d8ecf7",
-      color: "#267396",
+      color: getCSSColor("--chat-primary"),
     },
   },
 });
