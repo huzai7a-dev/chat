@@ -1,6 +1,5 @@
 import { Server } from "socket.io";
 import axios from "axios";
-import env from "../env.json";
 import { triggerPushMsg } from "./webpush";
 
 const socketMappings = {};
@@ -47,7 +46,7 @@ export const withSocket = (app) => {
 
     socket.on("group-messaging", (data) => {
       axios
-        .post(`${env.url}/bwccrm/groupparticipants`, {
+        .post(`${process.env.RAZZLE_BASE_URL}/bwccrm/groupparticipants`, {
           user_id: data.user_id,
           group_id: data.group_id,
         })
@@ -74,7 +73,7 @@ export const withSocket = (app) => {
     socket.on("group-member", (data) => {
       socketMappings[data.member_id]?.emit("group-member", data);
       axios
-        .post(`${env.url}/bwccrm/groupparticipants`, {
+        .post(`${process.env.RAZZLE_BASE_URL}/bwccrm/groupparticipants`, {
           user_id: data.user_id,
           group_id: data.group_id,
         })
@@ -91,7 +90,7 @@ export const withSocket = (app) => {
 
     socket.on("group-seen", (data) => {
       axios
-        .post(`${env.url}/bwccrm/groupparticipants`, {
+        .post(`${process.env.RAZZLE_BASE_URL}/bwccrm/groupparticipants`, {
           user_id: data.user_id,
           group_id: data.group_id,
         })
@@ -110,7 +109,7 @@ export const withSocket = (app) => {
 
     socket.on("isGroupWindowOpen", (data) => {
       axios
-        .post(`${env.url}/bwccrm/groupparticipants`, {
+        .post(`${process.env.RAZZLE_BASE_URL}/bwccrm/groupparticipants`, {
           user_id: data.user_id,
           group_id: data.group_id,
         })

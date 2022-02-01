@@ -5,6 +5,7 @@ import express from "express";
 import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
 import { getSubscriptions } from "./server/webpush";
+import { GREY, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, BLACK, SECONDARYMAIN } from "./Theme/colorConstant";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -54,6 +55,16 @@ server
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="/favicon.png" />
+    <style> 
+    :root {
+      --chat-primary: ${PRIMARYMAIN};
+      --chat-primary-light: ${PRIMARYLIGHT};
+      --chat-grey: ${GREY};
+      --chat-black: ${BLACK};
+      --chat-light: ${LIGHT};
+      --chat-secondary: ${SECONDARYMAIN};
+    }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta

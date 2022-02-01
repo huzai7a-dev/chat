@@ -1,10 +1,9 @@
-import { Avatar, IconButton, Typography } from "@material-ui/core";
+import { Avatar, Typography } from "@material-ui/core";
 import React from "react";
 import "./Welcome.css";
 import { useSelector } from "react-redux";
-
-import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import { PRIMARYMAIN } from "../../Theme/colorConstant";
+
 function Welcome() {
   const avatarStyle = {
     width:"120px",

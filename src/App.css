@@ -1,14 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
-:root {
-  --chat-primary: #267396;
-  --chat-primary-light: #d8ecf7;
-  --chat-grey: #aeaeae;
-  --chat-black: #161616;
-  --chat-light: #f0f4f8;
-  --chat-secondary: #f1f1f4;
-}
-
 * {
   margin: 0;
   padding: 0;

@@ -1,13 +1,12 @@
 import express from "express";
 import axios from "axios";
 import multer from "multer";
-import env from "../env.json";
 import { getSubscriptions, saveSubscription, triggerPushMsg } from "./webpush";
 import { getFormData } from "./db";
 
 const router = express.Router();
 
-router.use("/api/*", multer().any(), (req, res, next) => {
+router.use("/api/*", multer().any(), (req, res) => {
   const contentType = req.get("content-type") || "application/json";
 
   const body = {};
@@ -16,7 +15,7 @@ router.use("/api/*", multer().any(), (req, res, next) => {
   const axiosRoute = {
     params: req.params,
     headers: req.originalUrl.includes('/public/') ? undefined : { "Content-Type": contentType },
-    url: `${env.url}${req.originalUrl.replace("/api", "")}`,
+    url: `${process.env.RAZZLE_BASE_URL}${req.originalUrl.replace("/api", "")}`,
     method: req.method,
     responseType: req.originalUrl.includes('/public/') ? "arraybuffer" : "json",
   };
@@ -59,11 +58,11 @@ router.use("/api/*", multer().any(), (req, res, next) => {
     });
 });
 
-router.use("/bizzportal/*", (req, res, next) => {
+router.use("/bizzportal/*", (req, res) => {
   const axiosRoute = {
     // params: req.params,
     // headers: req.headers,
-    url: `${env.url}${req.originalUrl}`,
+    url: `${process.env.RAZZLE_BASE_URL}${req.originalUrl}`,
     method: req.method,
     // data: req.body,
     responseType: "arraybuffer",
@@ -85,7 +84,7 @@ router.use("/bizzportal/*", (req, res, next) => {
     });
 });
 
-router.use("/service-worker", async (req, res, next) => {
+router.use("/service-worker", async (req, res) => {
   return res.sendFile(`${process.cwd()}\\src\\service_worker.js`);
 });
 
