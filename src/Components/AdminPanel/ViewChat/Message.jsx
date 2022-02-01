@@ -3,7 +3,6 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import React from "react";
 import {
   PRIMARYLIGHT,
-  PRIMARYMAIN,
   SECONDARYDARK,
   SECONDARYMAIN,
 } from "../../../Theme/colorConstant";

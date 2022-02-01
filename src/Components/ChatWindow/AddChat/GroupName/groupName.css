@@ -40,7 +40,7 @@
   left: 0%;
 }
 .groupNameModel__nextIconContainer .nextBtn {
-  background-color: #d8ecf7;
+  background-color: var(--chat-primary-light);
   color: #000;
 }
 

@@ -21,9 +21,9 @@ import { setQuote } from "../../../Redux/actions/app";
 // import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
-import Utils, { getCSSColor, getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
+import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
-import { DARKLIGHT, DANGER } from "../../../Theme/colorConstant";
+import { DARKLIGHT, DANGER, PRIMARYLIGHT, PRIMARYMAIN } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Tooltip from "@material-ui/core/Tooltip";
 import Recorder from "../../../Components/Recorder/Recorder";
@@ -34,14 +34,14 @@ const useStyles = makeStyles({
   sendBtn: {
     width: "50px",
     height: "50px",
-    background: getCSSColor("--chat-primary"),
+    background: PRIMARYMAIN,
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
-      background: "#d8ecf7",
-      color: getCSSColor("--chat-primary"),
+      background: PRIMARYLIGHT,
+      color: PRIMARYMAIN,
     },
   },
   attachBtn: {
@@ -50,14 +50,14 @@ const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: getCSSColor("--chat-primary"),
+    background: PRIMARYMAIN,
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
-      background: "#d8ecf7",
-      color: getCSSColor("--chat-primary"),
+      background: PRIMARYLIGHT,
+      color: PRIMARYMAIN,
     },
   },
   micIcon: {

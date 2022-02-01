@@ -18,7 +18,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import { setQuote } from "../../../Redux/actions/app";
 import Utils, {
   filterList,
-  getCSSColor,
   getFileFromBlob,
   placeCaretAtEnd,
 } from "../../../helper/util";
@@ -31,7 +30,7 @@ import {
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { setGroupMessages } from "../../../Redux/actions/message";
-import { DARKLIGHT, DARKMAIN } from "../../../Theme/colorConstant";
+import { DARKLIGHT, DARKMAIN, PRIMARYLIGHT, PRIMARYMAIN } from "../../../Theme/colorConstant";
 import MicIcon from "@material-ui/icons/Mic";
 import { useReactMediaRecorder } from "react-media-recorder";
 // import Recorder from "../../Recorder/Recorder";
@@ -44,14 +43,14 @@ const useStyles = makeStyles({
   sendBtn: {
     width: "50px",
     height: "50px",
-    background: getCSSColor("--chat-primary"),
+    background: PRIMARYMAIN,
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
-      background: "#d8ecf7",
-      color: getCSSColor("--chat-primary"),
+      background: PRIMARYLIGHT,
+      color: PRIMARYMAIN,
     },
   },
   attachBtn: {
@@ -60,14 +59,14 @@ const useStyles = makeStyles({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: getCSSColor("--chat-primary"),
+    background: PRIMARYMAIN,
     color: "#fff",
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
     "&:hover": {
-      background: "#d8ecf7",
-      color: getCSSColor("--chat-primary"),
+      background: PRIMARYLIGHT,
+      color: PRIMARYMAIN,
     },
   },
 });

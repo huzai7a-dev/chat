@@ -167,7 +167,7 @@
   width: 100%;
 }
 .options p:hover {
-  background: #d8ecf7;
+  background: var(--chat-primary-light);
   cursor: pointer;
 }
 .optionsContainer {

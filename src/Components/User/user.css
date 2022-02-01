@@ -3,7 +3,7 @@
   margin: 0.3rem 0;
 }
 .user__container:hover {
-  background: #d8ecf7;
+  background: var(--chat-primary-light);
   cursor: pointer;
   color: var(--chat-primary);
 }

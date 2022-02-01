@@ -12,7 +12,7 @@ import { setQuote } from "../../../../Redux/actions/app";
 import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { DARKLIGHT } from "../../../../Theme/colorConstant";
+import { DARKLIGHT, PRIMARYLIGHT } from "../../../../Theme/colorConstant";
 
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
@@ -329,7 +329,7 @@ function UserMessage(props) {
               style={{
                 background:
                   props.sender?.message_from !== loggedInUser
-                    ? "#d8ecf7"
+                    ? PRIMARYLIGHT
                     : messageToBackground,
                 color:
                   isNightMode && props.sender?.message_from == loggedInUser

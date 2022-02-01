@@ -6,6 +6,7 @@ import dark from '../theme.dark.json';
 export const PRIMARYMAIN = light.primary;
 export const PRIMARYLIGHT = light.primary_light;
 export const SECONDARYMAIN = light.secondary;
+export const SECONDARYLIGHT = light.secondary_light;
 export const SECONDARYDARK = light.secondary_dark;
 export const GREY = light.grey;
 export const LIGHT = light.light;
@@ -25,7 +26,7 @@ export const SUCCESSLIGHT = green[50];
 
 export const BACKGROUND = {
   ["light"]: {
-    default: SECONDARYMAIN,
+    default: SECONDARYLIGHT,
     active: WHITE,
   },
   ["dark"]: {
