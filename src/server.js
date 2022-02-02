@@ -5,7 +5,7 @@ import express from "express";
 import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
 import { getSubscriptions } from "./server/webpush";
-import { GREY, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, BLACK, SECONDARYMAIN } from "./Theme/colorConstant";
+import { GREY, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, BLACK, SECONDARYMAIN, SECONDARYLIGHT } from "./Theme/colorConstant";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -63,6 +63,7 @@ server
       --chat-black: ${BLACK};
       --chat-light: ${LIGHT};
       --chat-secondary: ${SECONDARYMAIN};
+      --chat-secondary-light: ${SECONDARYLIGHT};
     }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1" />

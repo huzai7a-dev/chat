@@ -74,7 +74,7 @@ function MessageWindowHeader(props) {
           {active_user?.elsemployees_name}
         </h2>
         <div onClick={openGallery}>
-          <Typography variant="body2">Gallery</Typography>
+          <Typography variant="body2" style={{color: "#fff"}}>Gallery</Typography>
         </div>
       </div>
       <Modal

@@ -8,9 +8,8 @@ import * as yup from "yup";
 import moment from "moment";
 
 import {
-  PRIMARYLIGHT,
+  AUTHCOLOR,
   PRIMARYMAIN,
-  SECONDARYMAIN,
   WHITE,
 } from "../../../Theme/colorConstant";
 import { signUp } from "../../../api/auth";
@@ -25,7 +24,6 @@ const useStyle = makeStyles({
     padding: "10px 20px",
   },
   formContainer: {
-    background: SECONDARYMAIN,
     minHeight: "600px",
     height: "auto",
     padding: 20,
@@ -47,7 +45,7 @@ function Signup() {
   const [profile,setProfile] = React.useState({});
   const dispatch = useDispatch();
   const history = useHistory();
-  console.log(profile)
+
   return (
     <Grid
       className={classes.container}
@@ -85,7 +83,7 @@ function Signup() {
               },
             };
             params.data = Utils.getFormData(params.data)
-            const response = await dispatch(signUp(params));
+            await dispatch(signUp(params));
             history.replace('/');
           }}
         >
@@ -214,7 +212,7 @@ function Signup() {
               <Grid item xs={12}>
                 <Button
                   onClick={handleSubmit}
-                  style={{ width: "100%", backgroundColor: PRIMARYLIGHT}}
+                  style={{ width: "100%", backgroundColor: AUTHCOLOR, color: WHITE}}
                 >
                   Sign Up
                 </Button>

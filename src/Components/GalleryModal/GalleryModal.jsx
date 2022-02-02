@@ -19,11 +19,12 @@ const GalleryModal = React.forwardRef((props) => {
   const [attachments, setAttachments] = useState([]);
   const dispatch = useDispatch();
 
-  const { auth_user, activeId, activeType } = useSelector((store) => {
+  const { auth_user, activeId, activeType, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user,
       activeType: store.chat?.active?.activeType,
       activeId: store.chat?.active?.activeId,
+      isNightMode: store.app.mode || false,
     };
   });
 
@@ -110,15 +111,15 @@ const GalleryModal = React.forwardRef((props) => {
         className={classes.attachmentHeader}
       >
         <IconButton onClick={() => history.replace(location.pathname)}>
-          <CloseIcon />
+          <CloseIcon style={{color: isNightMode ? "#fff" : "#000" }}/>
         </IconButton>
-        <Typography variant="h5" style={{ flex: "1", textAlign: "center" }}>
+        <Typography variant="h5" style={{ flex: "1", textAlign: "center", color: isNightMode ? "#fff" : "#000" }}>
           Gallery
         </Typography>
         {/* {renderDropdown} */}
       </Box>
     );
-  }, [classes, location, history]);
+  }, [classes, location, history, isNightMode]);
 
   const filterAttachment = useCallback(
     (attachment) => {
@@ -231,8 +232,8 @@ const GalleryModal = React.forwardRef((props) => {
             return (
               <div className="attachView" key={id}>
                 <div className="file" style={{ maxWidth: "100%" }}>
-                  <FileCopyIcon />
-                  <Typography variant="caption">{fileName}</Typography>
+                  <FileCopyIcon style={{color: isNightMode ? "#fff" : "#000" }}/>
+                  <Typography variant="caption" style={{color: isNightMode ? "#fff" : "#000"}}>{fileName}</Typography>
                   <DownloadButton />
                 </div>
               </div>
@@ -240,7 +241,7 @@ const GalleryModal = React.forwardRef((props) => {
           }
         });
     });
-  }, [attachments, filterAttachment, openImage]);
+  }, [attachments, filterAttachment, openImage, isNightMode]);
 
   const modalStyle = {
     height: "100vh",
@@ -258,7 +259,7 @@ const GalleryModal = React.forwardRef((props) => {
   const galleryWidth = window.innerWidth < 700 ? "100%" : "400px";
   return (
     <Box
-      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth }}
+      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth, backgroundColor: isNightMode ? "#000" : "#fff" }}
       className="gallery__container"
     >
       {renderAttachmentsHeader}
@@ -266,7 +267,7 @@ const GalleryModal = React.forwardRef((props) => {
         {attachments?.length > 0 ? (
           renderAttachments
         ) : (
-          <Typography align="center">No Attachments</Typography>
+          <Typography align="center" style={{color: isNightMode ? "#fff" : "#000"}}>No Attachments</Typography>
         )}
       </Box>
       <Modal

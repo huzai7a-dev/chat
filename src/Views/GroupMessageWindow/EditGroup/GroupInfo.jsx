@@ -8,6 +8,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { setEditGroupModelState, setEditGroupNameToMemberModelState } from "../../../Redux/actions/app";
 import axios from "axios";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 function GroupInfo() {
   const { auth_user, active_group,isNightMode } = useSelector((store) => {
     return {
@@ -85,7 +86,7 @@ function GroupInfo() {
       </div>
       <div className="groupInfoName">
         <input
-          style={{ borderBottom: editable ? "1px solid #d5d9de" : null }}
+          style={{ borderBottom: editable ? "1px solid #d5d9de" : null, color: isNightMode ? WHITE : BLACK }}
           disabled={!editable}
           type="text"
           value={name}

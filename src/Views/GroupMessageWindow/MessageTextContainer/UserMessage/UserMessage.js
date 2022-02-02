@@ -26,7 +26,7 @@ function UserMessage({ chatgroup, ...props }) {
   const attachments = chatgroup.groupmessage_attachment;
   const menuDiv = useRef();
 
-  const onClickOutside = useCallback((e) => {
+  const onClickOutside = useCallback(() => {
     setOption(false);
   }, []);
 
@@ -217,7 +217,28 @@ function UserMessage({ chatgroup, ...props }) {
               : "userMessage__details"
           }
         >
-          
+          {props.tail?.groupmessage_id == chatgroup?.groupmessage_id && (
+            <div className="userMessage__name">
+              <p>
+                {user !== loggedInUser ? chatgroup.from_username + "," : ""}
+              </p>
+            </div>
+          )}
+          {props.tail?.groupmessage_id == chatgroup?.groupmessage_id && (
+            <div
+              className="userMessage__time"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                alignSelf:
+                  chatgroup.from_userid !== loggedInUser
+                    ? "flex-start"
+                    : "flex-end",
+              }}
+            >
+              <p>{moment(props.head?.fullTime).format("LT")}</p>
+            </div>
+          )}
         </div>
         {chatgroup.groupmessage_attachment ? (
           <div
@@ -259,46 +280,49 @@ function UserMessage({ chatgroup, ...props }) {
                   {chatgroup.groupmessage_body}
                 </div>
               )}
-              <div
-            ref={menuDiv}
-            className="msgOption"
-            style={option ? {display:"flex"} : null}
-            onClick={() => {
-              setOption(!option);
-            }}
-          >
-            <MoreVertIcon />
-            {option ? (
-              <div className="optionsContainer" style={{[chatgroup?.from_userid === loggedInUser ? "right": "left"]: "100%"}}>
-                <div className="options">
-                  <p
-                    onClick={() => {
-                      setForwardModel(true);
-                    }}
-                  >
-                    Forward
-                  </p>
-                  <p onClick={quoteData}>Quote</p>
-                  {chatgroup.groupmessage_attachment ? (
+            <div
+              ref={menuDiv}
+              className="msgOption"
+              style={option ? { display: "flex" } : null}
+              onClick={() => {
+                setOption(!option);
+              }}
+            >
+              <MoreVertIcon />
+              {option ? (
+                <div
+                  className="optionsContainer"
+                  style={{
+                    [chatgroup?.from_userid === loggedInUser
+                      ? "right"
+                      : "left"]: "100%",
+                  }}
+                >
+                  <div className="options">
                     <p
-                      onClick={() =>
-                        downloadAttachment(chatgroup.groupmessage_attachment)
-                      }
+                      onClick={() => {
+                        setForwardModel(true);
+                      }}
                     >
-                      Download
+                      Forward
                     </p>
-                  ) : null}
+                    <p onClick={quoteData}>Quote</p>
+                    {chatgroup.groupmessage_attachment ? (
+                      <p
+                        onClick={() =>
+                          downloadAttachment(chatgroup.groupmessage_attachment)
+                        }
+                      >
+                        Download
+                      </p>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            ) : null}
-          </div>
+              ) : null}
+            </div>
           </div>
         ) : null}
-        {props.head?.groupmessage_id == chatgroup?.groupmessage_id && (
-          <div className="userMessage__name">
-            <p>{user !== loggedInUser ? chatgroup.from_username + "," : ""}</p>
-          </div>
-        )}
+
         <Box display="flex" style={{ float: "right" }}>
           {seenData.map((seen, id) => {
             return seen.messageid == chatgroup.groupmessage_id &&
@@ -313,21 +337,7 @@ function UserMessage({ chatgroup, ...props }) {
             ) : null;
           })}
         </Box>
-        {props.head?.groupmessage_id == chatgroup?.groupmessage_id && (
-          <div
-            className="userMessage__time"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              alignSelf:
-                chatgroup.from_userid !== loggedInUser
-                  ? "flex-start"
-                  : "flex-end",
-            }}
-          >
-            <p>{moment(props.head?.fullTime).format("LT")}</p>
-          </div>
-        )}
+
         <AttachmentModel />
         <Modal
           isOpen={forwardModel}

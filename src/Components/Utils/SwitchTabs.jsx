@@ -50,6 +50,7 @@ const SwitchTabs = React.memo(
           className="tabBtn"
           style={{
             background: tabValue == title.people ? WHITE : SECONDARYMAIN,
+            color: tabValue == title.people ? "#000" :  WHITE,
           }}
         >
           {title.people}
@@ -67,6 +68,7 @@ const SwitchTabs = React.memo(
           className="tabBtn"
           style={{
             background: tabValue == title.groups ? WHITE : SECONDARYMAIN,
+            color: tabValue == title.groups ? "#000" :  WHITE,
           }}
         >
           {title.groups}

@@ -137,7 +137,7 @@ const GroupListContainer =({
         >
           <ArrowBackIcon style={{color: isNightMode && PRIMARYMAIN}} />
         </Button>
-        <Typography variant="h6" color={isNightMode ? "primary" : "textSecondary"}>Create New Group</Typography>
+        <Typography variant="h6" style={{color: "#fff"}}>Create New Group</Typography>
         <Button
           onClick={() => {
             setGroupModelName(false);

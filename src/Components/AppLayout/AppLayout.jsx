@@ -135,6 +135,7 @@ export default function AppLayout({ children }) {
         variant="persistent"
         anchor="left"
         open={!sideBarCollapsed}
+        PaperProps={{style:{ borderWidth:0 }}}
         classes={{
           paper: classes.drawerPaper,
         }}

@@ -142,7 +142,8 @@ function MessageTextContainer() {
       >
         {Object.keys(groupedByMessages)?.map((key, id) => {
           const groupedByMessage = groupedByMessages[key];
-          let keyMessage = groupedByMessage[0];
+          let headMessage = groupedByMessage[0];
+          let tailMessage = groupedByMessage[0];
           
           return (
             <div key={id}>
@@ -151,13 +152,13 @@ function MessageTextContainer() {
                   className="divider"
                   style={{
                     background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
+                    
                   }}
                 />
                 <Typography
                   variant="body2"
                   align="center"
-                  color={isNightMode ? "primary" : "textSecondary"}
-                  style={{ padding: "0px 5px" }}
+                  style={{ padding: "0px 5px", color: "#fff" }}
                 >
                   {key}
                 </Typography>
@@ -169,17 +170,24 @@ function MessageTextContainer() {
                 />
               </div>
               <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {groupedByMessage?.map((message) => {
+                {groupedByMessage?.map((message, messageIndex) => {
                   
-                  if (keyMessage.message_from != message.message_from || moment(keyMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
-                    keyMessage = message
+                  if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+                    headMessage = message
                   }
+
+                  groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
+                    if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
+                      tailMessage = nextMessage
+                    }
+                  })
                   
                   return (
                     <UserMessage
                       sender={message}
                       key={message?.message_id}
-                      head={keyMessage}
+                      head={headMessage}
+                      tail={tailMessage}
                     />
                   )
                 })}

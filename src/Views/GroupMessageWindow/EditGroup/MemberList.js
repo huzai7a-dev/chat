@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setEditGroupModelState, setEditGroupNameToMemberModelState} from "../../../Redux/actions/app";
 import { setUserGroups } from "../../../Redux/actions/chat";
 import { getSocket } from "../../../config/socket";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 function MemberList() {
   
   const { auth_user, active_group,isNightMode } = useSelector((store) => {
@@ -85,7 +86,7 @@ function MemberList() {
         <Input
           value={groupMember}
           placeholder="Search people"
-          style={{ width: "80%", marginTop: "20px" }}
+          style={{ width: "80%", marginTop: "20px", color: isNightMode ? WHITE: BLACK }}
           onChange={(e) => {
             setGroupMember(e.target.value);
           }}

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import User from "./User/User";
 import "./chatWindow.css";
 import SearchBar from "./SearchBar/SearchBar";
 import AddChat from "./AddChat/AddChat";
 import ChatUserContainer from "./ChatUserContainer/ChatUserContainer";
-import { DARKMAIN, SECONDARYLIGHT } from "../../Theme/colorConstant";
+import { DARKMAIN, } from "../../Theme/colorConstant";
 import { useSelector } from "react-redux";
 import SwitchTabs from "../Utils/SwitchTabs";
 
@@ -20,7 +19,7 @@ const ChatWindow = React.memo(() => {
   return (
     <div
       className="chat__window"
-      style={{ background: isNightMode ? DARKMAIN : SECONDARYLIGHT }}
+      style={{ background: isNightMode ? DARKMAIN : "#FFF" }}
     >
       <div className="chatWindow__header">
         <SearchBar />

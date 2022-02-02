@@ -51,9 +51,9 @@ const User = React.memo(() => {
       ): null
       }
       <Tooltip title={isNightMode ? "Day Mode": "Night Mode"}>
-        <IconButton onClick={()=>{dispatch(setNightMode(!isNightMode))}}>
+        <IconButton color='primary' onClick={()=>{dispatch(setNightMode(!isNightMode))}}>
           {!isNightMode ?
-            <Brightness3Icon style={{color:isNightMode ? "#fff" : "267396"}}/> : <WbSunnyIcon style={{color:isNightMode ? "#fff" : "267396"}}/>
+            <Brightness3Icon color='primary' style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}/> : <WbSunnyIcon color='primary' style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}/>
           }
         </IconButton>
       </Tooltip>
@@ -68,7 +68,7 @@ const User = React.memo(() => {
             }
           }}
         >
-          <ExitToAppIcon style={{color:isNightMode ? "#fff" : "267396"}}/>
+          <ExitToAppIcon style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}/>
         </IconButton>
         </Tooltip>
         <Modal

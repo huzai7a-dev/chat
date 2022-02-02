@@ -51,7 +51,7 @@
   color: var(--chat-grey);
   font-family: "Roboto" sans-serif;
   font-size: 0.8rem;
-  margin-left: 5px;
+  margin-bottom: 5px;
   width: 100%;
   justify-content: space-between;
   position: relative;
@@ -155,7 +155,7 @@
   z-index: 10;
 }
 .msgOption {
-  display: none;
+  display: flex;
   cursor: pointer;
 }
 .options {
@@ -191,15 +191,12 @@
   transform: translate(-50%, -50%);
 }
 .userMessage__time {
-  margin-bottom: 20px;
   color: var(--chat-grey);
   font-family: "Roboto" sans-serif;
   font-size: 0.8rem;
-  margin-left: 5px;
 }
 .userMessage__name {
   color: var(--chat-grey);
   font-family: "Roboto" sans-serif;
   font-size: 0.8rem;
-  margin-left: 5px;
 }

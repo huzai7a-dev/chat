@@ -7,7 +7,7 @@ function WelcomeAdmin({isBarOpen}) {
         <Box display="flex" justifyContent="center" alignItems="center" style={divStyle}>
             <Box display="flex" alignItems="center" flexDirection="column">
                 <Avatar/>
-                <Typography variant="h6">Welcome to admin panel</Typography>
+                <Typography variant="h6" style={{color: "#FFF"}}>Welcome to admin panel</Typography>
             </Box>
         </Box>
     )

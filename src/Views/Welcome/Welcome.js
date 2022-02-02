@@ -21,7 +21,7 @@ function Welcome() {
       
       <div className="welcome__container">
         <div className="userName">
-          <Typography variant="h6">
+          <Typography variant="h6" style={{color: "#fff"}}>
             Welcome {auth_user?.elsemployees_name}
           </Typography>
         </div>

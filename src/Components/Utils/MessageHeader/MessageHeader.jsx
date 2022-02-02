@@ -1,13 +1,15 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import "./MessageHeader.css";
 import { IconButton, Typography } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import { useHistory, useLocation } from "react-router-dom";
+import { setEditGroupModelState, setParticipantModelState } from '../../../Redux/actions/app';
 
 const MessageHeader = () => {
   const history = useHistory();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const { header, isNightMode } = useSelector((store) => {
     return {
@@ -38,7 +40,7 @@ const MessageHeader = () => {
                 {" "}
                 |{" "}
               </Typography>
-              <Typography variant="body2">Members</Typography>
+              <Typography onClick={() => dispatch(setParticipantModelState(true))} variant="body2">Members</Typography>
             </>
           )}
         </div>
@@ -46,7 +48,7 @@ const MessageHeader = () => {
       <div className="message__header__right">
         {header.activeType == "group" && (
           <div>
-            <IconButton>
+            <IconButton onClick={() => dispatch(setEditGroupModelState(true))}>
               <GroupAddIcon
                 color="primary"
                 style={{ width: "40px", height: "40px" }}

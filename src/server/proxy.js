@@ -53,7 +53,7 @@ router.use("/api/*", multer().any(), (req, res) => {
       if (response) {
         return res.status(response.status).send(response.data);
       } else {
-        return res.status(500).send("Server not Responding");
+        return res.status(500).send(e);
       }
     });
 });
@@ -79,7 +79,7 @@ router.use("/bizzportal/*", (req, res) => {
       if (response) {
         return res.status(response.status).send(response.data);
       } else {
-        return res.status(500).send("Server not Responding");
+        return res.status(500).send(e);
       }
     });
 });

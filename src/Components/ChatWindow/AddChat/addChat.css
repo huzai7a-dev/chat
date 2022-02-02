@@ -25,6 +25,8 @@
   transform: translate(-50%, -50%);
   border: none;
   outline: none;
+  display: flex;
+  background-color: var(--chat-black);
 }
 
 @media (max-width: 992px) {

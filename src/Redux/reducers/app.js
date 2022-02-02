@@ -20,13 +20,14 @@ const initState = {
   editGroupModelState: false,
   typedMsg: [],
   seen: false,
-  mode: false,
+  mode: true,
   adminPanel: false,
   sideBarCollapsed: false,
   callerInfo: {},
   callingInfo: {},
   remoteStream: null,
   localStream: null,
+  participantModelState: false,
 };
 
 export default (state = initState, action) => {

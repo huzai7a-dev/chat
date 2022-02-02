@@ -68,29 +68,9 @@
   top: 0;
   right: 0;
 }
-.participants {
-  height: 100%;
-  background: #eeee;
-}
 .groupLogo {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-.participantsContainer {
-  overflow-y: scroll;
-  height: 80%;
-}
-.participantsdetails {
-  display: flex;
-  align-items: center;
-}
-.participantsLoader {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.participant {
-  padding: 10px;
-}
+

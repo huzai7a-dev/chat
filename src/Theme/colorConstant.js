@@ -23,14 +23,3 @@ export const DANGER = red[400];
 export const DANGERLIGHT = red[50];
 export const SUCCESS = green[400];
 export const SUCCESSLIGHT = green[50];
-
-export const BACKGROUND = {
-  ["light"]: {
-    default: SECONDARYLIGHT,
-    active: WHITE,
-  },
-  ["dark"]: {
-    default: DARKMAIN,
-    active: DARKLIGHT,
-  },
-};

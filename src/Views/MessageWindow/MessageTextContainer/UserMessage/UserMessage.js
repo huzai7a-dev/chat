@@ -6,13 +6,15 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import CancelIcon from "@material-ui/icons/Cancel";
 import Modal from "react-modal";
-import DoneAllIcon from "@material-ui/icons/DoneAll";
 import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import { DARKLIGHT, PRIMARYLIGHT } from "../../../../Theme/colorConstant";
+import {
+  DARKLIGHT,
+  SECONDARYLIGHT,
+} from "../../../../Theme/colorConstant";
 
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
@@ -230,7 +232,13 @@ function UserMessage(props) {
 
   const MessageOptions = React.memo(() => {
     return (
-      <div className="optionsContainer" style={{[props.sender?.message_from === loggedInUser ? "right": "left"]: "100%"}}>
+      <div
+        className="optionsContainer"
+        style={{
+          [props.sender?.message_from === loggedInUser ? "right" : "left"]:
+            "100%",
+        }}
+      >
         <div className="options">
           <p
             onClick={() => {
@@ -269,7 +277,14 @@ function UserMessage(props) {
         {props.sender?.message_from !== loggedInUser ? (
           <Avatar
             src={`/bizzportal/public/img/${image}`}
-            style={{ width: "40px", height: "40px", visibility:props.head.message_id == props.sender.message_id ? "visible": 'hidden' }}
+            style={{
+              width: "40px",
+              height: "40px",
+              visibility:
+                props.head.message_id == props.sender.message_id
+                  ? "visible"
+                  : "hidden",
+            }}
           />
         ) : null}
       </div>
@@ -282,22 +297,23 @@ function UserMessage(props) {
               : "userMessage__details"
           }
         >
-          <div className="userMessage__name" style={{ marginRight: "5px" }}>
-            {/* <p>
-              {props.sender.message_from !== loggedInUser && props.head.message_id == props.sender.message_id
-                ? props.sender.from_username + ","
-                : ""}
-            </p> */}
-          </div>
-
-          {/* <div
-            className="userMessage__time"
-            style={{ display: "flex", alignItems: "center" }}
-          >
-            {props.head.message_id == props.sender.message_id && (
-              <p>{moment(props.head.fullTime).format("LT")}</p>
-            )}
-          </div> */}
+          {props.tail?.message_id == props.sender.message_id && (
+            <div className="userMessage__name" style={{ marginRight: "5px" }}>
+              <p>
+                {props.sender.message_from !== loggedInUser
+                  ? props.sender.from_username + ","
+                  : ""}
+              </p>
+            </div>
+          )}
+          {props.tail?.message_id == props.sender.message_id && (
+            <div
+              className="userMessage__time"
+              style={{ display: "flex", alignItems: "center" }}
+            >
+              <p>{moment(props.head?.fullTime).format("LT")}</p>
+            </div>
+          )}
         </div>
         {parseInt(props.sender.message_forwarded) == 1 ? (
           <Typography
@@ -329,7 +345,7 @@ function UserMessage(props) {
               style={{
                 background:
                   props.sender?.message_from !== loggedInUser
-                    ? PRIMARYLIGHT
+                    ? SECONDARYLIGHT
                     : messageToBackground,
                 color:
                   isNightMode && props.sender?.message_from == loggedInUser
@@ -360,7 +376,7 @@ function UserMessage(props) {
             <div
               className="msgOption"
               ref={menuDiv}
-              style={option ? {display:"flex"} : null}
+              style={option ? { display: "flex" } : null}
               onClick={() => {
                 setOption(!option);
               }}
@@ -370,25 +386,6 @@ function UserMessage(props) {
             </div>
           </div>
         ) : null}
-        {props.head.message_id == props.sender.message_id && (
-          <div
-            className="userMessage__time"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              alignSelf:
-                props.sender?.message_from !== loggedInUser
-                  ? "flex-start"
-                  : "flex-end",
-            }}
-          >
-            <p>{moment(props.head.fullTime).format("LT")}</p>
-            {props.sender.seen > 0 &&
-            props.sender?.message_from == loggedInUser ? (
-              <DoneAllIcon fontSize="small" color="primary" />
-            ) : null}
-          </div>
-        )}
         <AttachmentModel />
         <Modal
           isOpen={forwardModel}

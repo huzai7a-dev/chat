@@ -1,7 +1,6 @@
 import React, { useEffect, createRef, useState, useCallback } from "react";
 import "./MessageTextContainer.css";
 import UserMessage from "./UserMessage/UserMessage";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Avatar } from "@material-ui/core";
@@ -151,7 +150,8 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
       >
         {Object.keys(groupedByMessages)?.map((key, id) => {
           const groupedByMessage = groupedByMessages[key];
-          let keyMessage = groupedByMessage[0];
+          let headMessage = groupedByMessage[0];
+          let tailMessage = groupedByMessage[0];
 
           return (
             <div key={id}>
@@ -165,8 +165,7 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
                 <Typography
                   variant="body2"
                   align="center"
-                  color={isNightMode ? "primary" : "textSecondary"}
-                  style={{ padding: "0px 5px" }}
+                  style={{ padding: "0px 5px", color: "#fff" }}
                 >
                   {key}
                 </Typography>
@@ -178,12 +177,18 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
                 />
               </div>
               <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {groupedByMessage?.map((message) => {
-                  
-                  if (keyMessage.from_userid != message.from_userid || moment(keyMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
-                    keyMessage = message
+                {groupedByMessage?.map((message, messageIndex) => {
+
+                  if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+                    headMessage = message
                   }
 
+                  groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
+                    if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
+                      tailMessage = nextMessage
+                    }
+                  })
+                  
                   return (
                   <UserMessage
                     chatgroup={message}
@@ -192,7 +197,8 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
                       groupedByMessage[groupedByMessage.length - 1]
                         .groupmessage_id === message.groupmessage_id
                     }
-                    head={keyMessage}
+                    head={headMessage}
+                    tail={tailMessage}
                   />
                 )})}
               </div>
@@ -216,7 +222,7 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
             {active_group.group_name?.toUpperCase()[0]}
           </Avatar>
         )}
-        <Typography color={isNightMode ? "primary" : "textSecondary"}>
+        <Typography style={{color: "#fff"}}>
           Welcome To {`${active_group?.group_name}'s`} Group
         </Typography>
       </div>
