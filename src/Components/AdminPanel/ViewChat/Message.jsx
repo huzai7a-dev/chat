@@ -6,7 +6,10 @@ import {
   SECONDARYDARK,
   SECONDARYMAIN,
 } from "../../../Theme/colorConstant";
-import moment from 'moment'
+import moment from 'moment';
+import { useSelector } from 'react-redux';
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
+
 const useStyles = makeStyles((theme) => ({
   message: {
     alignSelf: (props) =>
@@ -36,7 +39,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Message(props) {
   const classes = useStyles(props);
-
+  const { isNightMode } = useSelector(store => {
+    return {
+      isNightMode: store.app.mode
+    }
+  })
   const RenderSendAttachment = () => {
     const attachments = props.message.message_attachment;
     return attachments.split(",").map((attachment, id) => {
@@ -101,7 +108,7 @@ function Message(props) {
           <div className="attachView" key={id}>
             <div className="file">
               <FileCopyIcon />
-              <Typography variant="caption">{fileName}</Typography>
+              <Typography  variant="caption">{fileName}</Typography>
               <DownloadButton />
             </div>
           </div>
@@ -124,7 +131,7 @@ function Message(props) {
       />
       <Box>
         <Box style={{marginTop:"10px",padding:"0px 5px"}}>
-          <Typography variant="caption">{moment(props.message.fullTime).format('lll')}</Typography>
+          <Typography variant="caption" style={{color: isNightMode ? WHITE: BLACK}}>{moment(props.message.fullTime).format('lll')}</Typography>
         {props.message.message_forwarded == 1 && <Typography variant="caption">Forwarded</Typography>}
         </Box>
         {props.message?.message_attachment !== null ? (

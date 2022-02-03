@@ -4,6 +4,7 @@ import { DARKMAIN } from "../../../Theme/colorConstant";
 import "./EditGroup.css";
 import GroupInfo from "./GroupInfo";
 import MemberList from "./MemberList";
+
 function EditGroup() {
     const { editGroupNameToMemberModelState,isNightMode } = useSelector((store) => {
         return {

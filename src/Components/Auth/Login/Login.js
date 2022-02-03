@@ -35,6 +35,7 @@ const Login = React.memo(() => {
   };
 
   return (
+    <>
     <div className="login" onKeyDown={loginOnEnter}>
       <div className="login__container">
         <img src={logo} alt="Logo" />
@@ -86,6 +87,10 @@ const Login = React.memo(() => {
       </Typography>
       </div>
     </div>
+    <footer className="footer">
+          <h5>Powered by Bizz World Communications</h5>
+        </footer>
+    </>
   );
 });
 

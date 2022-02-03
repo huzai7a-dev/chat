@@ -1,5 +1,5 @@
 .login {
-  height: 100vh;
+  height: calc(100vh - 2.5rem);
   width: 100%;
   display: flex;
   justify-content: center;

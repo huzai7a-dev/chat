@@ -32,3 +32,12 @@ html {
 .MuiAppBar-root {
   height:64px !important;
 }
+
+.footer {
+  color: whitesmoke;
+  background: var(--chat-black);
+  display:flex;
+  height:2.5rem;
+  justify-content: center;
+  align-items: center;
+}

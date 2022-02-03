@@ -3,15 +3,17 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { approveUser, declineUser, getSignupUsers } from "../../../api/admin";
 import { filterList } from "../../../helper/util";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 import User from "../User";
 
 function ViewUsers() {
   const [users, setUsers] = React.useState([]);
   const [userUpdated, setUserUpdated] = React.useState({});
   const [userName,setUserName] = useState('');
-  const { auth_user } = useSelector((store) => {
+  const { auth_user, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
+      isNightMode: store.app.mode,
     };
   });
   const dispatch = useDispatch();
@@ -21,7 +23,7 @@ function ViewUsers() {
     ).then((res) => {
       setUsers(res.data.contacts);
     });
-  }, [userUpdated]);
+  }, [auth_user.elsemployees_empid, dispatch, userUpdated]);
 
   const onDecline = (declineUserId) => {
     const params = {
@@ -51,7 +53,7 @@ function ViewUsers() {
   return (
     <div style={{ height: "100%", overflow: "auto", width: "100%" }}>
       <Box p={2} display="flex" justifyContent="center" style={{width:"100%",margin:"5px 0px"}}>
-        <TextField  style={{width:"50%"}} placeholder="Search User" value={userName} onChange={(e)=> setUserName(e.target.value)}/>
+        <TextField InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}} InputProps={{style: {color: isNightMode ? WHITE: BLACK}}} style={{width:"50%", color: isNightMode ? WHITE: BLACK}} placeholder="Search User" value={userName} onChange={(e)=> setUserName(e.target.value)}/>
       </Box>
       {users.length > 0 ? (
         users.filter(v => filterList(v.elsemployees_name,userName)).map((user) => (

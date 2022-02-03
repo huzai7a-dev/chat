@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllGroups } from "../../../api/chat";
 import GroupContainer from "./GroupContainer";
 import MessageContainer from "./MessageContainer";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 
 const useStyles = makeStyles({
   groupsContainer: {
@@ -18,9 +19,10 @@ function ViewGroupChat() {
   const classes = useStyles();
   const [searchGroup, setSearchGroup] = React.useState("");
   const [hasMessages, setHasMessages] = React.useState(false);
-  const { groups } = useSelector((store) => {
+  const { groups, isNightMode } = useSelector((store) => {
     return {
       groups: store?.chat.allGroups || [],
+      isNightMode: store.app.mode || false,
     };
   });
   const dispatch = useDispatch();
@@ -43,12 +45,14 @@ function ViewGroupChat() {
       <Box
         display="flex"
         alignItems="flex-end"
-        style={{ marginBottom: "10px" }}
+        style={{ marginBottom: "10px",color: isNightMode ? WHITE: BLACK }}
       >
         <TextField
           label="Search Group..."
-          style={{ width: "100%" }}
+          InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}}
+          style={{ width: "100%", color: isNightMode ? WHITE: BLACK }}
           value={searchGroup}
+          InputProps={{style:{color: isNightMode ? WHITE: BLACK}}}
           onChange={handleSearch}
         />
         <Button

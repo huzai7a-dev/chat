@@ -1,13 +1,14 @@
 import React from "react";
 import { Box, Avatar, makeStyles, Typography,Button } from "@material-ui/core";
-import { PRIMARYMAIN } from "../../../Theme/colorConstant";
+import { BLACK, PRIMARYMAIN, WHITE } from "../../../Theme/colorConstant";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminGroupMessages } from "../../../api/message";
 
 function Group({ group,setHasMessages }) {
-  const { auth_user} = useSelector((store) => {
+  const { auth_user, isNightMode} = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
+      isNightMode: store.app.mode,
     };
   });
   const dispatch=useDispatch();
@@ -34,7 +35,7 @@ function Group({ group,setHasMessages }) {
             />
           )}
         </Box>
-        <Box>{group.group_name}</Box>
+        <Box style={{color: isNightMode ? WHITE: BLACK}}>{group.group_name}</Box>
       </Box>
     </Button>
   );

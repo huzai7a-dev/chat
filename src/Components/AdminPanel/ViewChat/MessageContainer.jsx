@@ -8,6 +8,7 @@ import { mergeArray } from "../../../helper/util";
 import {
   setAdminUserMessages,
 } from "../../../Redux/actions/message";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 const useStyles = makeStyles(() => ({
   messageContainer: {
     height: "100%",
@@ -32,9 +33,10 @@ function MessageContainer(props) {
 
   const [hasMore, setHasMore] = useState(true);
   const dispatch = useDispatch();
-  const { messages } = useSelector((store) => {
+  const { messages, isNightMode } = useSelector((store) => {
     return {
       messages: store.message.adminUserMessages || [],
+      isNightMode: store.message.mode || false,
     };
   });
 
@@ -66,7 +68,7 @@ function MessageContainer(props) {
         scrollableTarget="scrollableDiv"
       >
         {messages.length < 1 ? (
-           <Typography className={classes.noMessage}>No messages between them </Typography>
+           <Typography style={{color: isNightMode ? WHITE: BLACK}} className={classes.noMessage}>No messages between them </Typography>
         ) : (
           messages.map((message) => {
             return (

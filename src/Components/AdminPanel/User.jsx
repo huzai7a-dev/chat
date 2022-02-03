@@ -3,13 +3,21 @@ import { Box, Typography, Avatar, Button } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import DoneIcon from "@material-ui/icons/Done";
 import {
+  BLACK,
   DANGER,
   DANGERLIGHT,
   SUCCESS,
   SUCCESSLIGHT,
+  WHITE,
 } from "../../Theme/colorConstant";
+import { useSelector } from "react-redux";
 
 function User({ name, profile, handleDecline, handleApproved }) {
+  const { isNightMode } = useSelector(store => {
+    return {
+      isNightMode: store.app.mode,
+    }
+  });
   return (
     <Box
       display="flex"
@@ -22,7 +30,7 @@ function User({ name, profile, handleDecline, handleApproved }) {
             src={`/bizzportal/public/img/${profile}`}
             style={{ marginRight: "5px" }}
           />
-          <Typography style={{ flex: "2" }}>{name}</Typography>
+          <Typography style={{ flex: "2",color: isNightMode ? WHITE: BLACK}}>{name}</Typography>
         </Box>
         <Box display="flex" flex="2" justifyContent="right">
           {handleDecline && (

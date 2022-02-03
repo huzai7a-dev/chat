@@ -5,9 +5,11 @@ import {
   PRIMARYLIGHT,
   PRIMARYMAIN,
   SECONDARYDARK,
-  SECONDARYMAIN,
+  SECONDARYMAIN,BLACK,WHITE
 } from "../../../Theme/colorConstant";
 import moment from 'moment'
+import { useSelector} from 'react-redux';
+
 const useStyles = makeStyles((theme) => ({
   message: {
     alignSelf: (props) =>
@@ -38,6 +40,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Message(props) {
   const classes = useStyles(props);
+  const {isNightMode} = useSelector(store => {
+    return {
+      isNightMode: store.app.mode
+    }
+  })
   const RenderSendAttachment = () => {
     const attachments = props.message.groupmessage_attachment;
     return attachments.split(",").map((attachment, id) => {
@@ -66,7 +73,7 @@ function Message(props) {
           <div className="attachView" key={id}>
             <img
               onClick={(e) => {
-                openImage(e);
+                // openImage(e);
               }}
               height="auto"
               width="150px"
@@ -126,7 +133,7 @@ function Message(props) {
       />
       <Box>
         <Box style={{marginTop:"10px",padding:"0px 5px"}}>
-          <Typography variant="caption">{moment(props.message.fullTime).format('lll')}</Typography>
+          <Typography variant="caption" style={{color: isNightMode ? WHITE: BLACK}}>{moment(props.message.fullTime).format('lll')}</Typography>
         {props.message.groupmessage_forwarded == 1 && <Typography variant="caption">Forwarded</Typography>}
         </Box>
         {props.message?.groupmessage_attachment !== null ? (

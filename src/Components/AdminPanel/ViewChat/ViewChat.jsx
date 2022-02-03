@@ -3,13 +3,13 @@ import { Box, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllContacts, getContactsTotal } from "../../../api/chat";
+import { getAllContacts } from "../../../api/chat";
 import ToUser from "./ToUser";
-import { Skeleton } from "@mui/material";
 import FromUser from "./FromUser";
-import { getAdminUserMessages, getUserMessages } from "../../../api/message";
+import { getAdminUserMessages } from "../../../api/message";
 import MessageContainer from "./MessageContainer";
 import { filterList } from "../../../helper/util";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,7 +39,7 @@ function ViewMessages() {
   const [hasMessages, setHasMessages] = useState(false);
   const [isUserSelected, setUserSelected] = useState(true);
 
-  const { auth_user, contacts } = useSelector((store) => {
+  const { auth_user, contacts, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
       isNightMode: store.app.mode || false,
@@ -142,13 +142,17 @@ function ViewMessages() {
         >
           <TextField
             label="To"
-            
+            InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}}
+            InputProps={{style: {color: isNightMode ? WHITE: BLACK}}}
+            style={{color: isNightMode ? WHITE: BLACK}}
             onChange={handleToUser}
             value={to}
           />
           <TextField
             label="From"
-           
+            InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}}
+            InputProps={{style: {color: isNightMode ? WHITE: BLACK}}}
+            style={{color: isNightMode ? WHITE: BLACK}}
             onChange={handleFromUser}
             value={from}
             disabled={isUserSelected}

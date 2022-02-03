@@ -18,7 +18,7 @@ import Utils from "../../../helper/util";
 
 const useStyle = makeStyles({
   container: {
-    height: "100vh",
+    height: "calc(100vh - 2.5rem)",
     width: "100vw",
     background: WHITE,
     padding: "10px 20px",
@@ -47,6 +47,7 @@ function Signup() {
   const history = useHistory();
 
   return (
+    <>
     <Grid
       className={classes.container}
       container
@@ -98,7 +99,7 @@ function Signup() {
               <Grid item xs={12}>
                 <Typography variant="h5">
                   Sign Up to
-                  <span style={{ color: PRIMARYMAIN }}> Bizz Chat</span>
+                  <span style={{ color: PRIMARYMAIN }}> Cyberxify Chat</span>
                 </Typography>
               </Grid>
               <Grid item xs={6}>
@@ -222,6 +223,10 @@ function Signup() {
         </Formik>
       </Grid>
     </Grid>
+    <footer className="footer">
+    <h5>Powered by Bizz World Communications</h5>
+  </footer>
+  </>
   );
 }
 

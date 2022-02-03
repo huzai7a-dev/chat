@@ -5,14 +5,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { declineUser, getApproveUsers } from "../../../api/admin";
 import User from "../User";
 import { filterList } from "../../../helper/util";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 
 export default function ViewApprovedUsers() {
   const [users, setUsers] = React.useState([]);
   const [userUpdated, setUserUpdated] = React.useState({});
   const [userName,setUserName] = React.useState('');
-  const { auth_user } = useSelector((store) => {
+  const { auth_user, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
+      isNightMode: store.app.mode,
     };
   });
   const dispatch = useDispatch();
@@ -39,8 +41,8 @@ export default function ViewApprovedUsers() {
   };
   return (
     <div style={{height:"100%",width:"100%"}}>
-      <Box p={2} display="flex" justifyContent="center" style={{width:"100%",margin:"5px 0px"}}>
-        <TextField  style={{width:"50%"}} placeholder="Search User" value={userName} onChange={(e)=> setUserName(e.target.value)}/>
+      <Box p={2} display="flex" justifyContent="center" style={{width:"100%",margin:"5px 0px", color: isNightMode ? WHITE: BLACK}}>
+        <TextField InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}} InputProps={{style: {color: isNightMode ? WHITE: BLACK}}} style={{width:"50%", color: isNightMode ? WHITE: BLACK}} placeholder="Search User" value={userName} onChange={(e)=> setUserName(e.target.value)}/>
       </Box>
       <Box style={{height:"100%",width:"100%"}}>
       {users.filter(v => filterList(v.elsemployees_name,userName)).map((user) => {
