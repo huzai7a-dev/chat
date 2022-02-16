@@ -6,7 +6,7 @@ import {
   setRemoteStream,
   setLocalStream,
 } from "../Redux/actions/app";
-import { getPeerConnection, setPeerConnection } from '../config/peerconnection';
+import { getPeerConnection } from '../config/peerconnection';
 import { getSocket } from "../config/socket";
 
 export const useRTCClient = () => {
@@ -14,7 +14,7 @@ export const useRTCClient = () => {
   const { reduxLocalStream, reduxRemoteStream } = useSelector(store => {
     return {
       reduxLocalStream: store.app.localStream,
-      reduxRemoteStream: store.app.localStream,
+      reduxRemoteStream: store.app.remoteStream,
     }
   })
   const remoteStream = useRef(reduxRemoteStream);
