@@ -1,20 +1,20 @@
 import React from 'react';
 import { useSelector } from "react-redux";
 import { DARKMAIN } from "../../../Theme/colorConstant";
-import "./EditGroup.css";
 import GroupInfo from "./GroupInfo";
 import MemberList from "./MemberList";
+import "./EditGroup.css";
 
 function EditGroup() {
-    const { editGroupNameToMemberModelState,isNightMode } = useSelector((store) => {
+    const { switchToMember,isNightMode } = useSelector((store) => {
         return {
-            editGroupNameToMemberModelState:store.app.editGroupNameToMemberModelState || false,
+            switchToMember:store.app.editGroupNameToMemberModelState || false,
             isNightMode:store.app.mode || false
         }
       });
     return (
         <div className="editGroup" style={{background: isNightMode ? DARKMAIN : "#eee"}}>
-            {!editGroupNameToMemberModelState ? <GroupInfo /> : <MemberList />}
+            {!switchToMember ? <GroupInfo /> : <MemberList />}
         </div>
     );
 }
