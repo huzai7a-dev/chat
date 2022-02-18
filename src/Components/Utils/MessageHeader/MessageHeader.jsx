@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import "./MessageHeader.css";
 import { IconButton, Typography } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
+import PhoneIcon from "@material-ui/icons/Phone";
 import { useHistory, useLocation } from "react-router-dom";
 import { setEditGroupModelState, setParticipantModelState } from '../../../Redux/actions/app';
 
@@ -46,6 +47,12 @@ const MessageHeader = () => {
         </div>
       </div>
       <div className="message__header__right">
+        <IconButton onClick={() => window.open(`callto://${header.user_id || 8004 /*@Todo: Configure Extension here*/}`)}>
+            <PhoneIcon 
+              color="secondary"
+              style={{ width: "30px", height: "30px" }}
+            />
+        </IconButton>
         {header.activeType == "group" && (
           <div>
             <IconButton onClick={() => dispatch(setEditGroupModelState(true))}>
