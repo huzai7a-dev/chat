@@ -1,5 +1,5 @@
 import { Avatar, makeStyles, Badge, Box } from "@material-ui/core";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useMemo } from "react-redux";
 import "./chatUser.css";
 import { useHistory } from "react-router-dom";
 import { setActiveGroup, setHeaderData } from "../../../../Redux/actions/chat";
@@ -59,7 +59,7 @@ function ChatGroup({ group }) {
       },
     };
 
-    if (parseInt(group?.groupunseenmesg) > 0) {
+    if (group?.groupunseenmesg) {
       dispatch(seenGroupMessage(seenParams)).then(() => {
         const socketParams = {
           group_id: active_group.group_id,
@@ -95,6 +95,18 @@ function ChatGroup({ group }) {
         group.group_name.toUpperCase().split(" ")[1][0]
       : group.group_name.toUpperCase()[0] + group.group_name.toUpperCase()[1];
 
+    const renderLastMessageText = useMemo(() => {
+      if(group.lastmessage !== "null" && group.lastmessage) {
+        return group.lastmessage
+      } else if(group?.attachment) {
+        return "Attachment"
+      } else if(parseInt(group.created_by) == parseInt(auth_user.elsemployees_empid)) {
+        return "You created this group";
+      } else {
+        return "Be the first to initiate conversation";
+      }
+    }, [auth_user.elsemployees_empid, group])
+
   return (
     <div
       className="chatUser"
@@ -114,7 +126,7 @@ function ChatGroup({ group }) {
         <Box display="flex" justifyContent="space-between">
           <h3
             style={{
-              color: group.groupunseenmesg > 0 ? PRIMARYMAIN : heading,
+              color: group.groupunseenmesg ? PRIMARYMAIN : heading,
               fontWeight: group.groupunseenmesg ? "600" : "100",
               flex: "3",
             }}
@@ -122,20 +134,18 @@ function ChatGroup({ group }) {
             {group.group_name}
           </h3>
           <p style={{ flex: "1" }}>
-            {moment(group?.groupmessagetime).format("LT")}
+            {moment(group?.groupmessagetime|| group?.updated_at).format("LT")}
           </p>
         </Box>
 
         <div className="chatUser__lastMessage">
-          <p style={{ fontWeight: group.groupunseenmesg > 0 && "900" }}>
-            {group.lastmessage !== "null" && group.lastmessage !== null
-              ? group.lastmessage
-              : "Attachment"}
+          <p style={{ fontWeight: group.groupunseenmesg && "900" }}>
+            {renderLastMessageText}
           </p>
         </div>
       </div>
       <div className="unseenMsg">
-        <Badge badgeContent={group.groupunseenmesg} color="primary"></Badge>
+      {group.groupunseenmesg ? <Badge badgeContent={group.groupunseenmesg} color="primary"></Badge> : null}
       </div>
     </div>
   );

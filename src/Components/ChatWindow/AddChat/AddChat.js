@@ -33,7 +33,7 @@ function AddChat() {
             }
           }}
         > 
-          <GroupAddIcon style={{color:isNightMode ? "#fff": "PRIMARYMAIN"}}/>
+          <GroupAddIcon style={{color:isNightMode ? "#fff": PRIMARYMAIN}}/>
           Create New Group
         </IconButton>
       </div>

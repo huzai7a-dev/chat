@@ -1,6 +1,5 @@
 import { green, red } from "@material-ui/core/colors";
 import light from '../theme.light.json';
-import dark from '../theme.dark.json';
 
 // light
 export const PRIMARYMAIN = light.primary;

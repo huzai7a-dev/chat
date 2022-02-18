@@ -29,12 +29,7 @@ function MessageWindowHeader(props) {
       };
     }
   );
-  useEffect(() => {
-    const peer = new window.Peer();
-    peer.on("open", (id) => {
-      setMyCallId(id);
-    });
-  }, []);
+
   const dispatch = useDispatch();
     const openGallery = ()=>{
       history.replace(`${location.pathname}#gallery`)

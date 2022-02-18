@@ -20,7 +20,7 @@ const initState = {
   editGroupModelState: false,
   typedMsg: [],
   seen: false,
-  mode: true,
+  mode: false,
   adminPanel: false,
   sideBarCollapsed: false,
   callerInfo: {},

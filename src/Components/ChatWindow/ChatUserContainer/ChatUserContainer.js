@@ -198,7 +198,7 @@ function ChatUserContainer({ tabValue }) {
       },
     };
 
-    if (parseInt(group?.groupunseenmesg) > 0) {
+    if (group?.groupunseenmesg) {
       dispatch(seenGroupMessage(seenParams)).then(() => {
         const socketParams = {
           group_id: active_group.group_id,
@@ -217,6 +217,19 @@ function ChatUserContainer({ tabValue }) {
       });
     }
     }
+
+    const renderLastMessageText = useCallback((group) => {
+      if(group.lastmessage !== "null" && group.lastmessage ) {
+        return group.lastmessage
+      } else if(group?.attachment) {
+        return "Attachment"
+      } else if(parseInt(group.created_by) == parseInt(auth_user.elsemployees_empid)) {
+        return "You created this group";
+      } else {
+        return "Be the first to initiate conversation";
+      }
+    }, [])
+
     if (!groupsLoaded)
       return (
         <div
@@ -238,15 +251,11 @@ function ChatUserContainer({ tabValue }) {
             <AppUser
               key={group?.group_id}
               userName={group?.group_name}
-              lastMessage={
-                group?.lastmessage && group?.lastmessage != "null"
-                  ? group?.lastmessage
-                  : "Attachment"
-              }
+              lastMessage={renderLastMessageText(group)}
               activeUser={
                 active_group?.group_id == group?.group_id
               }
-              date={moment(group?.groupmessagetime).format("LT")}
+              date={moment(group?.groupmessagetime || group?.updated_at).format("LT")}
               handleClick={() => onClickGroup(group)}
               userImage={group?.group_image}
               path={attachments_url}
@@ -268,6 +277,7 @@ function ChatUserContainer({ tabValue }) {
       </div>
     );
   });
+
   return (
     <div className="container">
       {/* <SwitchTabs /> */}

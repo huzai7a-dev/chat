@@ -65,6 +65,11 @@ export const setSeen = (seen) => {
 };
 
 export const setNightMode = (mode) => {
+  if(mode) {
+    localStorage.setItem("theme","dark")
+  } else {
+    localStorage.removeItem("theme");
+  } 
   return {
     type: SET_NIGHT_MODE,
     mode,

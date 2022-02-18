@@ -46,7 +46,7 @@ function GroupName({
         </Button>
       </div>
       <div className="groupName__header">
-        <Typography variant="h6" style={{color: "#fff"}}>New Group Chat</Typography>
+        <Typography variant="h6" style={{color: isNightMode && "#fff"}}>New Group Chat</Typography>
       </div>
 
       <label className="groupNameModel__imageContainer">

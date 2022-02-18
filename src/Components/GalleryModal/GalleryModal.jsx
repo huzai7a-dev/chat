@@ -10,7 +10,7 @@ import { useEffect } from "react";
 import { getUserAttachments, getGroupAttachments } from "../../api/message";
 import "./gallerymodal.style.css";
 
-const GalleryModal = React.forwardRef((props) => {
+const GalleryModal = React.memo((props) => {
   const classes = useStyle();
   const [attachmentType, setAttachmentType] = useState("all");
   const [attachSrc, setAttachSrc] = useState("");
@@ -259,7 +259,7 @@ const GalleryModal = React.forwardRef((props) => {
   const galleryWidth = window.innerWidth < 700 ? "100%" : "400px";
   return (
     <Box
-      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth, backgroundColor: isNightMode ? "#000" : "#fff" }}
+      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth, backgroundColor: isNightMode ? "#000" : "#eee" }}
       className="gallery__container"
     >
       {renderAttachmentsHeader}

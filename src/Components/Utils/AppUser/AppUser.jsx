@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 function AppUser({
   userName,
   userImage,
-  activeUser,
   lastMessage,
   date,
   handleClick,
@@ -58,7 +57,7 @@ function AppUser({
           }}
         >
             <Typography variant="caption">{lastMessage}</Typography>
-            <Badge style={{position:"absolute",right:"0",bottom:"0",marginRight:"8px",marginBottom:"9.6px"}} badgeContent={unseen} color="primary"/>
+            {unseen ? <Badge style={{position:"absolute",right:"0",bottom:"0",marginRight:"8px",marginBottom:"9.6px"}} badgeContent={unseen} color="primary"/>: null}
         </Box>
       </Box>
     </Box>
