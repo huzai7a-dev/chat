@@ -48,7 +48,7 @@ export default (state = initState, action) => {
     case SET_USER_GROUPS:
       return (state = {
         ...state,
-        groups: action.groups,
+        groups: Object.assign([], action.groups),
       });
 
     case SET_GROUP_MEM_INFO:

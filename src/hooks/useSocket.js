@@ -2,21 +2,19 @@ import { useEffect } from "react";
 import { getSocket, init } from "../config/socket";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setActiveGroup, setGroupMemInfo, setMakeCall,setCallAccepted, setNewGroupMessage, setOnCallComing, } from "../Redux/actions/chat";
+import { setActiveGroup, setGroupMemInfo, setNewGroupMessage } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
 import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
-import { Notify } from "../helper/notify";
-import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
-import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
-import { useRTCClient } from "../helper/rtcClient";
-let isAlreadyCalling = false;
+// import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
+// import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
+// import { useRTCClient } from "../helper/rtcClient";
 
 const useSocket = () => {
-  const { acceptCall, callUser } = useRTCClient();
-  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId,onCall, callerInfo } = useSelector((store) => {
+  // const { acceptCall, callUser } = useRTCClient();
+  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId, callerInfo } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
@@ -34,103 +32,60 @@ const useSocket = () => {
     init(auth_user.elsemployees_empid);
   }, [auth_user]);
 
-  useEffect(() => {
-    if(active_user.elsemployees_empid && !isAlreadyCalling) {
-      try {
-        callUser(active_user.elsemployees_empid)
-      } catch(e) {
-        console.log(e)
-      }
-      isAlreadyCalling=true
-    }
-  },[active_user, callUser])
+  // useEffect(() => {
+  //   if(active_user.elsemployees_empid && !isAlreadyCalling) {
+  //     try {
+  //       callUser(active_user.elsemployees_empid)
+  //     } catch(e) {
+  //       console.log(e)
+  //     }
+  //     isAlreadyCalling=true
+  //   }
+  // },[active_user, callUser])
   
   // ********************************* socket for calling *********************************
 
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on("call-made", (data) => {
-      console.log("I am getting a call", data);
-      dispatch(setCallerInfo(data));
-      acceptCall(data)
-    });
-    return () => {
-      socket.off("call-made");
-    };
-  }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
+  // useEffect(() => {
+  //   const socket = getSocket(auth_user.elsemployees_empid);
+  //   socket.on("call-made", (data) => {
+  //     console.log("I am getting a call", data);
+  //     dispatch(setCallerInfo(data));
+  //     acceptCall(data)
+  //   });
+  //   return () => {
+  //     socket.off("call-made");
+  //   };
+  // }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
 
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on("answer-made", async (data) => {
-      dispatch(setCallingInfo(data));
-      console.log("Call Accepted", data)
-      const peerConnection = getPeerConnection();
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-      // setPeerConnection(peerConnection)
-    });
-    return () => {
-      socket.off("answer-made");
-    };
-  }, [auth_user.elsemployees_empid, dispatch]);
+  // useEffect(() => {
+  //   const socket = getSocket(auth_user.elsemployees_empid);
+  //   socket.on("answer-made", async (data) => {
+  //     dispatch(setCallingInfo(data));
+  //     console.log("Call Accepted", data)
+  //     const peerConnection = getPeerConnection();
+  //     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+  //     // setPeerConnection(peerConnection)
+  //   });
+  //   return () => {
+  //     socket.off("answer-made");
+  //   };
+  // }, [auth_user.elsemployees_empid, dispatch]);
 
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on("end-call", async () => {
-      const peerConnection = getPeerConnection();
-      peerConnection.close();
-      setPeerConnection(null);
-      socket.emit("request-end-call", {
-        to: callerInfo,
-        from: auth_user.elsemployees_empid,
-      });
-    });
-    return () => {
-      socket.off("end-call");
-    };
-  }, [auth_user, callerInfo, dispatch]);
-
-  useEffect(()=>{
-    const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("startCall",data =>{
-      dispatch(setOnCallComing({
-        isCalling:true,
-        callFrom:data.userName,
-        callerId:data.userCallId,
-      }))
-    })
-  },[auth_user.elsemployees_empid,dispatch])
-  
-  useEffect(()=>{
-    const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("acceptCall",data =>{
-      const peer = new window.Peer();
-      var call = peer.call(data.callerId, data.mediaStream);
-      dispatch(setMakeCall(false))
-      dispatch(setCallAccepted(true))
-    })
-  },[auth_user.elsemployees_empid,dispatch])
-
-  useEffect(()=>{
-    const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("endCall",data =>{
-      dispatch(setOnCallComing({
-        ...onCall,
-        isCalling:false
-      }))
-    })
-  },[auth_user.elsemployees_empid, dispatch, onCall])
-
-  useEffect(()=>{
-    const socket = getSocket(auth_user.elsemployees_empid)
-    socket.on("rejectCall",data =>{
-      dispatch(setOnCallComing({
-        ...onCall,
-        isCalling:false
-      }))
-      dispatch(setMakeCall(false))
-      Notify('Call Rejected','error')
-    })
-  },[auth_user.elsemployees_empid, dispatch, onCall])
+  // useEffect(() => {
+  //   const socket = getSocket(auth_user.elsemployees_empid);
+  //   socket.on("end-call", async () => {
+  //     const peerConnection = getPeerConnection();
+  //     peerConnection.close();
+  //     setPeerConnection(null);
+  //     socket.emit("request-end-call", {
+  //       to: callerInfo,
+  //       from: auth_user.elsemployees_empid,
+  //     });
+  //   });
+  //   return () => {
+  //     socket.off("end-call");
+  //   };
+  // }, [auth_user, callerInfo, dispatch]);
 
   // ********************************* socket for calling *********************************
   

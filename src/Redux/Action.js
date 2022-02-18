@@ -16,14 +16,14 @@
 //   };
 // }
 
-export function updateGroup(updateGroup) {
-  return function (dispatch) {
-    dispatch({
-      type: "updateGroup",
-      payload: updateGroup,
-    });
-  };
-}
+// export function updateGroup(updateGroup) {
+//   return function (dispatch) {
+//     dispatch({
+//       type: "updateGroup",
+//       payload: updateGroup,
+//     });
+//   };
+// }
 
 // export function sendMsg(sendMsg) {
 //   return function (dispatch) {

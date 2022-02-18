@@ -12,8 +12,8 @@ import "./groupListContainer.css";
 import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
-import { updateGroup } from "../../../../Redux/Action";
 import { DARKMAIN, PRIMARYMAIN } from "../../../../Theme/colorConstant";
+import { setUserGroups } from "../../../../Redux/actions/chat";
 const GroupMemebers = React.memo(({ members, userId, setUserId, isChecked })=> {
   const [selectMember, setSelectMember] = useState(false);
   const image = members?.elsemployees_image;
@@ -104,7 +104,7 @@ const GroupListContainer =({
             user_id: auth_user?.elsemployees_empid,
           })
           .then((res) => {
-            dispatch(updateGroup(res.data));
+            dispatch(setUserGroups(res.data));
           })
           .catch((err) => {
             console.warn("group error", err);

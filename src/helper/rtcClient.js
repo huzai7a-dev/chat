@@ -3,22 +3,20 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setCallerInfo,
   setCallingInfo,
-  setRemoteStream,
-  setLocalStream,
 } from "../Redux/actions/app";
-import { getPeerConnection } from '../config/peerconnection';
+import { getPeerConnection, setPeerConnection } from '../config/peerconnection';
 import { getSocket } from "../config/socket";
 
 export const useRTCClient = () => {
   const dispatch = useDispatch();
-  const { reduxLocalStream, reduxRemoteStream } = useSelector(store => {
-    return {
-      reduxLocalStream: store.app.localStream,
-      reduxRemoteStream: store.app.remoteStream,
-    }
-  })
-  const remoteStream = useRef(reduxRemoteStream);
-  const localStream = useRef(reduxLocalStream);
+  // const { reduxLocalStream, reduxRemoteStream } = useSelector(store => {
+  //   return {
+  //     reduxLocalStream: store.app.localStream,
+  //     reduxRemoteStream: store.app.remoteStream,
+  //   }
+  // })
+  const remoteStream = useRef(null);
+  const localStream = useRef(null);
   const localTrack = useRef();
 
   const { auth_user, callerInfo } = useSelector((store) => {
@@ -37,13 +35,10 @@ export const useRTCClient = () => {
     const socket = getSocket(auth_user.elsemployees_empid);
     remoteStream.current = remoteStream.current || new MediaStream();
     localStream.current = localStream.current || await navigator.mediaDevices.getUserMedia({ audio: true });
-    const remoteVideo = document.querySelector('#remoteVideo');
-    remoteVideo.srcObject = remoteStream.current;
-    remoteVideo.play();
 
     peerConnection.addEventListener("track", (e) => {
       console.log("Add Track From Peer", e);
-      remoteStream.current?.addTrack(e.track, remoteStream.current);
+      localStream.current?.addTrack(e.track, remoteStream.current);
     });
     
     localStream.current.getTracks().forEach((track) => {
@@ -56,25 +51,39 @@ export const useRTCClient = () => {
     
     const offer = await peerConnection.createOffer();
     await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
+    setPeerConnection(peerConnection)
+
+    const remoteVideo = document.querySelector('#remoteVideo');
+    remoteVideo.srcObject = remoteStream.current;
+    setTimeout(() => remoteVideo.play(), 0);
+
+    peerConnection.ontrack = ({track, streams}) => {
+      track.onunmute = () => {
+        if (remoteVideo.srcObject) {
+          return;
+        }
+        remoteVideo.srcObject = streams[0];
+      };
+    };
+
     socket.emit("call-user", {
       offer,
       to: user_id, // who is receiving
       from: auth_user.elsemployees_empid, // who is calling
     });
-    // setPeerConnection(peerConnection)
-    dispatch(setRemoteStream(remoteStream.current))
-    dispatch(setLocalStream(localStream.current))
-  }, [auth_user, dispatch]);
+    // dispatch(setRemoteStream(remoteStream.current))
+    // dispatch(setLocalStream(localStream.current))
+  }, [auth_user]);
 
   const endCall = useCallback((user_id) => {
     const socket = getSocket(auth_user.elsemployees_empid);
     remoteStream.current = new MediaStream();
-    dispatch(setRemoteStream(remoteStream.current))
+    // dispatch(setRemoteStream(remoteStream.current))
     socket.emit('request-end-call', {
       to: user_id,
       from: auth_user.elsemployees_empid,
     });
-  }, [auth_user, dispatch])
+  }, [auth_user])
 
   const acceptCall = useCallback(async (data = callerInfo) => {
     
@@ -92,8 +101,8 @@ export const useRTCClient = () => {
 
     peerConnection.addEventListener("track", (e) => {
       console.log("Add Track From Peer", e);
-      remoteStream.current?.addTrack(e.track, remoteStream.current);
-      dispatch(setRemoteStream(remoteStream.current))
+      localStream.current?.addTrack(e.track, remoteStream.current);
+      // dispatch(setRemoteStream(remoteStream.current))
     });
     
     localStream.current.getTracks().forEach((track) => {
@@ -114,10 +123,10 @@ export const useRTCClient = () => {
       from : data.from,
       to: data.to
     }))
-    dispatch(setRemoteStream(remoteStream.current))
-    dispatch(setLocalStream(localStream.current))
+    // dispatch(setRemoteStream(remoteStream.current))
+    // dispatch(setLocalStream(localStream.current))
     dispatch(setCallerInfo({}))
-    // setPeerConnection(peerConnection)
+    setPeerConnection(peerConnection)
   }, [auth_user?.elsemployees_empid, callerInfo, dispatch])
 
   return {
