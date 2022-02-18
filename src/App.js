@@ -14,6 +14,7 @@ import { lightTheme } from "./Theme/customTheme";
 import Modal from "react-modal";
 import { getContactsTotal } from "./api/message";
 import Auth from "./Components/Auth/Auth";
+import { setNightMode } from "./Redux/actions/app";
 
 Modal.setAppElement("#root");
 const App = () => {
@@ -33,6 +34,12 @@ const App = () => {
     dispatch(setAuthUser(auth_user));
     history.push("/");
   }, [dispatch, history]);
+
+  useEffect(() => {
+    const theme = localStorage.getItem("theme");
+    dispatch(setNightMode(theme == "dark"))
+  }, [dispatch])
+
   useSocket();
   useWorker();
   useEffect(() => {
