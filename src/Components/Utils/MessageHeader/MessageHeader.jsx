@@ -3,17 +3,23 @@ import { useSelector, useDispatch } from "react-redux";
 import "./MessageHeader.css";
 import { IconButton, Typography } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
+// import ConnectWithoutContactIcon from '@material-ui/icons/Phone';
 import PhoneIcon from "@material-ui/icons/Phone";
 import { useHistory, useLocation } from "react-router-dom";
-import { setEditGroupModelState, setParticipantModelState } from '../../../Redux/actions/app';
+import {
+  setEditGroupModelState,
+  setParticipantModelState,
+} from "../../../Redux/actions/app";
+import { setCallingUser } from "../../../Redux/actions/call";
 
 const MessageHeader = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { header, isNightMode } = useSelector((store) => {
+  const { header, isNightMode, active_user } = useSelector((store) => {
     return {
+      active_user: store.chat.active_user,
       header: store.chat.active || {},
       isNightMode: store.app.mode || false,
     };
@@ -34,26 +40,35 @@ const MessageHeader = () => {
           {header?.activeName}
         </Typography>
         <div className="left__options">
-          <Typography variant="body2" onClick={openGallery}>Gallery </Typography>
+          <Typography variant="body2" onClick={openGallery}>
+            Gallery{" "}
+          </Typography>
           {header.activeType == "group" && header?.other.membersLength > 0 && (
             <>
               <Typography variant="body2" style={{ margin: "0 5px" }}>
                 {" "}
                 |{" "}
               </Typography>
-              <Typography onClick={() => dispatch(setParticipantModelState(true))} variant="body2">Members</Typography>
+              <Typography
+                onClick={() => dispatch(setParticipantModelState(true))}
+                variant="body2"
+              >
+                Members
+              </Typography>
             </>
           )}
         </div>
       </div>
       <div className="message__header__right">
-        <IconButton onClick={() => window.open(`callto://${header.user_id || 8004 /*@Todo: Configure Extension here*/}`)}>
-            <PhoneIcon 
-              color="secondary"
-              style={{ width: "30px", height: "30px" }}
-            />
+        <IconButton
+          onClick={() => dispatch(setCallingUser(active_user))}
+        >
+          <PhoneIcon
+            color="secondary"
+            style={{ width: "30px", height: "30px" }}
+          />
         </IconButton>
-        
+
         {header.activeType == "group" && (
           <div>
             <IconButton onClick={() => dispatch(setEditGroupModelState(true))}>

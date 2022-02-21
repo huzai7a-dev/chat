@@ -15,8 +15,9 @@ import { useRTCClient } from "../helper/rtcClient";
 
 const useSocket = () => {
   const { acceptCall, callUser, processAfterAccept } = useRTCClient();
-  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId, callerInfo } = useSelector((store) => {
+  const { auth_user, callingUser, active_user, active_group,messages,groupMessages,oldMessageGroupId, callerInfo } = useSelector((store) => {
     return {
+      callingUser: store.call.callingUser,
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
       active_group: store.chat?.active_group || {},
@@ -33,15 +34,15 @@ const useSocket = () => {
     init(auth_user.elsemployees_empid);
   }, [auth_user]);
 
-  // useEffect(() => {
-  //   if(active_user.elsemployees_empid) {
-  //     try {
-  //       callUser(active_user.elsemployees_empid)
-  //     } catch(e) {
-  //       console.log(e)
-  //     }
-  //   }
-  // },[active_user, callUser])
+  useEffect(() => {
+    if(callingUser?.elsemployees_empid) {
+      try {
+        callUser(callingUser.elsemployees_empid)
+      } catch(e) {
+        console.log(e)
+      }
+    }
+  },[callingUser, callUser])
   
   // ********************************* socket for calling *********************************
 
