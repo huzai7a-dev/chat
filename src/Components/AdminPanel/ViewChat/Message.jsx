@@ -9,6 +9,7 @@ import {
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 import { BLACK, WHITE } from "../../../Theme/colorConstant";
+import RenderAttachment from "../../Utils/RenderAttachment";
 
 const useStyles = makeStyles((theme) => ({
   message: {
@@ -44,78 +45,7 @@ function Message(props) {
       isNightMode: store.app.mode
     }
   })
-  const RenderSendAttachment = () => {
-    const attachments = props.message.message_attachment;
-    return attachments.split(",").map((attachment, id) => {
-      const DownloadButton = () => {
-        return (
-          <Button variant="outlined" size="small" color={"primary"} key={id}>
-            <a
-              href={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              download={attachment}
-              className="anchorText"
-            >
-              Download
-            </a>
-          </Button>
-        );
-      };
-      const splitAttachment = attachment.split(".");
-      const attachmentType = splitAttachment[splitAttachment.length - 1];
-      if (
-        attachmentType.toLowerCase() === "jpg" ||
-        attachmentType.toLowerCase() === "gif" ||
-        attachmentType.toLowerCase() === "png" ||
-        attachmentType.toLowerCase() === "jpeg"
-      ) {
-        return (
-          <div className="attachView" key={id}>
-            <img
-              height="auto"
-              width="150px"
-              src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              alt="attachment"
-            />
-          </div>
-        );
-      }
-      else if (
-        attachmentType.toLowerCase() === "mp4" ||
-        attachmentType.toLowerCase() === "mkv" ||
-        attachmentType.toLowerCase() === "wmv" ||
-        attachmentType.toLowerCase() === "flv"
-      )
-      
-      {
-        return (
-          <div className="attachView" key={id}>
-            <video
-              height="auto"
-              width="150px"
-              src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              alt="attachments"
-              controls
-            />
-          </div>
-        );
-      }
-      else if (attachmentType.toLowerCase() === "wav") {
-        return <audio src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`} controls style={{margin:"10px 0px"}}/>
-      }
-       else {
-        const fileName = props.message.message_originalname.split(",")[id];
-        return (
-          <div className="attachView" key={id}>
-            <div className="file">
-              <FileCopyIcon />
-              <Typography  variant="caption">{fileName}</Typography>
-              <DownloadButton />
-            </div>
-          </div>
-        );
-      }
-    });
-  };
+
   const attachmentStyle = {
     display: "flex",
     flexWrap: "wrap",
@@ -136,7 +66,11 @@ function Message(props) {
         </Box>
         {props.message?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
-            <RenderSendAttachment />
+            <RenderAttachment
+              attachments={props.message.message_attachment}
+              fileName={props.message.message_originalname}
+              onOpenImage={ ()=> null}
+            />
           </div>
         ) : null}
         {props.message?.message_quotebody !== "null" && (

@@ -1,26 +1,21 @@
-import { Avatar, Typography, Button } from "@material-ui/core";
+import { Avatar, Typography } from "@material-ui/core";
 import React, { useState, useRef, useCallback } from "react";
 import "./userMessage.css";
 import { useDispatch, useSelector } from "react-redux";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
-import CancelIcon from "@material-ui/icons/Cancel";
 import Modal from "react-modal";
 import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
-import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import {
-  DARKLIGHT,
-  SECONDARYLIGHT,
-} from "../../../../Theme/colorConstant";
+import { DARKLIGHT, SECONDARYLIGHT } from "../../../../Theme/colorConstant";
+import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
+import RenderAttachment from "../../../../Components/Utils/RenderAttachment";
 
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
-      // contacts: store.message.contacts.contacts || [],
       active_user: store.auth.auth_user || {},
       isNightMode: store.app.mode || false,
     };
@@ -54,82 +49,7 @@ function UserMessage(props) {
       message_originalname: props.sender.message_originalname || null,
     },
   };
-  //function to render sent attachment
-  const RenderSendAttachment = () => {
-    return attachments.split(",").map((attachment, id) => {
-      const DownloadButton = () => {
-        return (
-          <Button variant="outlined" size="small" color={"primary"} key={id}>
-            <a
-              href={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              download={attachment}
-              className="anchorText"
-            >
-              Download
-            </a>
-          </Button>
-        );
-      };
-      const splitAttachment = attachment.split(".");
-      const attachmentType = splitAttachment[splitAttachment.length - 1];
-      if (
-        attachmentType.toLowerCase() === "jpg" ||
-        attachmentType.toLowerCase() === "gif" ||
-        attachmentType.toLowerCase() === "png" ||
-        attachmentType.toLowerCase() === "jpeg"
-      ) {
-        return (
-          <div className="attachView" key={id}>
-            <img
-              onClick={(e) => {
-                openImage(e);
-              }}
-              height="auto"
-              width="150px"
-              src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              alt="attachment"
-            />
-          </div>
-        );
-      } else if (
-        attachmentType.toLowerCase() === "mp4" ||
-        attachmentType.toLowerCase() === "mkv" ||
-        attachmentType.toLowerCase() === "wmv" ||
-        attachmentType.toLowerCase() === "flv"
-      ) {
-        return (
-          <div className="attachView" key={id}>
-            <video
-              height="auto"
-              width="150px"
-              src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              alt="attachments"
-              controls
-            />
-          </div>
-        );
-      } else if (attachmentType.toLowerCase() === "wav") {
-        return (
-          <audio
-            src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-            controls
-            style={{ margin: "10px 0px" }}
-          />
-        );
-      } else {
-        const fileName = props.sender.message_originalname.split(",")[id];
-        return (
-          <div className="attachView" key={id}>
-            <div className="file">
-              <FileCopyIcon />
-              <Typography variant="caption">{fileName}</Typography>
-              <DownloadButton />
-            </div>
-          </div>
-        );
-      }
-    });
-  };
+  
   // function to open image/video
   const openImage = useCallback((e) => {
     setMedia(e.target.src);
@@ -194,41 +114,7 @@ function UserMessage(props) {
     );
   });
 
-  const AttachmentModel = React.memo(() => {
-    const imgStyle = {
-      width: "auto",
-      maxWidth: "100%",
-      maxHeight: "100%",
-      display: "block",
-      height: "auto",
-    };
-
-    return (
-      <Modal
-        isOpen={openModel}
-        onRequestClose={() => {
-          setOpenModel(false);
-        }}
-        className="mediaModel"
-      >
-        <div className="mediaContainer">
-          {props.sender.message_attachment ? (
-            <TransformWrapper>
-              <TransformComponent>
-                <img alt="Attachment" src={media} style={imgStyle} />
-              </TransformComponent>
-            </TransformWrapper>
-          ) : null}
-          <CancelIcon
-            className="modelCutIcon"
-            onClick={() => {
-              setOpenModel(false);
-            }}
-          />
-        </div>
-      </Modal>
-    );
-  });
+ 
 
   const MessageOptions = React.memo(() => {
     return (
@@ -326,7 +212,11 @@ function UserMessage(props) {
 
         {props.sender?.message_attachment !== null ? (
           <div className="sentAttachment" style={attachmentStyle}>
-            <RenderSendAttachment />
+            <RenderAttachment
+              attachments={attachments}
+              fileName={props.sender.message_originalname}
+              onOpenImage={(e)=> openImage(e)}
+            />
           </div>
         ) : null}
 
@@ -340,39 +230,29 @@ function UserMessage(props) {
                   : "row-reverse",
             }}
           >
-            {props.sender.message_quotebody ? <QuotedMessage /> : null}
-            <div
-              style={{
-                background:
+            <div>
+              {props.sender.message_quotebody ? <QuotedMessage /> : null}
+              <div
+                style={{
+                  background:
+                    props.sender?.message_from !== loggedInUser
+                      ? SECONDARYLIGHT
+                      : messageToBackground,
+                  color:
+                    isNightMode && props.sender?.message_from == loggedInUser
+                      ? "#fff"
+                      : "rgb(37, 36, 35)",
+                }}
+                className={
                   props.sender?.message_from !== loggedInUser
-                    ? SECONDARYLIGHT
-                    : messageToBackground,
-                color:
-                  isNightMode && props.sender?.message_from == loggedInUser
-                    ? "#fff"
-                    : "rgb(37, 36, 35)",
-              }}
-              className={
-                props.sender?.message_from !== loggedInUser
-                  ? "senderMessage__text"
-                  : "recieverMessage__text"
-              }
-            >
-              {props.sender.message_body}
+                    ? "senderMessage__text"
+                    : "recieverMessage__text"
+                }
+              >
+                {props.sender.message_body}
+              </div>
             </div>
-            {/* <div
-              style={{
-                position: "absolute",
-                right: "0",
-                fontSize: ".2rem",
-                bottom: "-1rem",
-              }}
-            >
-              {props.sender.seen > 0 &&
-              props.sender.message_from == loggedInUser ? (
-                <DoneAllIcon fontSize="small" color="primary" />
-              ) : null}
-            </div> */}
+            
             <div
               className="msgOption"
               ref={menuDiv}
@@ -386,7 +266,11 @@ function UserMessage(props) {
             </div>
           </div>
         ) : null}
-        <AttachmentModel />
+        <ViewAttachment
+          src={media}
+          openModel={openModel}
+          handClose={(state)=> setOpenModel(state)}
+        />
         <Modal
           isOpen={forwardModel}
           onRequestClose={() => {

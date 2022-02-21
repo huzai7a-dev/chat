@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const apiCall = (params, onSuccess, onFailure) => (dispatch, getState) =>
-  new Promise(async (resolve, reject) => {
+  new Promise((resolve, reject) => {
     const requestingObject = {
       url: `${params.path}`,
       headers: dispatch(getHeaders(params)),

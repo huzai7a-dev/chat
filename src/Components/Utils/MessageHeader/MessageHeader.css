@@ -4,6 +4,9 @@
   align-items: center;
   width: 100%;
 }
+.message__header__right {
+  display: flex;
+}
 .left__options {
   color: #d1d1d1;
   cursor: pointer;

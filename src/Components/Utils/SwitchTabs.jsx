@@ -1,7 +1,7 @@
-import React,{ useCallback, useEffect, useRef, useState } from "react";
+import React,{ useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Box, Typography, Badge } from "@material-ui/core";
-import { SECONDARYMAIN, WHITE } from "../../Theme/colorConstant";
+import { Button, Box, Badge } from "@material-ui/core";
+import { BLACK, PRIMARYMAIN, SECONDARYMAIN, WHITE } from "../../Theme/colorConstant";
 
 const SwitchTabs = React.memo(
   ({ tabValue, setTabValue, }) => {
@@ -49,8 +49,8 @@ const SwitchTabs = React.memo(
           ref={tabRef}
           className="tabBtn"
           style={{
-            background: tabValue == title.people ? WHITE : SECONDARYMAIN,
-            color: tabValue == title.people ? "#000" :  WHITE,
+            background: tabValue == title.people ? PRIMARYMAIN : SECONDARYMAIN,
+            color: tabValue == title.people ? WHITE : BLACK,
           }}
         >
           {title.people}
@@ -67,8 +67,8 @@ const SwitchTabs = React.memo(
           ref={tabRef}
           className="tabBtn"
           style={{
-            background: tabValue == title.groups ? WHITE : SECONDARYMAIN,
-            color: tabValue == title.groups ? "#000" :  WHITE,
+            background: tabValue == title.groups ? PRIMARYMAIN : SECONDARYMAIN,
+            color: tabValue == title.groups ? WHITE : BLACK,
           }}
         >
           {title.groups}

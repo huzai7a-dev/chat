@@ -126,3 +126,9 @@ export const getGroupParticipants = (params = {}) => (dispatch) => {
   params.method = "POST";
   return dispatch(apiCall(params));
 };
+
+export const createGroup = (params = {}) => (dispatch) => {
+  params.path = "/api/bwccrm/createGroup";
+  params.method = "POST";
+  return dispatch(apiCall(params));
+};

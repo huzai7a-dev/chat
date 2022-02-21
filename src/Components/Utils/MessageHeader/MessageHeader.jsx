@@ -53,6 +53,7 @@ const MessageHeader = () => {
               style={{ width: "30px", height: "30px" }}
             />
         </IconButton>
+        
         {header.activeType == "group" && (
           <div>
             <IconButton onClick={() => dispatch(setEditGroupModelState(true))}>
