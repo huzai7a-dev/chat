@@ -8,12 +8,13 @@ import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 
 import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
-// import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
-// import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
-// import { useRTCClient } from "../helper/rtcClient";
+import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
+import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
+import { useRTCClient } from "../helper/rtcClient";
+
 
 const useSocket = () => {
-  // const { acceptCall, callUser } = useRTCClient();
+  const { acceptCall, callUser, processAfterAccept } = useRTCClient();
   const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId, callerInfo } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
@@ -33,59 +34,73 @@ const useSocket = () => {
   }, [auth_user]);
 
   // useEffect(() => {
-  //   if(active_user.elsemployees_empid && !isAlreadyCalling) {
+  //   if(active_user.elsemployees_empid) {
   //     try {
   //       callUser(active_user.elsemployees_empid)
   //     } catch(e) {
   //       console.log(e)
   //     }
-  //     isAlreadyCalling=true
   //   }
   // },[active_user, callUser])
   
   // ********************************* socket for calling *********************************
 
-  // useEffect(() => {
-  //   const socket = getSocket(auth_user.elsemployees_empid);
-  //   socket.on("call-made", (data) => {
-  //     console.log("I am getting a call", data);
-  //     dispatch(setCallerInfo(data));
-  //     acceptCall(data)
-  //   });
-  //   return () => {
-  //     socket.off("call-made");
-  //   };
-  // }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("call-made", (data) => {
+      console.log("I am getting a call", data);
+      dispatch(setCallerInfo(data));
+      acceptCall(data)
+    });
+    return () => {
+      socket.off("call-made");
+    };
+  }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
 
-  // useEffect(() => {
-  //   const socket = getSocket(auth_user.elsemployees_empid);
-  //   socket.on("answer-made", async (data) => {
-  //     dispatch(setCallingInfo(data));
-  //     console.log("Call Accepted", data)
-  //     const peerConnection = getPeerConnection();
-  //     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
-  //     // setPeerConnection(peerConnection)
-  //   });
-  //   return () => {
-  //     socket.off("answer-made");
-  //   };
-  // }, [auth_user.elsemployees_empid, dispatch]);
+  useEffect(() => {
+    
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("answer-made", async (data) => {
+      dispatch(setCallingInfo(data));
+      processAfterAccept(data)
+    });
+    return () => {
+      socket.off("answer-made");
+    };
+  }, [auth_user?.elsemployees_empid, dispatch, processAfterAccept]);
 
-  // useEffect(() => {
-  //   const socket = getSocket(auth_user.elsemployees_empid);
-  //   socket.on("end-call", async () => {
-  //     const peerConnection = getPeerConnection();
-  //     peerConnection.close();
-  //     setPeerConnection(null);
-  //     socket.emit("request-end-call", {
-  //       to: callerInfo,
-  //       from: auth_user.elsemployees_empid,
-  //     });
-  //   });
-  //   return () => {
-  //     socket.off("end-call");
-  //   };
-  // }, [auth_user, callerInfo, dispatch]);
+  useEffect(() => {
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.on("end-call", async () => {
+      const peerConnection = getPeerConnection();
+      peerConnection.close();
+      setPeerConnection(null);
+      socket.emit("request-end-call", {
+        to: callerInfo,
+        from: auth_user?.elsemployees_empid,
+      });
+    });
+    return () => {
+      socket.off("end-call");
+    };
+  }, [auth_user, callerInfo, dispatch]);
+
+  useEffect(() => {
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.on("icecandidate-receive", async (data) => {
+        console.log("Received Ice Event ", data)
+        const peerConnection = getPeerConnection();
+        try {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(data)))
+        }
+        catch (e) {
+            console.error(data, e)
+        }
+    });
+    return () => {
+        socket.off("icecandidate-receive");
+    };
+}, [auth_user]);
 
   // ********************************* socket for calling *********************************
   
@@ -229,10 +244,10 @@ const useSocket = () => {
     return () => {
       socket.off('group-seen')
     }
-  },[active_group?.group_id, auth_user.elsemployees_empid, dispatch])
+  },[active_group?.group_id, auth_user?.elsemployees_empid, dispatch])
 
   useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid)
+    const socket = getSocket(auth_user?.elsemployees_empid)
       socket.on("isWindowOpen", () => {
         console.log('widow is open')
         const params = {
@@ -247,7 +262,7 @@ const useSocket = () => {
       return () => {
         socket.off('isWindowOpen')
       }
-  },[active_user?.elsemployees_empid, auth_user.elsemployees_empid, dispatch]);
+  },[active_user?.elsemployees_empid, auth_user?.elsemployees_empid, dispatch]);
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)

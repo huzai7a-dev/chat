@@ -8,31 +8,15 @@ export const withSocket = (app) => {
   const io = new Server(app);
 
   io.on("connection", (socket) => {
-    console.log("a user connected with id",socket.id);
+    console.log("a user connected with id", socket.id);
   });
 
   const workspaces = io.of(/^\/user-\d+$/);
 
   workspaces.on("connection", (socket) => {
     socketMappings[socket.nsp.name.split("-")[1]] = socket;
+
     // ********************************* socket for calling *********************************
-
-    socket.on('startCall',(data)=>{
-      socketMappings[data?.user_id]?.emit("startCall", data);
-    })
-
-    socket.on('acceptCall',(data)=>{
-      socketMappings[data?.user_id]?.emit("acceptCall", data);
-    })
-
-    socket.on('endCall',(data)=>{
-      socketMappings[data?.user_id]?.emit("endCall", data);
-    })
-    socket.on('rejectCall',(data)=>{
-      socketMappings[data?.user_id]?.emit("rejectCall", data);
-    })
-
-   // ********************************* socket for calling *********************************
 
     socket.on("messaging", async (data) => {
       const notification = {
@@ -126,24 +110,33 @@ export const withSocket = (app) => {
         .catch((err) => console.log(err));
     });
 
-    socket.on("call-user", async data => {
-        socketMappings[data.to]?.emit("call-made", { // request it to receiver
-          offer: data.offer,
-          from: data.from, // who is calling
-          to: data.to, // who is receiving
-        });
+    socket.on("call-user", async (data) => {
+      socketMappings[data.to]?.emit("call-made", {
+        // request it to receiver
+        offer: data.offer,
+        from: data.from, // who is calling
+        to: data.to, // who is receiving
       });
+    });
 
-    socket.on("make-answer", async data => {
-        socketMappings[data.from]?.emit('answer-made', {  // request approved from receiver notify caller
-          answer: data.answer,
-          from: data.from, // who is calling
-          to: data.to, // who is receiving
-       })
+    socket.on("icecandidate-sent", async (data) => {
+      socketMappings[data?.user_id]?.emit(
+        "icecandidate-receive",
+        data.candidate
+      );
+    });
+
+    socket.on("make-answer", async (data) => {
+      socketMappings[data.from]?.emit("answer-made", {
+        // request approved from receiver notify caller
+        answer: data.answer,
+        from: data.from, // who is calling
+        to: data.to, // who is receiving
       });
+    });
 
-    socket.on('request-end-call', async (data) => {
-      socketMappings[data.to]?.emit('end-call', data)
+    socket.on("request-end-call", async (data) => {
+      socketMappings[data.to]?.emit("end-call", data);
     });
 
     socket.on("typing", (data) => {
