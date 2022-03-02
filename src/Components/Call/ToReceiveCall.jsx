@@ -6,29 +6,29 @@ import CallEndIcon from "@material-ui/icons/CallEnd";
 import { DANGER, SECONDARYDARK, SUCCESS } from "../../Theme/colorConstant";
 
 
-const ToReceiveCall = ({handleAccept,handleReject,from}) => {
-  const userName =
-    from.toUpperCase().split(" ")[0][0] +
-    from.toUpperCase().split(" ")[1][0];
+const ToReceiveCall = React.memo((props) => {
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-around" className="onAnswerContainer">
+      <audio loop autoPlay>
+        <source src="/audio/incoming.wav" type="audio/wav" />
+      </audio>
       <Box display="flex" flexDirection="column" alignItems="center">
-        <Avatar style={{ width: "80px", height: "80px" }}>
-          <Typography variant="h5">{userName}</Typography>
+        <Avatar src={`/bizzportal/public/img/${props.fromUser?.elsemployees_image}`} style={{ width: "80px", height: "80px" }}>
+          <Typography variant="h5">{props.fromUser?.elsemployees_name}</Typography>
         </Avatar>
-        <Typography variant="h6" style={{color:"#fff"}}>{from}</Typography>
+        <Typography variant="h6" style={{color:"#fff"}}>{props.from}</Typography>
         <Typography variant="caption" style={{color:SECONDARYDARK}}>Incoming call...</Typography>
       </Box>
       <Box display="flex" justifyContent="space-around" style={{width:"50%"}}>
-        <IconButton style={{ backgroundColor: SUCCESS }} onClick={handleAccept}>
+        <IconButton style={{ backgroundColor: SUCCESS }} onClick={props.onAcceptIncomingCall}>
           <CallIcon  style={{color:"#fff"}}/>
         </IconButton>
-        <IconButton style={{ backgroundColor: DANGER }} onClick={handleReject}>
+        <IconButton style={{ backgroundColor: DANGER }} onClick={props.onRejectIncomingCall}>
           <CallEndIcon style={{color:"#fff"}}/>
         </IconButton>
       </Box>
     </Box>
   );
-};
+});
 
 export default ToReceiveCall;

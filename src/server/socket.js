@@ -1,8 +1,10 @@
 import { Server } from "socket.io";
 import axios from "axios";
 import { triggerPushMsg } from "./webpush";
+import express from "express";
 
 const socketMappings = {};
+const router = express.Router();
 
 export const withSocket = (app) => {
   const io = new Server(app);
@@ -14,7 +16,7 @@ export const withSocket = (app) => {
   const workspaces = io.of(/^\/user-\d+$/);
 
   workspaces.on("connection", (socket) => {
-    socketMappings[socket.nsp.name.split("-")[1]] = socket;
+    socketMappings[socket.nsp.name.split("-")[1]] = socket.id;
 
     // ********************************* socket for calling *********************************
 
@@ -25,7 +27,7 @@ export const withSocket = (app) => {
         image: data?.from_userpicture,
       };
       triggerPushMsg(data?.message_to, notification);
-      socketMappings[data?.message_to]?.emit("messaging", data);
+      workspaces.to(socketMappings[data?.message_to])?.emit("messaging", data);
     });
 
     socket.on("group-messaging", (data) => {
@@ -44,7 +46,7 @@ export const withSocket = (app) => {
 
             if (participant.elsemployees_empid != data.user_id) {
               triggerPushMsg(participant.elsemployees_empid, notification);
-              socketMappings[participant.elsemployees_empid]?.emit(
+              workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
                 "messaging",
                 data
               );
@@ -55,7 +57,7 @@ export const withSocket = (app) => {
     });
 
     socket.on("group-member", (data) => {
-      socketMappings[data.member_id]?.emit("group-member", data);
+      workspaces.to(socketMappings[data.member_id])?.emit("group-member", data);
       axios
         .post(`${process.env.RAZZLE_BASE_URL}/bwccrm/groupparticipants`, {
           user_id: data.user_id,
@@ -63,7 +65,7 @@ export const withSocket = (app) => {
         })
         .then((res) => {
           res.data.participants?.forEach((participant) => {
-            socketMappings[participant.elsemployees_empid]?.emit(
+            workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
               "group-member",
               data
             );
@@ -81,7 +83,7 @@ export const withSocket = (app) => {
         .then((res) => {
           res.data.participants?.forEach((participant) => {
             if (participant.elsemployees_empid != data.user_id) {
-              socketMappings[participant.elsemployees_empid]?.emit(
+              workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
                 "group-seen",
                 data
               );
@@ -100,7 +102,7 @@ export const withSocket = (app) => {
         .then((res) => {
           res.data.participants?.forEach((participant) => {
             if (participant.elsemployees_empid != data.user_id) {
-              socketMappings[participant.elsemployees_empid]?.emit(
+              workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
                 "isGroupWindowOpen",
                 data
               );
@@ -111,23 +113,18 @@ export const withSocket = (app) => {
     });
 
     socket.on("call-user", async (data) => {
-      socketMappings[data.to]?.emit("call-made", {
-        // request it to receiver
-        offer: data.offer,
-        from: data.from, // who is calling
-        to: data.to, // who is receiving
-      });
+      workspaces.to(socketMappings[data.to])?.emit("call-made", data);
     });
 
     socket.on("icecandidate-sent", async (data) => {
-      socketMappings[data?.user_id]?.emit(
+      workspaces.to(socketMappings[data?.user_id])?.emit(
         "icecandidate-receive",
         data.candidate
       );
     });
 
     socket.on("make-answer", async (data) => {
-      socketMappings[data.from]?.emit("answer-made", {
+      workspaces.to(socketMappings[data.from])?.emit("answer-made", {
         // request approved from receiver notify caller
         answer: data.answer,
         from: data.from, // who is calling
@@ -136,23 +133,32 @@ export const withSocket = (app) => {
     });
 
     socket.on("request-end-call", async (data) => {
-      socketMappings[data.to]?.emit("end-call", data);
+      workspaces.to(socketMappings[data.to])?.emit("end-call", data);
     });
 
     socket.on("typing", (data) => {
-      socketMappings[data?.user_id]?.emit("typing", data);
+      workspaces.to(socketMappings[data?.user_id])?.emit("typing", data);
     });
     socket.on("leaveTyping", (data) => {
-      socketMappings[data?.user_id]?.emit("leaveTyping", data);
+      workspaces.to(socketMappings[data?.user_id])?.emit("leaveTyping", data);
     });
     socket.on("seen", (data) => {
-      socketMappings[data?.message_to]?.emit("seen", data);
+      workspaces.to(socketMappings[data?.message_to])?.emit("seen", data);
     });
     socket.on("isWindowOpen", (data) => {
-      socketMappings[data?.message_to]?.emit("isWindowOpen", data);
+      workspaces.to(socketMappings[data?.message_to])?.emit("isWindowOpen", data);
     });
     socket.on("disconnect", (socket) => {
       console.log("disconnected", socket);
+      // delete socketMappings[socket.nsp.name.split("-")[1]]
     });
   });
+
+  router.get('/active-users', (req, res) => {
+    return res.json(Object.keys(socketMappings))
+  })
 };
+
+
+
+export const socketRoutes = router;

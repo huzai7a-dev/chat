@@ -2,25 +2,27 @@ import React from 'react'
 import {Box,Typography,Avatar,IconButton,Tooltip} from '@material-ui/core';
 import CallEndIcon from "@material-ui/icons/CallEnd";
 import { DANGER } from "../../Theme/colorConstant";
-import './call.css'
-const OnCalling = ({name,handleCallEnd})=>{
+import './call.css';
+
+const OnCalling = React.memo((props) => {
+
     return (
-        <Box className="onCallingContainer">
+        <Box padding={0} className="onCallingContainer">
             <Box p={2}>
-                <Typography variant="h5" style={{color:"#fff"}}>{name}</Typography>
+                <Typography variant="h5" style={{color:"#fff"}}>{props.name}</Typography>
             </Box>
             <Box className="userIconContainer">
-                 <Avatar style={{height:"80px",width:"80px"}}>{name[0]}</Avatar>
+                 <Avatar style={{height:"80px",width:"80px"}}>{props.name?.[0] || "A"}</Avatar>
             </Box>
             <Box className="endCalBtn">
                 <Tooltip title="End Call">
-                    <IconButton onClick={handleCallEnd}>
+                    <IconButton onClick={props.onReject}>
                         <CallEndIcon style={{color:DANGER}}/>
                     </IconButton>
                 </Tooltip>
             </Box>
         </Box>
     )
-}
+});
 
-export default React.memo(OnCalling)
+export default OnCalling;

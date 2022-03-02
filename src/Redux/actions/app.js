@@ -87,18 +87,6 @@ export const setSideBar = (state) => {
     state,
   }
 }
-export const setCallerInfo = (callerInfo) => {
-  return {
-    type: SET_RECEIVING_DATA,
-    callerInfo,
-  };
-};
-export const setCallingInfo = (callingInfo) => {
-  return {
-    type: SET_CALLING_DATA,
-    callingInfo,
-  };
-};
 export const setRemoteStream = (remoteStream) => {
   return {
     type: SET_REMOTE_STREAM,

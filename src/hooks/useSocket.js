@@ -2,30 +2,24 @@ import { useEffect } from "react";
 import { getSocket, init } from "../config/socket";
 import { useDispatch, useSelector } from "react-redux";
 
+
 import { setActiveGroup, setGroupMemInfo, setNewGroupMessage } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
-
 import { getGroupMessages, getUserMessages } from "../api/message";
 import { useHistory } from "react-router";
-import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
-import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
-import { useRTCClient } from "../helper/rtcClient";
 
 
 const useSocket = () => {
-  const { acceptCall, callUser, processAfterAccept } = useRTCClient();
-  const { auth_user, callingUser, active_user, active_group,messages,groupMessages,oldMessageGroupId, callerInfo } = useSelector((store) => {
+  
+  const { auth_user, active_user, active_group,messages,groupMessages,oldMessageGroupId } = useSelector((store) => {
     return {
-      callingUser: store.call.callingUser,
       auth_user: store.auth?.auth_user || {},
       active_user: store.chat?.active_user || {},
       active_group: store.chat?.active_group || {},
       messages:store.message?.userMessages || [],
       groupMessages:store.message?.groupMessages || {},
       oldMessageGroupId:store.chat.newMessage || [],
-      onCall: store.chat.call || {},
-      callerInfo: store.app.callerInfo,
     }
   });
   const dispatch = useDispatch();
@@ -33,77 +27,6 @@ const useSocket = () => {
   useEffect(() => {
     init(auth_user.elsemployees_empid);
   }, [auth_user]);
-
-  useEffect(() => {
-    if(callingUser?.elsemployees_empid) {
-      try {
-        callUser(callingUser.elsemployees_empid)
-      } catch(e) {
-        console.log(e)
-      }
-    }
-  },[callingUser, callUser])
-  
-  // ********************************* socket for calling *********************************
-
-  useEffect(() => {
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on("call-made", (data) => {
-      console.log("I am getting a call", data);
-      dispatch(setCallerInfo(data));
-      acceptCall(data)
-    });
-    return () => {
-      socket.off("call-made");
-    };
-  }, [acceptCall, auth_user.elsemployees_empid, dispatch]);
-
-  useEffect(() => {
-    
-    const socket = getSocket(auth_user.elsemployees_empid);
-    socket.on("answer-made", async (data) => {
-      dispatch(setCallingInfo(data));
-      processAfterAccept(data)
-    });
-    return () => {
-      socket.off("answer-made");
-    };
-  }, [auth_user?.elsemployees_empid, dispatch, processAfterAccept]);
-
-  useEffect(() => {
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.on("end-call", async () => {
-      const peerConnection = getPeerConnection();
-      peerConnection.close();
-      setPeerConnection(null);
-      socket.emit("request-end-call", {
-        to: callerInfo,
-        from: auth_user?.elsemployees_empid,
-      });
-    });
-    return () => {
-      socket.off("end-call");
-    };
-  }, [auth_user, callerInfo, dispatch]);
-
-  useEffect(() => {
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.on("icecandidate-receive", async (data) => {
-        console.log("Received Ice Event ", data)
-        const peerConnection = getPeerConnection();
-        try {
-            await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(data)))
-        }
-        catch (e) {
-            console.error(data, e)
-        }
-    });
-    return () => {
-        socket.off("icecandidate-receive");
-    };
-}, [auth_user]);
-
-  // ********************************* socket for calling *********************************
   
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)

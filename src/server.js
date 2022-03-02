@@ -6,6 +6,7 @@ import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
 import { getSubscriptions } from "./server/webpush";
 import { GREY, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, BLACK, SECONDARYMAIN, SECONDARYLIGHT } from "./Theme/colorConstant";
+import { socketRoutes } from "./server/socket";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -36,6 +37,7 @@ server
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
   .use(proxyRoutes)
+  .use('/socket', socketRoutes)
   .get("/*", (req, res) => {
     const context = {};
     getSubscriptions();

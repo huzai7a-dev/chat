@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import Main from "./Components/Main/Main";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setAuthUser } from "../src/Redux/actions/auth";
 import { useHistory } from "react-router-dom";
@@ -15,6 +15,7 @@ import Modal from "react-modal";
 import { getContactsTotal } from "./api/message";
 import Auth from "./Components/Auth/Auth";
 import { setNightMode } from "./Redux/actions/app";
+import useCalling from "./hooks/useCalling";
 
 Modal.setAppElement("#root");
 const App = () => {
@@ -37,11 +38,14 @@ const App = () => {
 
   useEffect(() => {
     const theme = localStorage.getItem("theme");
-    dispatch(setNightMode(theme == "dark"))
-  }, [dispatch])
+    dispatch(setNightMode(theme == "dark"));
+  }, [dispatch]);
 
   useSocket();
   useWorker();
+
+  const { renderOnCall, renderIncomingAlert, renderOngoingCall } = useCalling();
+
   useEffect(() => {
     const params = {
       data: {
@@ -52,8 +56,16 @@ const App = () => {
     dispatch(getContactsTotal(params));
   }, [auth_user?.elsemployees_empid, dispatch]);
 
-  return <div className="App">{auth_user ? <Main /> : <Auth />}</div>;
+  return (
+    <div className="App">
+      {auth_user ? <Main /> : <Auth />}
+      {renderOnCall}
+      {renderOngoingCall}
+      {renderIncomingAlert}
+    </div>
+  );
 };
+
 export default () => {
   return (
     <Provider store={Store}>

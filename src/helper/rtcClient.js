@@ -1,7 +1,6 @@
 import { useCallback, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setCallerInfo, setCallingInfo } from "../Redux/actions/app";
-import { getPeerConnection, setPeerConnection } from "../config/peerconnection";
+import { useSelector } from "react-redux";
+import { createNewPeerConnection, getPeerConnection, setPeerConnection } from "../config/peerconnection";
 import { getSocket } from "../config/socket";
 
 const offerOptions = {
@@ -11,22 +10,41 @@ const offerOptions = {
 };
 
 export const useRTCClient = () => {
-  const dispatch = useDispatch();
   const localStream = useRef(null);
 
-  const { auth_user, callerInfo } = useSelector((store) => {
+  const { auth_user } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
-      callerInfo: store.app.callerInfo || {},
     };
   });
 
+  const endCall = useCallback(() => {
+    const peerConnection = getPeerConnection();
+    if(localStream.current){
+      localStream.current.getTracks().forEach((track) => track.stop());
+    }
+    localStream.current = null;
+    peerConnection.close();
+    createNewPeerConnection()
+  }, [])
+
+  const requestEndCall = useCallback((user_id) => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    endCall();
+    socket.emit("request-end-call", {
+      to: user_id,
+      from: auth_user.elsemployees_empid,
+    });
+  },
+  [auth_user, endCall]
+);
+
   const callUser = useCallback(
-    async (user_id) => {
+    async (user) => {
       const devices = await navigator.mediaDevices.enumerateDevices();
       if (devices.filter((d) => d.kind == "audioinput").length == 0) return alert("No Input media detected");
 
-      console.log("Calling User", user_id);
+      console.log("Calling User", user);
       const peerConnection = getPeerConnection();
       const socket = getSocket(auth_user.elsemployees_empid);
       localStream.current = localStream.current || (await navigator.mediaDevices.getUserMedia({ audio: true }));
@@ -47,8 +65,22 @@ export const useRTCClient = () => {
           console.log("Sending Ice Candidate", event.candidate);
           socket.emit("icecandidate-sent", {
             candidate: JSON.stringify(event.candidate),
-            user_id,
+            user_id: user.elsemployees_empid,
           });
+        }
+      });
+
+      peerConnection.addEventListener("connectionstatechange", (event) => {
+        if (peerConnection.connectionState === "connected") {
+          console.log("Peer Connected", event);
+        }
+        if (peerConnection.connectionState === "disconnected") {
+          console.log("Disconnected Peer connection", event);
+          try {
+            requestEndCall();
+          } catch(e) {
+            console.log(e)
+          }
         }
       });
 
@@ -65,25 +97,16 @@ export const useRTCClient = () => {
 
       socket.emit("call-user", {
         offer,
-        to: user_id, // who is receiving
+        to: user.elsemployees_empid, // who is receiving
         from: auth_user.elsemployees_empid, // who is calling
+        toUser: user,
+        fromUser: auth_user,
       });
     },
-    [auth_user]
+    [auth_user, requestEndCall]
   );
 
-  const endCall = useCallback((user_id) => {
-      const socket = getSocket(auth_user.elsemployees_empid);
-      
-      socket.emit("request-end-call", {
-        to: user_id,
-        from: auth_user.elsemployees_empid,
-      });
-    },
-    [auth_user]
-  );
-
-  const acceptCall = useCallback(async (data = callerInfo) => {
+  const acceptCall = useCallback(async (data) => {
       const devices = await navigator.mediaDevices.enumerateDevices();
       if (devices.filter((d) => d.kind == "audioinput").length == 0) return alert("No Input media detected");
       console.log("Accepting the Call", data);
@@ -113,6 +136,17 @@ export const useRTCClient = () => {
         }
       });
 
+      peerConnection.addEventListener("connectionstatechange", (event) => {
+        if (peerConnection.connectionState === "connected") {
+          console.log("Peer Connected", event);
+          // @Todo: Set Active user details from API
+          // data.from
+        }
+        if (peerConnection.connectionState === "disconnected") {
+          console.log("Disconnected Peer connection", event);
+        }
+      });
+
       localStream.current.getTracks().forEach((track) => {
         console.log("Add Track From Stream", track);
         peerConnection.addTrack(track, localStream.current);
@@ -127,17 +161,9 @@ export const useRTCClient = () => {
         from: data.from, // who is calling
         to: data.to, // who is receiving
       });
-
-      dispatch(
-        setCallingInfo({
-          from: data.from,
-          to: data.to,
-        })
-      );
-      dispatch(setCallerInfo({}));
       setPeerConnection(peerConnection);
     },
-    [auth_user?.elsemployees_empid, callerInfo, dispatch]
+    [auth_user?.elsemployees_empid]
   );
 
   const processAfterAccept = useCallback(async (data) => {
@@ -149,10 +175,10 @@ export const useRTCClient = () => {
   );
 
   return {
-    localStream: localStream.current,
     processAfterAccept,
     callUser,
     endCall,
+    requestEndCall,
     acceptCall,
   };
 };

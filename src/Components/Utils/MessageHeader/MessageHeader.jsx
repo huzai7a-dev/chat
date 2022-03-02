@@ -10,7 +10,7 @@ import {
   setEditGroupModelState,
   setParticipantModelState,
 } from "../../../Redux/actions/app";
-import { setCallingUser } from "../../../Redux/actions/call";
+import { setCallingToUser } from "../../../Redux/actions/call";
 
 const MessageHeader = () => {
   const history = useHistory();
@@ -61,7 +61,7 @@ const MessageHeader = () => {
       </div>
       <div className="message__header__right">
         <IconButton
-          onClick={() => dispatch(setCallingUser(active_user))}
+          onClick={() => dispatch(setCallingToUser(active_user))}
         >
           <PhoneIcon
             color="secondary"

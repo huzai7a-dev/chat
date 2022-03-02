@@ -1,98 +1,138 @@
-// import { useEffect, useRef, useState } from "react";
-// import { useSelector } from "react-redux";
-// import { getSocket, init } from "../socket";
-// import Peer from "simple-peer";
-// const useCalling = (myAudio, userAudio) => {
-//   const { auth_user, active_user } = useSelector((store) => {
-//     return {
-//       auth_user: store.auth?.auth_user || {},
-//       active_user: store.chat?.active_user || {},
-//     };
-//   });
-//   useEffect(() => {
-//     init(auth_user.elsemployees_empid);
-//   }, [auth_user]);
-//   const [me, setMe] = useState("");
-//   const [stream, setStream] = useState();
-//   const [receivingCall, setReceivingCall] = useState(false);
-//   const [caller, setCaller] = useState("");
-//   const [callerSignal, setCallerSignal] = useState();
-//   const [callAccepted, setCallAccepted] = useState(false);
-//   const [idToCall, setIdToCall] = useState("");
-//   const [callEnded, setCallEnded] = useState(false);
-//   const [name, setName] = useState("");
-//   const connectionRef = useRef();
+import React, { useMemo, useEffect, useState, useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getSocket } from "../config/socket";
+import { useRTCClient } from "../helper/rtcClient";
+import { getPeerConnection } from "../config/peerconnection";
+// import { setCallerInfo } from "../Redux/actions/app";
+import Modal from "react-modal";
+import OnCall from "../Components/Call/OnCall";
+import OnCalling from "../Components/Call/OnCalling";
+import ToReceiveCall from "../Components/Call/ToReceiveCall";
+import { setActiveCaller, setCallingToUser } from "../Redux/actions/call";
 
-//   useEffect(() => {
-//     const socket = getSocket(auth_user.elsemployees_empid);
-//     navigator.mediaDevices
-//       .getUserMedia({ video: false, audio: true })
-//       .then((stream) => {
-//         setStream(stream);
-//         myAudio.current.srcObject = stream;
-//       });
+const useCalling = () => {
+  const dispatch = useDispatch();
+  const [incomingOffer, setIncomingOffer] = useState();
 
-//     socket.on("me", (id) => {
-//       setMe(id);
-//     });
+  const { auth_user, callingTo, activeCaller } = useSelector((store) => {
+      return {
+        callingTo: store.call.callingTo,
+        activeCaller: store.call.activeCaller,
+        auth_user: store.auth.auth_user || {},
+      };
+    }
+  );
 
-//     socket.on("startCall", (data) => {
-//       setReceivingCall(true);
-//       setCaller(data.from);
-//       setName(data.name);
-//       setCallerSignal(data.signal);
-//     });
-//   }, [auth_user.elsemployees_empid,myAudio]);
+  const { acceptCall, callUser, processAfterAccept, requestEndCall, endCall } = useRTCClient();
 
-//   const startCall = (id) => {
-//     const socket = getSocket(auth_user.elsemployees_empid);
-//     const peer = new Peer({
-//       initiator: true,
-//       trickle: false,
-//       stream: stream,
-//     });
-//     peer.on("signal", (data) => {
-//       socket.emit("startCall", {
-//         userToCall: id,
-//         signalData: data,
-//         from: me,
-//         name: name,
-//       });
-//     });
-//     peer.on("stream", (stream) => {
-//       userAudio.current.srcObject = stream;
-//     });
-//     socket.on("callAccepted", (signal) => {
-//       setCallAccepted(true);
-//       peer.signal(signal);
-//     });
+  const onAcceptIncomingCall = useCallback(() => {
+    acceptCall(incomingOffer);
+    dispatch(setActiveCaller(incomingOffer.fromUser))
+}, [incomingOffer, acceptCall, dispatch])
 
-//     connectionRef.current = peer;
-//   };
+const onRejectIncomingCall = useCallback(() => {
+    requestEndCall(incomingOffer.from);
+    setIncomingOffer();
+    dispatch(setCallingToUser())
+    dispatch(setActiveCaller())
+  }, [incomingOffer, requestEndCall, dispatch])
 
-//   const answerCall = () => {
-//     const socket = getSocket(auth_user.elsemployees_empid);
-//     setCallAccepted(true);
-//     const peer = new Peer({
-//       initiator: false,
-//       trickle: false,
-//       stream: stream,
-//     });
-//     peer.on("signal", (data) => {
-//       socket.emit("answerCall", { signal: data, to: caller });
-//     });
-//     peer.on("stream", (stream) => {
-//       userAudio.current.srcObject = stream;
-//     });
+  const onRejectOutgoingCall = useCallback(() => {
+    requestEndCall(callingTo.elsemployees_empid);
+    setIncomingOffer();
+    dispatch(setCallingToUser())
+    dispatch(setActiveCaller())
+  }, [requestEndCall, callingTo, dispatch])
 
-//     peer.signal(callerSignal);
-//     connectionRef.current = peer;
-//   };
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("call-made", (data) => {
+      console.log("I am getting a call", data);
+      setIncomingOffer(data);
+    });
+    return () => {
+      socket.off("call-made");
+    };
+  }, [auth_user.elsemployees_empid, dispatch]);
 
-//   const leaveCall = () => {
-//     setCallEnded(true);
-//     connectionRef.current.destroy();
-//   };
-// };
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on("answer-made", async (data) => {
+      processAfterAccept(data);
+      dispatch(setActiveCaller(callingTo))
+    });
+    return () => {
+      socket.off("answer-made");
+    };
+  }, [auth_user.elsemployees_empid, callingTo, dispatch, processAfterAccept]);
 
-// export default useCalling;
+  useEffect(() => {
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.on("end-call", async () => {
+        dispatch(setCallingToUser())
+        dispatch(setActiveCaller())
+        setIncomingOffer();
+        endCall();
+    });
+    return () => {
+      socket.off("end-call");
+    };
+  }, [auth_user, endCall, dispatch, incomingOffer]);
+
+  useEffect(() => {
+    const socket = getSocket(auth_user?.elsemployees_empid);
+    socket.on("icecandidate-receive", async (data) => {
+      console.log("Received Ice Event ", data);
+      const peerConnection = getPeerConnection();
+      try {
+        await peerConnection.addIceCandidate(
+          new RTCIceCandidate(JSON.parse(data))
+        );
+      } catch (e) {
+        console.error(data, e);
+      }
+    });
+    return () => {
+      socket.off("icecandidate-receive");
+    };
+  }, [auth_user]);
+
+  const renderOnCall = useMemo(() => {
+    return (
+      <Modal isOpen={!activeCaller?.elsemployees_empid && callingTo?.elsemployees_empid}>
+        <OnCall callUser={callUser} onRejectOutgoingCall={onRejectOutgoingCall} />
+      </Modal>
+    );
+  }, [callingTo, callUser, onRejectOutgoingCall, activeCaller]);
+
+  const renderOngoingCall = useMemo(() => {
+    console.log(incomingOffer ? "onRejectIncomingCall" : "onRejectOutgoingCall")
+    return (
+      <Modal
+        style={{ content: { padding: 0 } }}
+        isOpen={activeCaller?.elsemployees_empid}
+      >
+        <OnCalling onReject={incomingOffer ? onRejectIncomingCall : onRejectOutgoingCall}/>
+      </Modal>
+    );
+  }, [activeCaller, incomingOffer, onRejectIncomingCall, onRejectOutgoingCall]);
+
+  const renderIncomingAlert = useMemo(() => {
+    return (
+      <Modal
+        style={{ content: { padding: 0, background: "transparent" } }}
+        isOpen={!activeCaller?.elsemployees_empid && incomingOffer && incomingOffer?.offer}
+      >
+        <ToReceiveCall fromUser={incomingOffer?.fromUser || {}} onAcceptIncomingCall={onAcceptIncomingCall} onRejectIncomingCall={onRejectIncomingCall} />
+      </Modal>
+    );
+  }, [incomingOffer, onAcceptIncomingCall, onRejectIncomingCall, activeCaller]);
+
+  return {
+    renderOnCall,
+    renderOngoingCall,
+    renderIncomingAlert,
+  };
+};
+
+export default useCalling;

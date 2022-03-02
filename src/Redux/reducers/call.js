@@ -1,15 +1,21 @@
-import { SET_CALLING_USER } from "../constant/call";
+import { SET_CALLING_TO_USER, SET_ACTIVE_CALLER } from "../constant/call";
 
 const initState = {
-  callingUser: null,
+  callingTo: null,
+  activeCaller: null,
 };
 
 export default (state = initState, action) => {
   switch (action.type) {
-    case SET_CALLING_USER:
+    case SET_CALLING_TO_USER:
       return (state = {
         ...state,
-        callingUser: action.callingUser,
+        callingTo: action.callingTo || null,
+      });
+    case SET_ACTIVE_CALLER:
+      return (state = {
+        ...state,
+        activeCaller: action.activeCaller || null,
       });
 
     default:
