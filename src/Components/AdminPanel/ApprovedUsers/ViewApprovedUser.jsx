@@ -27,7 +27,7 @@ export default function ViewApprovedUsers() {
   }, [userUpdated]);
  
   const onDecline = (declineUserId) => {
-    console.log('declined')
+    
     const params = {
       data: {
         user_id: auth_user.elsemployees_empid,

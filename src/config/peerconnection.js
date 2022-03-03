@@ -9,20 +9,20 @@ const defaultRTCConfig = {
 export const createNewPeerConnection = (configuration = defaultRTCConfig) => {
   pc = new RTCPeerConnection(configuration);
 
-  pc.addEventListener("icecandidate", (event) => {
-    if (event.candidate) {
-      console.log("Ice Candidate", event);
-    }
-  });
+  // pc.addEventListener("icecandidate", (event) => {
+  //   if (event.candidate) {
+  //     console.log("Ice Candidate", event);
+  //   }
+  // });
 
-  pc.addEventListener("connectionstatechange", (event) => {
-    if (pc.connectionState === "connected") {
-      console.log("Peer Connected", event);
-    }
-    if (pc.connectionState === "disconnected") {
-      console.log("Disconnected Peer connection", event);
-    }
-  });
+  // pc.addEventListener("connectionstatechange", (event) => {
+  //   if (pc.connectionState === "connected") {
+  //     console.log("Peer Connected", event);
+  //   }
+  //   if (pc.connectionState === "disconnected") {
+  //     console.log("Disconnected Peer connection", event);
+  //   }
+  // });
 
   return pc;
 };

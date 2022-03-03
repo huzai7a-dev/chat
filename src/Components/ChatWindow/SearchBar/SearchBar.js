@@ -6,7 +6,7 @@ import "./searchBar.css";
 import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserSearchResult, setSearchText } from "../../../Redux/actions/app";
-import { DARKMAIN, PRIMARYMAIN, SECONDARYDARK, SECONDARYMAIN, WHITE } from "../../../Theme/colorConstant";
+import { BLACK, DARKMAIN, PRIMARYMAIN, SECONDARYDARK, SECONDARYMAIN, WHITE } from "../../../Theme/colorConstant";
 
 function SearchBar() {
   
@@ -34,9 +34,9 @@ function SearchBar() {
       });
   }, [auth_user?.elsemployees_empid, dispatch, users]);
   return (
-    <div className="searchBar" style={{border: isNightMode ?"1px solid #fff" : `1px solid ${SECONDARYDARK}`, background: isNightMode ? DARKMAIN:WHITE}}>
+    <div className="searchBar" style={{border: isNightMode ? `1px solid ${WHITE}` : `1px solid ${SECONDARYDARK}`, background: isNightMode ? DARKMAIN:WHITE}}>
       <input
-        style={{background: isNightMode && DARKMAIN , color:isNightMode ? SECONDARYMAIN: "#000"}}
+        style={{background: isNightMode && DARKMAIN , color:isNightMode ? SECONDARYMAIN: `${BLACK}`}}
         className="searchBarInput"
         placeholder="Search People"
         value={users}
@@ -47,14 +47,14 @@ function SearchBar() {
       />
       {users ? (
         <ClearIcon
-          style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}
+          style={{color:isNightMode ? WHITE : PRIMARYMAIN}}
           onClick={() => {
             setUsers("");
             dispatch(setSearchText(""));
           }}
         />
       ) : (
-        <SearchIcon style={{color:isNightMode ? "#fff" : PRIMARYMAIN}} />
+        <SearchIcon style={{color:isNightMode ? WHITE : PRIMARYMAIN}} />
       )}
     </div>
   );

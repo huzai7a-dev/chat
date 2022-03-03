@@ -28,7 +28,7 @@ import { setAdminPanel } from "../../Redux/actions/app";
 import ViewChat from "./ViewChat/ViewChat";
 import ViewGroupChat from "./ViewGroupChat/ViewGroupChat";
 import WelcomeAdmin from "./WelcomeAdmin";
-import {DARKMAIN, PRIMARYMAIN, SECONDARYMAIN} from '../../Theme/colorConstant'
+import { DARKMAIN, PRIMARYMAIN, WHITE } from '../../Theme/colorConstant'
 import ViewUsers from "./ViewUsers/ViewUsers";
 import ViewApprovedUsers from "./ApprovedUsers/ViewApprovedUser";
 import ViewDeclinedUser from "./ViewDeclinedUsers/ViewDeclinedUser";
@@ -134,7 +134,7 @@ export default function AdminPanel() {
   const location = useLocation()
   const dispatch = useDispatch();
   const activePath = location.pathname;
-  let {path,url} = useRouteMatch()
+  let { path } = useRouteMatch()
   const { isNightMode } = useSelector((store) => {
     return {
       isNightMode: store.app.mode || false,
@@ -143,7 +143,7 @@ export default function AdminPanel() {
   const handleDrawerOpen = () => {
     setOpen(true);
   };
-  console.log(path,url)
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -171,7 +171,7 @@ export default function AdminPanel() {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap style={{color: "#FFF"}}>
+          <Typography variant="h6" noWrap style={{color: WHITE}}>
             Admin Panel
           </Typography>
         </Toolbar>
@@ -182,12 +182,12 @@ export default function AdminPanel() {
         anchor="left"
         open={open}
         style={{borderWidth: 0}}
-        PaperProps={{style:{backgroundColor: isNightMode ? DARKMAIN : "#fff"}}}
+        PaperProps={{style:{backgroundColor: isNightMode ? DARKMAIN : WHITE}}}
         classes={{
           paper: classes.drawerPaper,
         }}
       >
-        <div style={{backgroundColor: isNightMode ? DARKMAIN : "#fff",}}>
+        <div style={{backgroundColor: isNightMode ? DARKMAIN : WHITE,}}>
           <Box display="flex" justifyContent="space-between" p={0.9}>
             <Button onClick={backToChat} style={{fontWeight:"600",color:PRIMARYMAIN}}>Back to Chat</Button>
             <IconButton onClick={handleDrawerClose}>
@@ -200,7 +200,7 @@ export default function AdminPanel() {
           </Box>
         </div>
         <Divider />
-        <List style={{backgroundColor: isNightMode ? DARKMAIN : "#fff",}}>
+        <List style={{backgroundColor: isNightMode ? DARKMAIN : WHITE,}}>
           {adminOptions.map(({ id, icon, title, path }) => (
             <ListItem
             key={id}

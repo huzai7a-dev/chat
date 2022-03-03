@@ -16,7 +16,7 @@ import MessageHeader from "../Utils/MessageHeader/MessageHeader";
 import { useDispatch, useSelector } from "react-redux";
 import "./appLayout.css";
 import { setSideBar } from "../../Redux/actions/app";
-import { DARKMAIN, PRIMARYMAIN } from "../../Theme/colorConstant";
+import { DARKMAIN, PRIMARYMAIN, WHITE } from "../../Theme/colorConstant";
 
 const drawerWidth = 350;
 const useStyles = makeStyles((theme) => ({
@@ -112,7 +112,7 @@ export default function AppLayout({ children }) {
         className={clsx(classes.appBar, {
           [classes.appBarShift]: !sideBarCollapsed,
         })}
-        style={{backgroundColor: isNightMode ? DARKMAIN : "#fff"}}
+        style={{backgroundColor: isNightMode ? DARKMAIN : WHITE}}
       >
         <Toolbar>
           <IconButton
@@ -141,7 +141,7 @@ export default function AppLayout({ children }) {
           paper: classes.drawerPaper,
         }}
       >
-        <div className={classes.drawerHeader} style={{backgroundColor: isNightMode ? DARKMAIN : "#fff",}}>
+        <div className={classes.drawerHeader} style={{backgroundColor: isNightMode ? DARKMAIN : WHITE,}}>
           <User />
           <IconButton onClick={handleDrawerClose} color="primary">
             {theme.direction === "ltr" ? (

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getGroupParticipants } from '../../../api/chat';
 import { attachments_url } from '../../../constants/apiConstants';
 import { setParticipantModelState } from '../../../Redux/actions/app';
-import { BLACK, DARKMAIN, PRIMARYMAIN, SECONDARYMAIN, WHITE } from '../../../Theme/colorConstant';
+import { BLACK, DARKMAIN, LIGHT, PRIMARYMAIN, SECONDARYMAIN, WHITE } from '../../../Theme/colorConstant';
 import './participants.css'
 
 function Participants() {
@@ -35,14 +35,14 @@ function Participants() {
         getParticipants();
     }, [getParticipants])
     return (
-        <div className="participants" style={{background: isNightMode ? DARKMAIN : "#eee"}}>
+        <div className="participants" style={{background: isNightMode ? DARKMAIN : LIGHT}}>
             <IconButton onClick={() => dispatch(setParticipantModelState(false))}>
                 <CloseIcon style={{color: isNightMode ? WHITE : BLACK}} />
             </IconButton>
             <div className="participantsHeader">
                 <div className="groupLogo">
                     {image ? (<Avatar src={`${attachments_url}${image}`} />) : <Avatar>{active_group?.group_name.toUpperCase()[0]}</Avatar>}
-                    <h3 style={{ fontWeight: "400", color: isNightMode ? "#fff" : PRIMARYMAIN }}>{active_group?.group_name}</h3>
+                    <h3 style={{ fontWeight: "400", color: isNightMode ? WHITE : PRIMARYMAIN }}>{active_group?.group_name}</h3>
                 </div>
             </div>
             {participants.length > 0 ? (

@@ -11,7 +11,7 @@ import SignOut from "./SignOut/SignOut";
 import { useHistory } from "react-router-dom";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import {ADMIN} from '../../../Role/index';
-import { PRIMARYMAIN } from "../../../Theme/colorConstant";
+import { PRIMARYMAIN, WHITE } from "../../../Theme/colorConstant";
 Modal.setAppElement("#root");
   
 const User = React.memo(() => {
@@ -39,13 +39,13 @@ const User = React.memo(() => {
           src={`/bizzportal/public/img/${image}`}
           className="userImg"
         />
-        <Typography variant="caption" style={{color:isNightMode ? "#fff": PRIMARYMAIN}} className="userName">{auth_user?.elsemployees_name}</Typography>
+        <Typography variant="caption" style={{color:isNightMode ? WHITE: PRIMARYMAIN}} className="userName">{auth_user?.elsemployees_name}</Typography>
         <div className="onlineStatus"></div>
       </div>
       { role == ADMIN ? (
         <Tooltip title={"Admin Panel"}>
         <IconButton onClick={switchToAdmin}>
-          <AdminPanelSettingsIcon style={{color:isNightMode ? "#fff": PRIMARYMAIN}}/>
+          <AdminPanelSettingsIcon style={{color:isNightMode ? WHITE: PRIMARYMAIN}}/>
         </IconButton>
       </Tooltip>
       ): null
@@ -53,7 +53,7 @@ const User = React.memo(() => {
       <Tooltip title={isNightMode ? "Day Mode": "Night Mode"}>
         <IconButton color='primary' onClick={()=>{dispatch(setNightMode(!isNightMode))}}>
           {!isNightMode ?
-            <Brightness3Icon color='primary' style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}/> : <WbSunnyIcon color='primary' style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}/>
+            <Brightness3Icon color='primary' style={{color:isNightMode ? WHITE : PRIMARYMAIN}}/> : <WbSunnyIcon color='primary' style={{color:isNightMode ? WHITE : PRIMARYMAIN}}/>
           }
         </IconButton>
       </Tooltip>
@@ -68,7 +68,7 @@ const User = React.memo(() => {
             }
           }}
         >
-          <ExitToAppIcon style={{color:isNightMode ? "#fff" : PRIMARYMAIN}}/>
+          <ExitToAppIcon style={{color:isNightMode ? WHITE : PRIMARYMAIN}}/>
         </IconButton>
         </Tooltip>
         <Modal

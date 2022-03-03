@@ -1,7 +1,7 @@
 .editGroup {
     width: 100%;
     height: 100%;
-    background: #eeee;
+    background: var(--chat-light);
   }
   .editGroupTop {
     display: flex;

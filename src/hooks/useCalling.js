@@ -47,7 +47,6 @@ const onRejectIncomingCall = useCallback(() => {
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid);
     socket.on("call-made", (data) => {
-      console.log("I am getting a call", data);
       setIncomingOffer(data);
     });
     return () => {
@@ -82,7 +81,6 @@ const onRejectIncomingCall = useCallback(() => {
   useEffect(() => {
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.on("icecandidate-receive", async (data) => {
-      console.log("Received Ice Event ", data);
       const peerConnection = getPeerConnection();
       try {
         await peerConnection.addIceCandidate(
@@ -99,28 +97,22 @@ const onRejectIncomingCall = useCallback(() => {
 
   const renderOnCall = useMemo(() => {
     return (
-      <Modal isOpen={!activeCaller?.elsemployees_empid && callingTo?.elsemployees_empid}>
+      <Modal style={{ content: { padding: 0 } }} isOpen={!activeCaller?.elsemployees_empid && callingTo?.elsemployees_empid}>
         <OnCall callUser={callUser} onRejectOutgoingCall={onRejectOutgoingCall} />
       </Modal>
     );
   }, [callingTo, callUser, onRejectOutgoingCall, activeCaller]);
 
   const renderOngoingCall = useMemo(() => {
-    console.log(incomingOffer ? "onRejectIncomingCall" : "onRejectOutgoingCall")
     return (
-      <Modal
-        style={{ content: { padding: 0 } }}
-        isOpen={activeCaller?.elsemployees_empid}
-      >
         <OnCalling onReject={incomingOffer ? onRejectIncomingCall : onRejectOutgoingCall}/>
-      </Modal>
     );
-  }, [activeCaller, incomingOffer, onRejectIncomingCall, onRejectOutgoingCall]);
+  }, [incomingOffer, onRejectIncomingCall, onRejectOutgoingCall]);
 
   const renderIncomingAlert = useMemo(() => {
     return (
       <Modal
-        style={{ content: { padding: 0, background: "transparent" } }}
+        style={{ content: { padding: 0, background: "transparent", border: 0 } }}
         isOpen={!activeCaller?.elsemployees_empid && incomingOffer && incomingOffer?.offer}
       >
         <ToReceiveCall fromUser={incomingOffer?.fromUser || {}} onAcceptIncomingCall={onAcceptIncomingCall} onRejectIncomingCall={onRejectIncomingCall} />

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Avatar } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 
-import { DARKLIGHT } from "../../../Theme/colorConstant";
+import { BLACK, DARKLIGHT, WHITE } from "../../../Theme/colorConstant";
 import { setUserMessages } from "../../../Redux/actions/message";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import UserMessage from "./UserMessage/UserMessage";
@@ -158,7 +158,7 @@ function MessageTextContainer() {
                 <Typography
                   variant="body2"
                   align="center"
-                  style={{ padding: "0px 5px", color: "#fff" }}
+                  style={{ padding: "0px 5px", color: isNightMode ?  WHITE : BLACK}}
                 >
                   {key}
                 </Typography>

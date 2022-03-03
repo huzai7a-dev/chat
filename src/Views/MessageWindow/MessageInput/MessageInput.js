@@ -23,7 +23,7 @@ import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
 import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
-import { DARKLIGHT, DANGER, PRIMARYLIGHT, PRIMARYMAIN } from "../../../Theme/colorConstant";
+import { DARKLIGHT, DANGER, PRIMARYLIGHT, PRIMARYMAIN, BLACK, WHITE, LIGHT } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
 import Tooltip from "@material-ui/core/Tooltip";
 import Recorder from "../../../Components/Recorder/Recorder";
@@ -35,7 +35,7 @@ const useStyles = makeStyles({
     width: "50px",
     height: "50px",
     background: PRIMARYMAIN,
-    color: "#fff",
+    color: WHITE,
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
@@ -51,7 +51,7 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
     background: PRIMARYMAIN,
-    color: "#fff",
+    color: WHITE,
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
@@ -355,7 +355,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       style={
         attachment.length
           ? {
-              background: isNightMode ? DARKLIGHT : "#eee",
+              background: isNightMode ? DARKLIGHT : LIGHT,
               height: "40vh",
               width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
             }
@@ -372,8 +372,8 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
                 <div
                   className="qoutMsg__container"
                   style={{
-                    background: isNightMode ? DARKLIGHT : "#eeee",
-                    color: isNightMode ? "#fff" : "#000",
+                    background: isNightMode ? DARKLIGHT : LIGHT,
+                    color: isNightMode ? WHITE : BLACK,
                   }}
                 >
                   <IconButton

@@ -30,7 +30,7 @@ import {
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";
 import { setGroupMessages } from "../../../Redux/actions/message";
-import { DARKLIGHT, DARKMAIN, PRIMARYLIGHT, PRIMARYMAIN } from "../../../Theme/colorConstant";
+import { BLACK, DARKLIGHT, DARKMAIN, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, WHITE } from "../../../Theme/colorConstant";
 import MicIcon from "@material-ui/icons/Mic";
 import { useReactMediaRecorder } from "react-media-recorder";
 // import Recorder from "../../Recorder/Recorder";
@@ -44,7 +44,7 @@ const useStyles = makeStyles({
     width: "50px",
     height: "50px",
     background: PRIMARYMAIN,
-    color: "#fff",
+    color: WHITE,
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
@@ -60,7 +60,7 @@ const useStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
     background: PRIMARYMAIN,
-    color: "#fff",
+    color: WHITE,
     borderRadius: "50%",
     fontSize: "10px",
     transition: ".3s",
@@ -374,7 +374,7 @@ function MessageInput({
       style={
         attachment.length
           ? {
-              background: isNightMode ? DARKMAIN : "#eee",
+              background: isNightMode ? DARKMAIN : LIGHT,
               height: "40vh",
               width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
             }
@@ -393,8 +393,8 @@ function MessageInput({
                 <div
                   className="qoutMsg__container"
                   style={{
-                    background: isNightMode ? DARKLIGHT : "#eeee",
-                    color: isNightMode ? "#fff" : "#000",
+                    background: isNightMode ? DARKLIGHT : LIGHT,
+                    color: isNightMode ? WHITE : BLACK,
                   }}
                 >
                   {quote.groupmessage_body && (

@@ -87,7 +87,7 @@ function ChatGroup({ group }) {
 
   const background = isNightMode && DARKMAIN;
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
-  const heading = isNightMode ? "#fff" : "#252423";
+  const heading = isNightMode ? WHITE : "#252423";
 
   const groupNamePicture =
     group.group_name.split(" ").length > 1

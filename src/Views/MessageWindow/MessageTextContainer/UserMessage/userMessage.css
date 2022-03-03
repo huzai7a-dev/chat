@@ -121,7 +121,7 @@
   margin: 2px;
 }
 .file {
-  background: #eeee;
+  background: var(--chat-light);
   padding: 10px;
   min-width: 150px;
   display: flex;
@@ -138,7 +138,7 @@
   position: absolute;
   top: 5%;
   left: 5%;
-  color: #fff;
+  color: var(--chat-white);
   cursor: pointer;
 }
 .mediaContainer {

@@ -4,7 +4,7 @@ import { useDispatch,useSelector } from "react-redux";
 import { useHistory } from "react-router";
 import { setSearchText } from "../../../../Redux/actions/app";
 import { setActiveChat } from "../../../../Redux/actions/chat";
-import { DARKMAIN } from "../../../../Theme/colorConstant";
+import { DARKMAIN, WHITE } from "../../../../Theme/colorConstant";
 import './chatUser.css'
 
 const SearchedUser = (props) => {
@@ -13,7 +13,7 @@ const SearchedUser = (props) => {
 
   const isNightMode = useSelector(state => state.app?.mode)
   const background = isNightMode && DARKMAIN ;
-  const heading = isNightMode ? "#fff" : "#252423";
+  const heading = isNightMode ? WHITE : "#252423";
 
   const onItemClick = useCallback((e) => {
     e.preventDefault();

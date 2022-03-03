@@ -9,15 +9,10 @@ const router = express.Router();
 export const withSocket = (app) => {
   const io = new Server(app);
 
-  io.on("connection", (socket) => {
-    console.log("a user connected with id", socket.id);
-  });
-
   const workspaces = io.of(/^\/user-\d+$/);
 
   workspaces.on("connection", (socket) => {
     socketMappings[socket.nsp.name.split("-")[1]] = socket.id;
-
     // ********************************* socket for calling *********************************
 
     socket.on("messaging", async (data) => {
@@ -155,7 +150,8 @@ export const withSocket = (app) => {
   });
 
   router.get('/active-users', (req, res) => {
-    return res.json(Object.keys(socketMappings))
+    // return res.json(Object.keys(socketMappings).filter(key => workspaces.sockets.get(socketMappings[key]).handshake.secure))
+    return res.json(Object.keys(socketMappings));
   })
 };
 

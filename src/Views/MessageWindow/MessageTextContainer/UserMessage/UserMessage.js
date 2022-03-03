@@ -8,7 +8,7 @@ import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
-import { DARKLIGHT, SECONDARYLIGHT } from "../../../../Theme/colorConstant";
+import { DARKLIGHT, SECONDARYLIGHT, WHITE } from "../../../../Theme/colorConstant";
 import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
 import RenderAttachment from "../../../../Components/Utils/RenderAttachment";
 
@@ -148,7 +148,7 @@ function UserMessage(props) {
     );
   });
 
-  const messageToBackground = isNightMode ? DARKLIGHT : "##f0f4f8";
+  const messageToBackground = isNightMode ? DARKLIGHT : "#f0f4f8";
 
   return (
     <div
@@ -240,7 +240,7 @@ function UserMessage(props) {
                       : messageToBackground,
                   color:
                     isNightMode && props.sender?.message_from == loggedInUser
-                      ? "#fff"
+                      ? WHITE
                       : "rgb(37, 36, 35)",
                 }}
                 className={

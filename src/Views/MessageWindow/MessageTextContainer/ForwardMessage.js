@@ -15,8 +15,9 @@ import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import DoneIcon from "@material-ui/icons/Done";
 import { sendMessage } from "../../../api/message";
 import { getContactsUser } from "../../../api/chat";
-import { DARKMAIN } from "../../../Theme/colorConstant";
+import { BLACK, DARKMAIN, WHITE } from "../../../Theme/colorConstant";
 import {filterList} from "../../../helper/util";
+
 const useStyle = makeStyles({
   paper: {
     width: "100%",
@@ -28,13 +29,14 @@ const useStyle = makeStyles({
     position: "sticky",
     top: "0",
     zIndex: "10",
-    background: "#fff",
+    background: WHITE,
     padding: "5px",
   },
   userContainer: {
     margin: "5px 0px",
   },
 });
+
 function ForwardMessageModel({ setForwardModel, params }) {
   const classes = useStyle();
   const dispatch = useDispatch();
@@ -78,14 +80,14 @@ function ForwardMessageModel({ setForwardModel, params }) {
   return (
     <Paper
       className={classes.paper}
-      style={{ background: isNightMode ? DARKMAIN : "#fff" }}
+      style={{ background: isNightMode ? DARKMAIN : WHITE }}
     >
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         className={classes.option}
-        style={{ background: isNightMode ? DARKMAIN : "#fff" }}
+        style={{ background: isNightMode ? DARKMAIN : WHITE }}
       >
         <IconButton
           color="primary"
@@ -96,7 +98,7 @@ function ForwardMessageModel({ setForwardModel, params }) {
           <ArrowBackIosIcon />
         </IconButton>
         <TextField
-          style={{ color: isNightMode ? "#fff" : "#000" }}
+          style={{ color: isNightMode ? WHITE : BLACK }}
           label="Search"
           fullWidth
           value={toForward}
@@ -110,7 +112,7 @@ function ForwardMessageModel({ setForwardModel, params }) {
       </Box>
       <Paper
         elevation={0}
-        style={{ background: isNightMode ? DARKMAIN : "#fff" }}
+        style={{ background: isNightMode ? DARKMAIN : WHITE }}
       >
         {contacts
           .filter((v) =>
@@ -131,7 +133,7 @@ function ForwardMessageModel({ setForwardModel, params }) {
                       active_user?.elsemployees_empid
                       ? "none"
                       : null,
-                  background: isNightMode ? DARKMAIN : "#fff",
+                  background: isNightMode ? DARKMAIN : WHITE,
                 }}
               >
                 <Box
@@ -149,7 +151,7 @@ function ForwardMessageModel({ setForwardModel, params }) {
                   <Typography
                     style={{
                       width: "200px",
-                      color: isNightMode ? "#fff" : "#000",
+                      color: isNightMode ? WHITE : BLACK,
                     }}
                   >
                     {contact.elsemployees_name}

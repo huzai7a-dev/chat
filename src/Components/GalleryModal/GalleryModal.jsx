@@ -9,6 +9,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { getUserAttachments, getGroupAttachments } from "../../api/message";
 import "./gallerymodal.style.css";
+import { BLACK, WHITE } from "../../Theme/colorConstant";
 
 const GalleryModal = React.memo((props) => {
   const classes = useStyle();
@@ -58,7 +59,6 @@ const GalleryModal = React.memo((props) => {
         },
       };
       const response = await dispatch(getGroupAttachments(params));
-      console.log(response);
       setAttachments(response.data.attachments);
     } catch (e) {
       console.log(e);
@@ -111,9 +111,9 @@ const GalleryModal = React.memo((props) => {
         className={classes.attachmentHeader}
       >
         <IconButton onClick={() => history.replace(location.pathname)}>
-          <CloseIcon style={{color: isNightMode ? "#fff" : "#000" }}/>
+          <CloseIcon style={{color: isNightMode ? WHITE : BLACK }}/>
         </IconButton>
-        <Typography variant="h5" style={{ flex: "1", textAlign: "center", color: isNightMode ? "#fff" : "#000" }}>
+        <Typography variant="h5" style={{ flex: "1", textAlign: "center", color: isNightMode ? WHITE : BLACK }}>
           Gallery
         </Typography>
         {/* {renderDropdown} */}
@@ -232,8 +232,8 @@ const GalleryModal = React.memo((props) => {
             return (
               <div className="attachView" key={id}>
                 <div className="file" style={{ maxWidth: "100%" }}>
-                  <FileCopyIcon style={{color: isNightMode ? "#fff" : "#000" }}/>
-                  <Typography variant="caption" style={{color: isNightMode ? "#fff" : "#000"}}>{fileName}</Typography>
+                  <FileCopyIcon style={{color: isNightMode ? WHITE : BLACK }}/>
+                  <Typography variant="caption" style={{color: isNightMode ? WHITE : BLACK}}>{fileName}</Typography>
                   <DownloadButton />
                 </div>
               </div>
@@ -259,7 +259,7 @@ const GalleryModal = React.memo((props) => {
   const galleryWidth = window.innerWidth < 700 ? "100%" : "400px";
   return (
     <Box
-      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth, backgroundColor: isNightMode ? "#000" : "#eee" }}
+      style={{ right: showGallery ? "0" : "-100%", width: galleryWidth, backgroundColor: isNightMode ? BLACK : WHITE }}
       className="gallery__container"
     >
       {renderAttachmentsHeader}
@@ -267,7 +267,7 @@ const GalleryModal = React.memo((props) => {
         {attachments?.length > 0 ? (
           renderAttachments
         ) : (
-          <Typography align="center" style={{color: isNightMode ? "#fff" : "#000"}}>No Attachments</Typography>
+          <Typography align="center" style={{color: isNightMode ? WHITE : BLACK}}>No Attachments</Typography>
         )}
       </Box>
       <Modal

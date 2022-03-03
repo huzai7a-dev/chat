@@ -2,7 +2,7 @@ import { Avatar, Typography } from "@material-ui/core";
 import React from "react";
 import "./Welcome.css";
 import { useSelector } from "react-redux";
-import { PRIMARYMAIN } from "../../Theme/colorConstant";
+import { PRIMARYMAIN, WHITE } from "../../Theme/colorConstant";
 
 function Welcome() {
   const avatarStyle = {
@@ -21,7 +21,7 @@ function Welcome() {
       
       <div className="welcome__container">
         <div className="userName">
-          <Typography variant="h6" style={{color: "#fff"}}>
+          <Typography variant="h6" style={{color: WHITE}}>
             Welcome {auth_user?.elsemployees_name}
           </Typography>
         </div>

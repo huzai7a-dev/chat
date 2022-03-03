@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import CloseIcon from "@material-ui/icons/Close";
 import NavigateNextIcon from "@material-ui/icons/NavigateNext";
 import EditIcon from "@material-ui/icons/Edit";
@@ -44,7 +44,6 @@ function GroupInfo() {
       setSelectedImage(e.target.files[0]);
     }
   };
-  console.log(selectedImage);
   const changeGroupNamePicture = () => {
     dispatch(setEditGroupNameToMemberModelState(true));
     if (nameChanged || imgChanged) {
@@ -68,11 +67,11 @@ function GroupInfo() {
     <div className="groupInfo">
       <div className="groupInfoHeader">
         <IconButton onClick={() => dispatch(setEditGroupModelState(false))}>
-          <CloseIcon style={{color:isNightMode ? "#fff": "#000"}} />
+          <CloseIcon style={{color:isNightMode ? WHITE: BLACK}} />
         </IconButton>
 
         <IconButton onClick={changeGroupNamePicture}>
-          <NavigateNextIcon style={{color:isNightMode ? "#fff": "#000"}} />
+          <NavigateNextIcon style={{color:isNightMode ? WHITE: BLACK}} />
         </IconButton>
       </div>
       <div className="groupInfoPicture">
@@ -97,11 +96,11 @@ function GroupInfo() {
         />
         {!editable ? (
           <IconButton onClick={setGroupName}>
-            <EditIcon style={{color:isNightMode ? "#fff": "#000"}} />
+            <EditIcon style={{color:isNightMode ? WHITE: BLACK}} />
           </IconButton>
         ) : (
           <IconButton onClick={edited}>
-            <CheckIcon style={{color:isNightMode ? "#fff": "#000"}} />
+            <CheckIcon style={{color:isNightMode ? WHITE: BLACK}} />
           </IconButton>
         )}
       </div>

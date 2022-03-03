@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import useSound from "use-sound";
+import React, { useState } from "react";
 import "./messageWindowHeader.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,18 +6,15 @@ import {
   Modal,
   Backdrop,
 } from "@material-ui/core";
-import skypeSound from "../../../Assets/sound/skype-ringing.mp3";
 import OnCall from "../../Call/OnCall";
 // import { getSocket } from "../../../socket";
 import { setMakeCall } from "../../../Redux/actions/chat";
 import { getSocket } from "../../../config/socket";
+import { WHITE } from "../../../Theme/colorConstant";
 // const Peer = require('peerjs');
 
 function MessageWindowHeader(props) {
   const [openCall, setOpenCall] = useState(false);
-  const [myCallId, setMyCallId] = useState("");
-  const [stream, setStream] = useState("");
-  const [play, { stop }] = useSound(skypeSound);
   const { active_user, isNightMode, auth_user, makeCall } = useSelector(
     (store) => {
       return {
@@ -35,23 +31,6 @@ function MessageWindowHeader(props) {
       history.replace(`${location.pathname}#gallery`)
     }
 
-
-  const onStartCall = () => {
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((stream) => {
-        setStream(stream);
-      });
-    const socketData = {
-      user_id: active_user?.elsemployees_empid,
-      userName: auth_user?.elsemployees_name,
-      userCallId: myCallId,
-    };
-    const socket = getSocket(auth_user?.elsemployees_empid);
-    socket.emit("startCall", socketData);
-    dispatch(setMakeCall(true));
-    //  play();
-  };
   const onEndCall = () => {
     const socketData = {
       user_id: active_user?.elsemployees_empid,
@@ -65,11 +44,11 @@ function MessageWindowHeader(props) {
   return (
     <div className="MessageWindowHeader">
       <div className="userName">
-        <h2 style={{ color: isNightMode ? "#fff" : "#000" }}>
+        <h2 style={{ color: isNightMode ? WHITE : "#000" }}>
           {active_user?.elsemployees_name}
         </h2>
         <div onClick={openGallery}>
-          <Typography variant="body2" style={{color: "#fff"}}>Gallery</Typography>
+          <Typography variant="body2" style={{color: WHITE}}>Gallery</Typography>
         </div>
       </div>
       <Modal

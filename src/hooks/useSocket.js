@@ -97,7 +97,7 @@ const useSocket = () => {
          } 
         // eslint-disable-next-line no-prototype-builtins
         else if (data.hasOwnProperty('group_id') && active_group?.group_id === data?.group_id) {
-          console.log('reached to group')
+          
           const socketParams = {
             group_id:active_group.group_id,
             user_id:auth_user?.elsemployees_empid,
@@ -173,7 +173,6 @@ const useSocket = () => {
   useEffect(() => {
     const socket = getSocket(auth_user?.elsemployees_empid)
       socket.on("isWindowOpen", () => {
-        console.log('widow is open')
         const params = {
           data:{
             from_id: auth_user?.elsemployees_empid,

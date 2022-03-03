@@ -110,7 +110,7 @@ const ChatUser = React.memo((props) => {
 
   const background = isNightMode && DARKMAIN;
   const activeBackground = isNightMode ? DARKLIGHT : WHITE;
-  const heading = isNightMode ? "#fff" : "#252423";
+  const heading = isNightMode ? WHITE : "#252423";
   return (
     <div
       className="chatUser"

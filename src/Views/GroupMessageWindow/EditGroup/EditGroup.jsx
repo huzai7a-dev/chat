@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from "react-redux";
-import { DARKMAIN } from "../../../Theme/colorConstant";
+import { DARKMAIN, LIGHT } from "../../../Theme/colorConstant";
 import GroupInfo from "./GroupInfo";
 import MemberList from "./MemberList";
 import "./EditGroup.css";
@@ -13,7 +13,7 @@ function EditGroup() {
         }
       });
     return (
-        <div className="editGroup" style={{background: isNightMode ? DARKMAIN : "#eee"}}>
+        <div className="editGroup" style={{background: isNightMode ? DARKMAIN : LIGHT}}>
             {!switchToMember ? <GroupInfo /> : <MemberList />}
         </div>
     );

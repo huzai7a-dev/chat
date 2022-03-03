@@ -11,6 +11,7 @@ import {
   setParticipantModelState,
 } from "../../../Redux/actions/app";
 import { setCallingToUser } from "../../../Redux/actions/call";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 
 const MessageHeader = () => {
   const history = useHistory();
@@ -35,7 +36,7 @@ const MessageHeader = () => {
       <div className="message__header__left">
         <Typography
           variant="h5"
-          style={{ color: isNightMode ? "#fff" : "#000" }}
+          style={{ color: isNightMode ? WHITE : BLACK }}
         >
           {header?.activeName}
         </Typography>
@@ -64,7 +65,7 @@ const MessageHeader = () => {
           onClick={() => dispatch(setCallingToUser(active_user))}
         >
           <PhoneIcon
-            color="secondary"
+            color="primary"
             style={{ width: "30px", height: "30px" }}
           />
         </IconButton>

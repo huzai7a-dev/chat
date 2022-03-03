@@ -1,5 +1,6 @@
 import { green, red } from "@material-ui/core/colors";
 import light from '../theme.light.json';
+import dark from '../theme.dark.json';
 
 // light
 export const PRIMARYMAIN = light.primary;
@@ -11,9 +12,11 @@ export const GREY = light.grey;
 export const LIGHT = light.light;
 export const WHITE = "#fff";
 export const BLACK = light.black;
+export const LIGHTACTIVE = light.active
 // dark
-export const DARKMAIN = "#161616";
-export const DARKLIGHT = "rgb(55 71 79 / 41%)";
+export const DARKMAIN = dark.primary;
+export const DARKLIGHT = dark.light;
+export const DARKACTIVE = dark.active;
 export const DARKPRIMFONT = "#fff";
 export const DARKSECFONT = "#cfd8dc";
 export const AUTHCOLOR = "#feb318";

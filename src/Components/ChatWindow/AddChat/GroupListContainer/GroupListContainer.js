@@ -12,7 +12,7 @@ import "./groupListContainer.css";
 import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
-import { DARKMAIN, PRIMARYMAIN } from "../../../../Theme/colorConstant";
+import { BLACK, DARKMAIN, LIGHT, PRIMARYMAIN, WHITE } from "../../../../Theme/colorConstant";
 import { createGroup } from "../../../../api/chat";
 import { setUserGroups } from "../../../../Redux/actions/chat";
 import Utils from "../../../../helper/util";
@@ -46,7 +46,7 @@ const GroupMemebers = React.memo(
           <div className="memberName">
             <Typography
               variant="h6"
-              style={{ color: isNightMode ? "#fff" : "#000" }}
+              style={{ color: isNightMode ? WHITE : "#000" }}
             >
               {members?.elsemployees_name}
             </Typography>
@@ -113,7 +113,7 @@ const GroupListContainer = ({
   };
   return (
     <div
-      style={{ background: isNightMode ? DARKMAIN : "#eeee" }}
+      style={{ background: isNightMode ? DARKMAIN : LIGHT }}
       className="groupListContainer"
       onKeyDown={(e) => {
         if (e.key === "Enter") {
@@ -131,7 +131,7 @@ const GroupListContainer = ({
         >
           <ArrowBackIcon style={{ color: isNightMode && PRIMARYMAIN }} />
         </Button>
-        <Typography variant="h6" style={{ color: "#fff" }}>
+        <Typography variant="h6" style={{ color: WHITE }}>
           Create New Group
         </Typography>
         <Button
@@ -147,7 +147,7 @@ const GroupListContainer = ({
       </div>
       <div className="groupListContainer__search">
         <Input
-          style={{ color: isNightMode ? "#fff" : "#000" }}
+          style={{ color: isNightMode ? WHITE : BLACK }}
           placeholder="Search People"
           onChange={(e) => {
             setGroupMember(e.target.value);
@@ -158,7 +158,7 @@ const GroupListContainer = ({
       {memberList.length > 0 ? (
         <div
           className="groupListContainer__memberList"
-          style={{ background: isNightMode ? DARKMAIN : "#eeee" }}
+          style={{ background: isNightMode ? DARKMAIN : LIGHT }}
         >
           {memberList.filter(filterMember).map((members) => (
             <GroupMemebers

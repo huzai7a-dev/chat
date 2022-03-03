@@ -36,7 +36,7 @@
 .css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input.css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input.css-d9oaum-MuiSelect-select-MuiInputBase-input-MuiFilledInput-input {
   padding: 0px !important;
   text-align: center;
-  background-color: #fff;
+  background-color: var(--chat-white);
   padding-right: 15px !important;
 }
 

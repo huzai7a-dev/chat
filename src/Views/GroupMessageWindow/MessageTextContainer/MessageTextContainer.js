@@ -12,7 +12,7 @@ import _ from "lodash";
 import moment from "moment";
 import Typography from "@material-ui/core/Typography";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import { DARKLIGHT } from "../../../Theme/colorConstant";
+import { BLACK, DARKLIGHT, WHITE } from "../../../Theme/colorConstant";
 import { setGroupMessages } from "../../../Redux/actions/message";
 import { mergeArray } from "../../../helper/util";
 const MessageTextContainer = React.memo(({ scrollDown }) => {
@@ -33,7 +33,6 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
       isNightMode: store.app.mode || false,
     };
   });
-  console.log("re render");
   const dispatch = useDispatch();
   const img = active_group?.group_image;
   const messageContainer = createRef();
@@ -165,7 +164,7 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
                 <Typography
                   variant="body2"
                   align="center"
-                  style={{ padding: "0px 5px", color: "#fff" }}
+                  style={{ padding: "0px 5px", color: isNightMode ? WHITE: BLACK }}
                 >
                   {key}
                 </Typography>
@@ -222,7 +221,7 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
             {active_group.group_name?.toUpperCase()[0]}
           </Avatar>
         )}
-        <Typography style={{color: "#fff"}}>
+        <Typography style={{color: isNightMode ? WHITE : BLACK}}>
           Welcome To {`${active_group?.group_name}'s`} Group
         </Typography>
       </div>

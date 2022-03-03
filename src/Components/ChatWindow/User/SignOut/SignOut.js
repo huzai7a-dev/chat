@@ -2,7 +2,7 @@ import { Button } from "@material-ui/core";
 import React, { useCallback } from "react";
 import "./signOut.css";
 import { useDispatch, useSelector } from "react-redux";
-import { DARKMAIN } from "../../../../Theme/colorConstant";
+import { DARKMAIN, LIGHT } from "../../../../Theme/colorConstant";
 import { logout } from "../../../../api/auth";
 import { useHistory } from "react-router";
 
@@ -27,7 +27,7 @@ function SignOut({ setMenuOpen }) {
   },[auth_user.elsemployees_empid, dispacth, history]);
 
   return (
-    <div className="signOut"  style={{background: isNightMode ? DARKMAIN: "#eee"}}>
+    <div className="signOut"  style={{background: isNightMode ? DARKMAIN: LIGHT}}>
       <div className="signOut__Message">
         <p>Do you want to Sign Out ? </p>
       </div>

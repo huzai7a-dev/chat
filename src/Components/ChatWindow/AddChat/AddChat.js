@@ -24,7 +24,7 @@ function AddChat() {
     <>
       <div className="add__chat">
         <IconButton
-          style={{color:isNightMode ? "#fff": PRIMARYMAIN ,border: isNightMode ?"1px solid #fff" : `1px solid ${SECONDARYDARK}`,background: isNightMode ? DARKMAIN:WHITE}}
+          style={{color:isNightMode ? WHITE: PRIMARYMAIN ,border: isNightMode ? `1px solid ${WHITE}` : `1px solid ${SECONDARYDARK}`,background: isNightMode ? DARKMAIN:WHITE}}
           className="addChat__btn"
           onClick={() => {
             setGroupModelName(true);
@@ -33,7 +33,7 @@ function AddChat() {
             }
           }}
         > 
-          <GroupAddIcon style={{color:isNightMode ? "#fff": PRIMARYMAIN}}/>
+          <GroupAddIcon style={{color:isNightMode ? WHITE: PRIMARYMAIN}}/>
           Create New Group
         </IconButton>
       </div>

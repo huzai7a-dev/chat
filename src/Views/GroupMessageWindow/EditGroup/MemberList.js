@@ -78,9 +78,9 @@ function MemberList() {
     <div style={{ height: "80%" }}>
       <div className="editGroupTop">
         <IconButton onClick={() => dispatch(setEditGroupNameToMemberModelState(false))}>
-          <ArrowBackIcon style={{color:isNightMode ? "#fff": "#000"}} />
+          <ArrowBackIcon style={{color:isNightMode ? WHITE: BLACK}} />
         </IconButton>
-        <Button onClick={closeGroup} style={{color:isNightMode ? "#fff": "#000"}}>Done</Button>
+        <Button onClick={closeGroup} style={{color:isNightMode ? WHITE: BLACK}}>Done</Button>
       </div>
       <div className="searchMember">
         <Input
@@ -150,15 +150,15 @@ function MemberList() {
                     <Avatar src={`/bizzportal/public/img/${image}`} />
                   </div>
                   <div className="memberName">
-                    <h3 style={{color:isNightMode ? "#fff": "#000"}}>{member?.elsemployees_name}</h3>
+                    <h3 style={{color:isNightMode ? WHITE: BLACK}}>{member?.elsemployees_name}</h3>
                   </div>
                   {isMemberAdded ? (
                     <IconButton onClick={removeMember}>
-                      <DeleteIcon style={{color:isNightMode && "#fff"}}/>
+                      <DeleteIcon style={{color:isNightMode && WHITE}}/>
                     </IconButton>
                   ) : (
                     <IconButton onClick={addMember}>
-                      <AddIcon  style={{color:isNightMode && "#fff"}}/>
+                      <AddIcon  style={{color:isNightMode && WHITE}}/>
                     </IconButton>
                   )}
                 </div>

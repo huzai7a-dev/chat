@@ -9,6 +9,7 @@ import EditGroup from "../EditGroup/EditGroup";
 import Participants from "../Participants/Participants";
 import { setEditGroupModelState,setParticipantModelState } from "../../../Redux/actions/app";
 import { useHistory, useLocation } from "react-router-dom";
+import { BLACK, WHITE } from "../../../Theme/colorConstant";
 
 function MessageWindowHeader() {
   const history = useHistory();
@@ -33,7 +34,7 @@ function MessageWindowHeader() {
   return (
     <div className="MessageWindowHeader">
       <div className="userName">
-        <h2 style={{color:isNightMode ? "#fff":"#000"}}>{active_group?.group_name}</h2>
+        <h2 style={{color:isNightMode ? WHITE : BLACK}}>{active_group?.group_name}</h2>
         <Box display="flex" alignItems="center">
         <p onClick={() => dispatch(setParticipantModelState(true))}>{memberLength} participants</p>
         <Typography variant="body2" style={{margin:"0px 5px"}}>|</Typography>

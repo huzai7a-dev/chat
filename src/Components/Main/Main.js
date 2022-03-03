@@ -5,33 +5,24 @@ import { useSelector } from "react-redux";
 import MessageWindow from "../../Views/MessageWindow/MessageWindow";
 import Welcome from "../../Views/Welcome/Welcome";
 import GroupMessageWindow from "../../Views/GroupMessageWindow/GroupMessageWindow";
-import { DARKMAIN } from "../../Theme/colorConstant";
+import { BLACK, WHITE } from "../../Theme/colorConstant";
 import AdminPanel from "../AdminPanel/AdminPanel";
 import AppLayout from "../AppLayout/AppLayout";
 import "./Main.css";
 import GalleryModal from "../GalleryModal/GalleryModal";
 
 const Main = React.memo(() => {
-  const videoRef = useRef();
-  const { isNightMode, remoteStream } =
+  const { isNightMode, } =
     useSelector((store) => {
       return {
         isNightMode: store.app.mode || false,
-        remoteStream : store.app.remoteStream,
       };
     });
-
-  useEffect(() => {
-    if(videoRef.current && remoteStream) {
-      videoRef.current.srcObject = remoteStream;
-      videoRef.current.play()
-    }
-  }, [remoteStream])
 
   return (
     <div
       className="main__window"
-      style={{ background: isNightMode ? DARKMAIN : "#fff" }}
+      style={{ background: isNightMode ? BLACK : WHITE }}
     >
       <Switch>
         <Route path="/admin" component={AdminPanel} />

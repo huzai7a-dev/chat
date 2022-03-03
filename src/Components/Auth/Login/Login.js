@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../../../api/auth";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import { useHistory } from "react-router";
-import { AUTHCOLOR } from "../../../Theme/colorConstant";
+import { AUTHCOLOR, WHITE } from "../../../Theme/colorConstant";
 const Login = React.memo(() => {
   const dispatch = useDispatch();
   const [visible, setVisible] = useState(false);
@@ -74,7 +74,7 @@ const Login = React.memo(() => {
             type="submit"
             style={{
               background: AUTHCOLOR,
-              color: "#fff",
+              color: WHITE,
               width: "100%",
               textDecoration: "none",
             }}

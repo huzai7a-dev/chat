@@ -1,6 +1,7 @@
 import { Box, Typography, Avatar, Badge } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
+import { BLACK, DARKACTIVE, LIGHTACTIVE, WHITE } from "../../../Theme/colorConstant";
 
 function AppUser({
   userName,
@@ -9,14 +10,24 @@ function AppUser({
   date,
   handleClick,
   path,
-  unseen=0
+  unseen=0,
+  activeUser
 }) {
   const {isNightMode } = useSelector((store) => {
     return {
       sideBarCollapsed: store.app.sideBarCollapsed || false,
       isNightMode: store.app.mode || false,
+
     };
   });
+
+  const getBackgroundColor = ()=> {
+    if(activeUser && isNightMode){
+      return DARKACTIVE
+    }else if(activeUser && !isNightMode){
+      return LIGHTACTIVE
+    }
+  }
   return (
     <Box
       onClick={handleClick}
@@ -24,13 +35,12 @@ function AppUser({
       style={{
         height: "65px",
         cursor: "pointer",
-        // backgroundColor: activeUser
-        //   ? BACKGROUND[isNightMode?"dark":"light"].active
-        //   : BACKGROUND[isNightMode?"dark":"light"].default,
-        color: isNightMode ? "#fff" : "#000" 
+        background:getBackgroundColor(),
+        color: isNightMode ? WHITE : BLACK,
       }}
       paddingX={1}
       paddingY={1.2}
+      marginX={0.8}
     >
       <Box display="flex" alignItems="center" marginRight={0.8}>
         {!(userImage == "null" || userImage == null) ? (

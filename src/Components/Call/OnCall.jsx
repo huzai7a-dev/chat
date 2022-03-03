@@ -9,7 +9,7 @@ import {
 import calling from "../../Assets/animation/ringing.json";
 import CallEndIcon from "@material-ui/icons/CallEnd";
 import "./call.css";
-import { DANGER } from "../../Theme/colorConstant";
+import { DANGER, WHITE } from "../../Theme/colorConstant";
 import Ringing from "../AnimationComponents/Ringing";
 import { useDispatch, useSelector } from "react-redux";
 import { getActiveUsers } from "../../api/chat";
@@ -29,7 +29,6 @@ const OnCall = React.memo((props) => {
     if (callingTo?.elsemployees_empid) {
       try {
         const response = await dispatch(getActiveUsers());
-        console.log(response)
         if(response.data?.some(id => parseInt(id) == parseInt(callingTo.elsemployees_empid))) {
           setCallStatus("Ringing")
           callUser(callingTo);
@@ -53,10 +52,10 @@ const OnCall = React.memo((props) => {
         <source src="/audio/waiting.wav" type="audio/wav" />
       </audio>
       <Box p={2}>
-        <Typography variant="h5" style={{ color: "#fff" }}>
+        <Typography variant="h5" style={{ color: WHITE }}>
           {callingTo?.elsemployees_name}
         </Typography>
-        <Typography variant="caption" style={{ color: "#fff" }}>
+        <Typography variant="caption" style={{ color: WHITE }}>
         {`${callStatus}...`}
         </Typography>
       </Box>
