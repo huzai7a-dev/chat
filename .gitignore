@@ -14,3 +14,4 @@ build
 .env.test.local
 .env.production.local
 subscriptions.db
+uploads

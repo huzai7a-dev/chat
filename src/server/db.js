@@ -1,6 +1,8 @@
 import { isMoment } from "moment";
 import FormData from "form-data";
 import path from 'path'
+import fs from 'fs';
+
 const sqlite3 = require('sqlite3').verbose();
 
 const connection = new sqlite3.Database(
@@ -34,6 +36,14 @@ const appendArray = (formData, key, arrValue) => {
         filename: value.originalname,
       });
     }
+    
+    // eslint-disable-next-line no-prototype-builtins
+    if (value.hasOwnProperty("path") && value.hasOwnProperty("originalname") && value.hasOwnProperty("mimetype")) {
+      return formData.append(`${key}[${index}]`, fs.createReadStream(value.path), {
+        filename: value.originalname, 
+        contentType: value.mimetype
+      });
+    }
 
     if (value !== null && typeof value === typeof {}) {
       return appendObject(formData, `${key}[${index}]`, value);
@@ -58,6 +68,14 @@ const appendObject = (formData, mainKey, obj) => {
     if (value.hasOwnProperty("buffer")) {
       return formData.append(`${key}[${index}]`, value.buffer, {
         filename: value.originalname,
+      });
+    }
+
+    // eslint-disable-next-line no-prototype-builtins
+    if (value.hasOwnProperty("path") && value.hasOwnProperty("originalname") && value.hasOwnProperty("mimetype")) {
+      return formData.append(`${key}[${index}]`, fs.createReadStream(value.path), {
+        filename: value.originalname, 
+        contentType: value.mimetype
       });
     }
 
@@ -87,6 +105,15 @@ export const getFormData = (obj = {}) => {
       // formData.append(`${key}[${index}]`, Readable.from(value.buffer.toString()), value.originalname)
       formData.append(key, obj[key].buffer, {
         filename: obj[key].originalname,
+      });
+      continue;
+    }
+
+    // eslint-disable-next-line no-prototype-builtins
+    if (obj[key]?.hasOwnProperty("path") && obj[key]?.hasOwnProperty("originalname") && obj[key]?.hasOwnProperty("mimetype")) {
+      formData.append(key, fs.createReadStream(obj[key].path), {
+        filename: obj[key].originalname, 
+        contentType: obj[key].mimetype
       });
       continue;
     }

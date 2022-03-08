@@ -8,7 +8,7 @@ import React, {
 import "./groupMessage.css";
 import SendIcon from "@material-ui/icons/Send";
 import AttachmentIcon from "@material-ui/icons/Attachment";
-import { Box, IconButton, makeStyles, Tooltip } from "@material-ui/core";
+import { Box, IconButton, LinearProgress, makeStyles, Tooltip } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import EmojiEmotionsIcon from "@material-ui/icons/EmojiEmotions";
@@ -115,6 +115,7 @@ function MessageInput({
   const [visibleAudio, setVisibleAudio] = useState(false);
   const [participants, setParticipants] = useState([]);
   const [showParticipants, setShowParticipants] = useState([]);
+  const [progress, setProgress] = useState(0)
 
   const onEmojiClick = (event) => {
     setMessage(`${message}${event.native}`);
@@ -277,10 +278,16 @@ function MessageInput({
         message_quoteuser: quote.from_username || null,
         message_attachment: attachmentFile || null,
       },
+      onUploadProgress: (progressEvent) => {
+        setProgress(
+          (progressEvent.loaded / progressEvent.total) * 100
+        );
+      },
     };
     messageParams.data = Utils.getFormData(messageParams.data);
     dispatch(sendGroupMessage(messageParams))
       .then((res) => {
+        setProgress(0)
         setScrollDown(res);
         dispatch(
           setGroupMessages({
@@ -329,7 +336,10 @@ function MessageInput({
         const socket = getSocket(auth_user?.elsemployees_empid);
         socket.emit("group-messaging", socketParams);
       })
-      .catch((err) => console.warn(err));
+      .catch((err) => {
+        setProgress(0);
+        console.warn(err)
+      });
   }, [
     active_group.group_id,
     active_group?.group_name,
@@ -385,6 +395,7 @@ function MessageInput({
         {attachment ? AttachmentPreview : null}
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
+      {progress && <LinearProgress value={progress} style={{width: "100%", margin: "1rem 0px"}}/>}
         <div className="inputContainer">
           {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (

@@ -6,7 +6,7 @@ import { getFormData } from "./db";
 
 const router = express.Router();
 
-router.use("/api/*", multer().any(), (req, res) => {
+router.use("/api/*", multer({dest: "./uploads"}).any(), (req, res) => {
   const contentType = req.get("content-type") || "application/json";
 
   const body = {};
@@ -18,6 +18,8 @@ router.use("/api/*", multer().any(), (req, res) => {
     url: `${process.env.RAZZLE_BASE_URL}${req.originalUrl.replace("/api", "")}`,
     method: req.method,
     responseType: req.originalUrl.includes('/public/') ? "arraybuffer" : "json",
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity,
   };
 
   if (contentType?.includes("form")) {
@@ -63,6 +65,8 @@ router.use("/bizzportal/*", (req, res) => {
     method: req.method,
     // data: req.body,
     responseType: "arraybuffer",
+    maxContentLength: Infinity,
+    maxBodyLength: Infinity,
   };
   axios(axiosRoute)
     .then((r) => {

@@ -18,7 +18,10 @@ export const apiCall = (params, onSuccess, onFailure) => (dispatch, getState) =>
               params.data
             ),
       params: params.params ? params.params : {},
-      responseType: params.responseType || "json"
+      onUploadProgress: params.onUploadProgress,
+      responseType: params.responseType || "json",
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
     };
     return axios(requestingObject)
       .then((response) => {

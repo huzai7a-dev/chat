@@ -28,6 +28,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import Tooltip from "@material-ui/core/Tooltip";
 import Recorder from "../../../Components/Recorder/Recorder";
 import { getSocket } from "../../../config/socket";
+import LinearProgress from '@material-ui/core/LinearProgress';
 // import Recorder from "../../Recorder/Recorder";
 
 const useStyles = makeStyles({
@@ -77,6 +78,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
   const [pastedImg, setPastedImg] = useState([]);
   const [isEmojiActive, setIsEmojiActive] = useState(false);
   const [visibleAudio, setVisibleAudio] = useState(false);
+  const [progress, setProgress] = useState(0);
   const textInput = useRef();
   const classes = useStyles(isRecording);
   const dispatch = useDispatch();
@@ -268,11 +270,17 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
         message_quoteuser: quote?.from_username || null,
         message_attachment: attachmentFile || "",
       },
+      onUploadProgress: (progressEvent) => {
+        setProgress(
+          (progressEvent.loaded / progressEvent.total) * 100
+        );
+      },
     };
     messageParams.data = Utils.getFormData(messageParams.data);
     await dispatch(sendMessage(messageParams))
       .then((res) => {
         // setScrollDown(res);
+        setProgress(0)
         const attachments = res.data.data.message_attachment;
         const socketParams = {
           message_originalname: auth_user?.elsemployees_name,
@@ -300,7 +308,10 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
         };
         dispatch(getContactsUser(getContactsParams));
       })
-      .catch((err) => console.warn(err));
+      .catch((err) => {
+        setProgress(0);
+        console.warn(err);
+      });
   }, [
     active_user?.elsemployees_empid,
     auth_user.elsemployees_empid,
@@ -364,6 +375,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     >
       <div className="attachmentPreview">{attachment && AttachmentPreview}</div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
+        {progress && <LinearProgress value={progress} style={{width: "100%", margin: "1rem 0px"}}/>}
         <div className="inputContainer">
           {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
