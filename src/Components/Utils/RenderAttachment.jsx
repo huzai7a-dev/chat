@@ -17,7 +17,7 @@ const RenderAttachment = ({attachments,fileName,onOpenImage}) => {
           </Button>
         );
       };
-      const splitAttachment = attachment.split(".");
+      const splitAttachment = attachment?.split(".");
       const attachmentType = splitAttachment[splitAttachment.length - 1];
       if (
         attachmentType.toLowerCase() === "jpg" ||
@@ -64,7 +64,13 @@ const RenderAttachment = ({attachments,fileName,onOpenImage}) => {
           />
         );
       } else {
-        const name = fileName.split(",")[id];
+        let name;
+        if (fileName?.split(",")[id]) {
+          name = fileName?.split(",")[id]
+        }else {
+          name = fileName?.split(".")[id]
+        }
+        
         return (
           <div className="attachView" key={id}>
             <div className="file">

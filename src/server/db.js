@@ -30,15 +30,13 @@ const appendArray = (formData, key, arrValue) => {
       return appendArray(formData, `${key}[${index}]`, value);
     }
 
-    // eslint-disable-next-line no-prototype-builtins
-    if (value.hasOwnProperty("buffer")) {
+    if (typeof value == "object" && "buffer" in value) {
       return formData.append(`${key}[${index}]`, value.buffer, {
         filename: value.originalname,
       });
     }
-    
-    // eslint-disable-next-line no-prototype-builtins
-    if (value.hasOwnProperty("path") && value.hasOwnProperty("originalname") && value.hasOwnProperty("mimetype")) {
+
+    if (typeof value == "object" && "path" in value && "originalname" in value && "mimetype" in value) {
       return formData.append(`${key}[${index}]`, fs.createReadStream(value.path), {
         filename: value.originalname, 
         contentType: value.mimetype
@@ -65,14 +63,14 @@ const appendObject = (formData, mainKey, obj) => {
     }
 
     // eslint-disable-next-line no-prototype-builtins
-    if (value.hasOwnProperty("buffer")) {
+    if (typeof value == "object" && "buffer" in value) {
       return formData.append(`${key}[${index}]`, value.buffer, {
         filename: value.originalname,
       });
     }
 
     // eslint-disable-next-line no-prototype-builtins
-    if (value.hasOwnProperty("path") && value.hasOwnProperty("originalname") && value.hasOwnProperty("mimetype")) {
+    if (typeof value == "object" && "path" in value && "originalname" in value && "mimetype" in value) {
       return formData.append(`${key}[${index}]`, fs.createReadStream(value.path), {
         filename: value.originalname, 
         contentType: value.mimetype
@@ -101,7 +99,7 @@ export const getFormData = (obj = {}) => {
     }
 
     // eslint-disable-next-line no-prototype-builtins
-    if (obj[key]?.hasOwnProperty("buffer")) {
+    if (typeof obj[key] == "object" && "buffer" in obj[key]) {
       // formData.append(`${key}[${index}]`, Readable.from(value.buffer.toString()), value.originalname)
       formData.append(key, obj[key].buffer, {
         filename: obj[key].originalname,
@@ -109,8 +107,7 @@ export const getFormData = (obj = {}) => {
       continue;
     }
 
-    // eslint-disable-next-line no-prototype-builtins
-    if (obj[key]?.hasOwnProperty("path") && obj[key]?.hasOwnProperty("originalname") && obj[key]?.hasOwnProperty("mimetype")) {
+    if (typeof obj[key] == "object" && "path" in obj[key] && "originalname" in obj[key] && "mimetype" in obj[key]) {
       formData.append(key, fs.createReadStream(obj[key].path), {
         filename: obj[key].originalname, 
         contentType: obj[key].mimetype
