@@ -2,6 +2,7 @@ import App from "./App";
 import React from "react";
 import { StaticRouter } from "react-router-dom";
 import express from "express";
+import cors from 'cors';
 import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
 import { getSubscriptions } from "./server/webpush";
@@ -33,6 +34,7 @@ const jsScriptTagsFromAssets = (assets, entrypoint, extra = "") => {
 const server = express();
 server
   .disable("x-powered-by")
+  .use(cors())
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
