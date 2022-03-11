@@ -143,9 +143,11 @@ export const withSocket = (app) => {
     socket.on("isWindowOpen", (data) => {
       workspaces.to(socketMappings[data?.message_to])?.emit("isWindowOpen", data);
     });
-    socket.on("disconnect", (socket) => {
-      console.log("disconnected", socket);
-      // delete socketMappings[socket.nsp.name.split("-")[1]]
+    socket.on("disconnect", () => {
+      if(socketMappings[socket.nsp.name.split("-")[1]]) {
+        delete socketMappings[socket.nsp.name.split("-")[1]]
+        console.log("disconnected", socket.nsp.name.split("-")[1])
+      }
     });
   });
 
