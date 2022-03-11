@@ -39,7 +39,7 @@ server
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
-  .get('/dialpad',(req, res) => res.sendFile(path.join(process.env.RAZZLE_PUBLIC_DIR+'/dialpad.html')))
+  .get('/dialpad',(req, res) => res.sendFile('dialpad.html', {root:process.env.RAZZLE_PUBLIC_DIR}))
   .use(proxyRoutes)
   .use('/socket', socketRoutes)
   .get("/*", (req, res) => {
