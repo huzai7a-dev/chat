@@ -6,7 +6,8 @@
     "start": "razzle start",
     "build": "razzle build --noninteractive",
     "test": "razzle test --env=jsdom",
-    "start:prod": "set NODE_ENV=production && node build/server.js"
+    "start:prod": "npm run clean && set NODE_ENV=production && node build/server.js",
+    "clean": "clean.bat"
   },
   "author": {
     "name": "Ahsan Ahmed",
