@@ -14,7 +14,7 @@ import {ADMIN} from '../../../Role/index';
 import { PRIMARYMAIN, WHITE } from "../../../Theme/colorConstant";
 Modal.setAppElement("#root");
   
-const User = React.memo(() => {
+const User = () => {
   const dispatch = useDispatch();
   const { auth_user,isNightMode } = useSelector((store) => {
     return {
@@ -83,6 +83,6 @@ const User = React.memo(() => {
       </div>
     </div>
   );
-});
+};
 
-export default React.memo(User);
+export default User;

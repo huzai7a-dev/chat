@@ -14,6 +14,7 @@ import {
   SET_CALL_ACCEPTED,
   SET_DATA_TO_CALL,
   SET_HEADER_DATA,
+  SET_ONLINE_USERS,
 } from "../constant/chat";
 
 export const setActiveChat = (active_user) => {
@@ -22,6 +23,13 @@ export const setActiveChat = (active_user) => {
     active_user,
   };
 };
+
+export const setOnlineUsers = (onlineUsers) => {
+  return {
+    type: SET_ONLINE_USERS,
+    onlineUsers
+  }
+}
 
 export const setActiveGroup = (active_group) => {
   return {

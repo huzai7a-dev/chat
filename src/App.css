@@ -37,7 +37,7 @@ html {
   color: whitesmoke;
   background: var(--chat-black);
   display:flex;
-  height:2.5rem;
+  height:2rem;
   justify-content: center;
   align-items: center;
 }

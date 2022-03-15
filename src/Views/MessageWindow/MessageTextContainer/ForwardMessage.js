@@ -54,13 +54,7 @@ function ForwardMessageModel({ setForwardModel, params }) {
       };
     }
   );
-  const searchedUsers = (members) => {
-    return (
-      members.elsemployees_name
-        .toLowerCase()
-        .indexOf(toForward.toLocaleLowerCase()) >= 0
-    );
-  };
+  
   const forwardMessage = async (userId) => {
     setSentTo(userId);
     const messageParams = {

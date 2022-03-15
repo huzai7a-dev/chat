@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "./App.css";
 import Main from "./Components/Main/Main";
 import { useEffect } from "react";
@@ -56,9 +56,16 @@ const App = () => {
     dispatch(getContactsTotal(params));
   }, [auth_user?.elsemployees_empid, dispatch]);
 
+  const renderApp = useMemo(() => {
+    if(auth_user) {
+      return <Main key={auth_user.elsemployees_empid}/>
+    }
+    return <Auth />
+  }, [auth_user])
+
   return (
     <div className="App">
-      {auth_user ? <Main /> : <Auth />}
+      {renderApp}
       {renderOnCall}
       {renderOngoingCall}
       {renderIncomingAlert}

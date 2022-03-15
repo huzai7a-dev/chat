@@ -1,10 +1,8 @@
 import { Server } from "socket.io";
 import axios from "axios";
 import { triggerPushMsg } from "./webpush";
-import express from "express";
 
 const socketMappings = {};
-const router = express.Router();
 
 export const withSocket = (app) => {
   const io = new Server(app);
@@ -14,6 +12,10 @@ export const withSocket = (app) => {
   workspaces.on("connection", (socket) => {
     socketMappings[socket.nsp.name.split("-")[1]] = socket.id;
     // ********************************* socket for calling *********************************
+
+    setInterval(() => {
+      socket.emit("online-users", Object.keys(socketMappings));
+    }, 5000)
 
     socket.on("messaging", async (data) => {
       const notification = {
@@ -151,12 +153,7 @@ export const withSocket = (app) => {
     });
   });
 
-  router.get('/active-users', (req, res) => {
-    // return res.json(Object.keys(socketMappings).filter(key => workspaces.sockets.get(socketMappings[key]).handshake.secure))
-    return res.json(Object.keys(socketMappings));
-  })
+  return app;
 };
 
-
-
-export const socketRoutes = router;
+export const getActiveUsers = () => Object.keys(socketMappings)

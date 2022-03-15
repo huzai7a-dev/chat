@@ -38,7 +38,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import Recorder from "../../../Components/Recorder/Recorder";
 import User from "../../../Components/AdminPanel/User";
 import { getSocket } from "../../../config/socket";
-
+import {useOutsideAlerter} from '../../../hooks/useOutsideClick';
 const useStyles = makeStyles({
   sendBtn: {
     width: "50px",
@@ -117,6 +117,12 @@ function MessageInput({
   const [showParticipants, setShowParticipants] = useState([]);
   const [progress, setProgress] = useState(0)
 
+  const menuDiv = useRef();
+  const onClickOutside = useCallback(() => {
+    setIsEmojiActive(false);
+  }, []);
+
+  useOutsideAlerter(menuDiv, onClickOutside);
   const onEmojiClick = (event) => {
     setMessage(`${message}${event.native}`);
     textInput.current.innerText = `${message}${event.native}`;
@@ -395,7 +401,7 @@ function MessageInput({
         {attachment ? AttachmentPreview : null}
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
-      {progress && <LinearProgress value={progress} style={{width: "100%", margin: "1rem 0px"}}/>}
+      {progress ? <LinearProgress value={progress} style={{width: "100%", margin: "1rem 0px"}}/>: null}
         <div className="inputContainer">
           {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
@@ -467,6 +473,7 @@ function MessageInput({
                     contentEditable={true}
                   />
                   <IconButton
+                    ref={menuDiv}
                     style={{ position: "absolute", top: "1%", left: "0%" }}
                     onClick={() => {
                       setIsEmojiActive(!isEmojiActive);

@@ -11,13 +11,14 @@ function AppUser({
   handleClick,
   path,
   unseen=0,
-  activeUser
+  activeUser,
+  userId
 }) {
-  const {isNightMode } = useSelector((store) => {
+  const {isNightMode, onlineUsers } = useSelector((store) => {
     return {
       sideBarCollapsed: store.app.sideBarCollapsed || false,
       isNightMode: store.app.mode || false,
-
+      onlineUsers: store.chat.onlineUsers
     };
   });
 
@@ -42,12 +43,15 @@ function AppUser({
       paddingY={1.2}
       marginX={0.8}
     >
-      <Box display="flex" alignItems="center" marginRight={0.8}>
+      <Box display="flex" alignItems="center" marginRight={0.8} position="relative">
         {!(userImage == "null" || userImage == null) ? (
           <Avatar src={path + userImage} />
         ) : (
           <Avatar />
         )}
+        {onlineUsers?.includes(`${userId}`) ? (
+          <div className="onlineStatus" />
+        ) : null}
       </Box>
       <Box flex="1" style={{position:'relative',}}>
         <Box display="flex" justifyContent="space-between">
@@ -66,7 +70,7 @@ function AppUser({
             overflowX: "hidden",
           }}
         >
-            <Typography variant="caption">{lastMessage}</Typography>
+            <Typography variant="caption" style={lastMessageStyles} >{lastMessage}</Typography>
             {unseen ? <Badge style={{position:"absolute",right:"0",bottom:"0",marginRight:"8px",marginBottom:"9.6px"}} badgeContent={unseen} color="primary"/>: null}
         </Box>
       </Box>
@@ -75,3 +79,10 @@ function AppUser({
 }
 
 export default AppUser;
+
+const lastMessageStyles = {
+  overflow: "hidden",
+    display: "inlineBlock",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+}

@@ -1,4 +1,4 @@
-import React, { createRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageInput from "./MessageInput/MessageInput";
 import "./MessageWindow.css";
@@ -11,7 +11,7 @@ import Participants from "./Participants/Participants";
 import EditGroup from "./EditGroup/EditGroup";
 
 function GroupMessageWindow() {
-  const dropzoneRef = createRef();
+  const dropzoneRef = useRef();
   const dispatch = useDispatch();
   const [attachment, setAttachment] = useState([]);
   const [scrollDown, setScrollDown] = useState("");

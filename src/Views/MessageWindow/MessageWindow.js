@@ -1,19 +1,23 @@
-import React, { createRef, useState, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import { Box } from "@material-ui/core";
 import Dropzone from "react-dropzone";
 import { Notify } from "../../helper/notify";
 import "./MessageWindow.css";
 import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageInput from "./MessageInput/MessageInput";
-import GalleryModal from "../../Components/GalleryModal/GalleryModal";
 
 function MessageWindow() {
-  const dropzoneRef = createRef();
+  const dropzoneRef = useRef();
   const [attachment, setAttachment] = useState([]);
   const [scrollDown, setScrollDown] = useState("");
+
+  const onDrop = useCallback((acceptedFiles) => {
+    setAttachment(acceptedFiles)
+  }, []);
+
   return (
     <Dropzone
-      onDrop={useCallback((acceptedFiles) => setAttachment(acceptedFiles), [])}
+      onDrop={onDrop}
       onDropRejected={() => {
         Notify("File Rejected", "error");
       }}

@@ -3,7 +3,7 @@ import { getSocket, init } from "../config/socket";
 import { useDispatch, useSelector } from "react-redux";
 
 
-import { setActiveGroup, setGroupMemInfo, setNewGroupMessage } from "../Redux/actions/chat";
+import { setActiveGroup, setGroupMemInfo, setNewGroupMessage, setOnlineUsers } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 import { getGroupMessages, getUserMessages } from "../api/message";
@@ -169,6 +169,16 @@ const useSocket = () => {
       socket.off('group-seen')
     }
   },[active_group?.group_id, auth_user?.elsemployees_empid, dispatch])
+
+  useEffect(()=>{
+    const socket = getSocket(auth_user.elsemployees_empid)
+    socket.on("online-users",(onlineUsers)=>{
+      dispatch(setOnlineUsers(onlineUsers));
+    })
+    return () => {
+      socket.off('online-users')
+    }
+  },[auth_user, dispatch])
 
   useEffect(() => {
     const socket = getSocket(auth_user?.elsemployees_empid)

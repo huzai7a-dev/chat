@@ -375,7 +375,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     >
       <div className="attachmentPreview">{attachment && AttachmentPreview}</div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
-        {progress && <LinearProgress value={progress} style={{width: "100%", margin: "1rem 0px"}}/>}
+        {progress ? (<LinearProgress value={progress} style={{width: "100%", margin: "1rem 0"}}/>) : null}
         <div className="inputContainer">
           {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (

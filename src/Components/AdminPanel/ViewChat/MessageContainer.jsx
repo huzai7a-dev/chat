@@ -1,5 +1,5 @@
-import { Box, CircularProgress, makeStyles, Typography } from "@material-ui/core";
-import React, { useState } from "react";
+import { makeStyles, Typography } from "@material-ui/core";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "./Message";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -57,6 +57,12 @@ function MessageContainer(props) {
     dispatch(setAdminUserMessages(mergedArray));
   };
 
+  const renderItems = useMemo(() => messages.map((message) => {
+    return (
+      <Message key={message.message_id} message={message} toId={props.toId} />
+    );
+  }), [messages, props.toId]);
+
   return (
     <div id="scrollableDiv" className={classes.messageContainer}>
       <InfiniteScroll
@@ -70,15 +76,7 @@ function MessageContainer(props) {
         {messages.length < 1 ? (
            <Typography style={{color: isNightMode ? WHITE: BLACK}} className={classes.noMessage}>No messages between them </Typography>
         ) : (
-          messages.map((message) => {
-            return (
-              <Message
-                key={message.message_id}
-                message={message}
-                toId={props.toId}
-              />
-            );
-          })
+          renderItems
         )}
       </InfiniteScroll>
     </div>

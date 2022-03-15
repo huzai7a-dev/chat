@@ -1,4 +1,4 @@
-import React, { useEffect, createRef, useState, useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import "./MessageTextContainer.css";
 import UserMessage from "./UserMessage/UserMessage";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,8 +21,6 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
     active_group,
     groupMessages,
     groupMemInfo,
-    isNightMode,
-    groupMessageData,
   } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
@@ -34,10 +32,9 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
     };
   });
   const dispatch = useDispatch();
-  const img = active_group?.group_image;
-  const messageContainer = createRef();
+  const messageContainer = useRef();
   const [alertMessage, setAlertMessage] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  
   useEffect(() => {
     const params = {
       data: {
@@ -47,9 +44,7 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
     };
     dispatch(getGroupMessages(params));
   }, [active_group, auth_user?.elsemployees_empid, dispatch]);
-  useEffect(() => {
-    setHasMore(true);
-  }, [active_group]);
+  
   const MemberAlert = () => {
     return (
       <Alert
@@ -79,11 +74,46 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
       messageContainer.current.scrollHeight -
       messageContainer.current.clientHeight;
     messageContainer.current.scrollTo(0, scroll);
-  }, [messageContainer]);
+  }, []);
   useEffect(() => {
     scrollToBottom();
   }, [scrollDown, active_group, scrollToBottom]);
   // if there is not message
+
+
+  return (
+    <div
+      className="messageTextContainer"
+      ref={messageContainer}
+      id="scrollableDiv"
+      style={{ display: "flex", flexDirection: "column-reverse" }}
+    >
+      {alertMessage ? MemberAlert() : null}
+      {groupMessages.length === 0 ? <NoChat /> : <Messages />}
+    </div>
+  );
+});
+
+const Messages = React.memo(() => {
+  const [hasMore, setHasMore] = useState(true);
+  const {
+    auth_user,
+    active_group,
+    groupMessages,
+    isNightMode,
+    groupMessageData,
+  } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+      active_group: store.chat.active_group || {},
+      groupMessages: store.message.groupMessages.messages || [],
+      groupMessageData: store.message.groupMessages || {},
+      isNightMode: store.app.mode || false,
+    };
+  });
+
+  const dispatch = useDispatch();
+
   const fetchMoreMessages = useCallback(async () => {
     const lastMsgId = groupMessages[groupMessages.length - 1].groupmessage_id;
     const params = {
@@ -114,129 +144,130 @@ const MessageTextContainer = React.memo(({ scrollDown }) => {
     groupMessages,
   ]);
 
-  const Messages = React.memo(() => {
-    const groupedByMessages = _.chain(groupMessages)
-      // Group the elements of Array based on `date` property
-      .groupBy((m) => {
-        return moment(m.fullTime).calendar({
-          sameDay: "[Today]",
-          nextDay: "[Tomorrow]",
-          nextWeek: "dddd",
-          lastDay: "[Yesterday]",
-          lastWeek: "dddd",
-          sameElse: "DD/MM/YYYY",
-        });
-      })
-      // `key` is group's name (date), `value` is the array of objects
-      .reduce((result, value, key) => {
-        result[key] = value;
-        return result;
-      }, {})
-      .value();
-    return (
-      <InfiniteScroll
-        dataLength={groupMessages.length}
-        next={fetchMoreMessages}
-        inverse={true}
-        hasMore={hasMore}
-        loader={
-          <div style={{ textAlign: "center" }}>
-            <CircularProgress />
-          </div>
-        }
-        scrollableTarget="scrollableDiv"
-        style={{ display: "flex", flexDirection: "column-reverse" }}
-      >
-        {Object.keys(groupedByMessages)?.map((key, id) => {
-          const groupedByMessage = groupedByMessages[key];
-          let headMessage = groupedByMessage[0];
-          let tailMessage = groupedByMessage[0];
+  useEffect(() => {
+    if(active_group) {
+      setHasMore(true);
+    }
+  }, [active_group]);
 
-          return (
-            <div key={id}>
-              <div className="dividerContainer">
-                <div
-                  className="divider"
-                  style={{
-                    background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
-                  }}
-                />
-                <Typography
-                  variant="body2"
-                  align="center"
-                  style={{ padding: "0px 5px", color: isNightMode ? WHITE: BLACK }}
-                >
-                  {key}
-                </Typography>
-                <div
-                  className="divider"
-                  style={{
-                    background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
-                  }}
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {groupedByMessage?.map((message, messageIndex) => {
-
-                  if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
-                    headMessage = message
-                  }
-
-                  groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
-                    if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
-                      tailMessage = nextMessage
-                    }
-                  })
-                  
-                  return (
-                  <UserMessage
-                    chatgroup={message}
-                    key={message.groupmessage_id}
-                    showDate={
-                      groupedByMessage[groupedByMessage.length - 1]
-                        .groupmessage_id === message.groupmessage_id
-                    }
-                    head={headMessage}
-                    tail={tailMessage}
-                  />
-                )})}
-              </div>
-            </div>
-          );
-        })}
-      </InfiniteScroll>
-    );
-  });
-
-  const NoChat = React.memo(() => {
-    return (
-      <div className="noChat">
-        {img ? (
-          <Avatar
-            style={{ width: "60px", height: "60px" }}
-            src={`/api/bwccrm/storage/app/public/chat_attachments/${img}`}
-          />
-        ) : (
-          <Avatar style={{ width: "60px", height: "60px" }}>
-            {active_group.group_name?.toUpperCase()[0]}
-          </Avatar>
-        )}
-        <Typography style={{color: isNightMode ? WHITE : BLACK}}>
-          Welcome To {`${active_group?.group_name}'s`} Group
-        </Typography>
-      </div>
-    );
-  });
+  const groupedByMessages = _.chain(groupMessages)
+    // Group the elements of Array based on `date` property
+    .groupBy((m) => {
+      return moment(m.fullTime).calendar({
+        sameDay: "[Today]",
+        nextDay: "[Tomorrow]",
+        nextWeek: "dddd",
+        lastDay: "[Yesterday]",
+        lastWeek: "dddd",
+        sameElse: "DD/MM/YYYY",
+      });
+    })
+    // `key` is group's name (date), `value` is the array of objects
+    .reduce((result, value, key) => {
+      result[key] = value;
+      return result;
+    }, {})
+    .value();
 
   return (
-    <div
-      className="messageTextContainer"
-      ref={messageContainer}
-      id="scrollableDiv"
+    <InfiniteScroll
+      dataLength={groupMessages.length}
+      next={fetchMoreMessages}
+      inverse={true}
+      hasMore={hasMore}
+      loader={
+        <div style={{ textAlign: "center" }}>
+          <CircularProgress />
+        </div>
+      }
+      scrollableTarget="scrollableDiv"
       style={{ display: "flex", flexDirection: "column-reverse" }}
     >
-      {alertMessage ? MemberAlert() : null}
-      {groupMessages.length === 0 ? <NoChat /> : <Messages />}
+      {Object.keys(groupedByMessages)?.map((key, id) => {
+        const groupedByMessage = groupedByMessages[key];
+        let headMessage = groupedByMessage[0];
+        let tailMessage = groupedByMessage[0];
+
+        return (
+          <div key={id}>
+            <div className="dividerContainer">
+              <div
+                className="divider"
+                style={{
+                  background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
+                }}
+              />
+              <Typography
+                variant="body2"
+                align="center"
+                style={{ padding: "0px 5px", color: isNightMode ? WHITE: BLACK }}
+              >
+                {key}
+              </Typography>
+              <div
+                className="divider"
+                style={{
+                  background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
+                }}
+              />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column-reverse" }}>
+              {groupedByMessage?.map((message, messageIndex) => {
+
+                if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+                  headMessage = message
+                }
+
+                groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
+                  if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
+                    tailMessage = nextMessage
+                  }
+                })
+                
+                return (
+                <UserMessage
+                  chatgroup={message}
+                  key={message.groupmessage_id}
+                  showDate={
+                    groupedByMessage[groupedByMessage.length - 1]
+                      .groupmessage_id === message.groupmessage_id
+                  }
+                  head={headMessage}
+                  tail={tailMessage}
+                />
+              )})}
+            </div>
+          </div>
+        );
+      })}
+    </InfiniteScroll>
+  );
+});
+
+const NoChat = React.memo(() => {
+  const { active_group, isNightMode } = useSelector((store) => {
+    return {
+      active_group: store.chat.active_group || {},
+      isNightMode: store.app.mode || false,
+    };
+  });
+
+  const img = active_group?.group_image;
+  return (
+    <div className="noChat">
+      {img ? (
+        <Avatar
+          style={{ width: "60px", height: "60px" }}
+          src={`/api/bwccrm/storage/app/public/chat_attachments/${img}`}
+        />
+      ) : (
+        <Avatar style={{ width: "60px", height: "60px" }}>
+          {active_group.group_name?.toUpperCase()[0]}
+        </Avatar>
+      )}
+      <Typography style={{color: isNightMode ? WHITE : BLACK}}>
+        Welcome To {`${active_group?.group_name}'s`} Group
+      </Typography>
     </div>
   );
 });

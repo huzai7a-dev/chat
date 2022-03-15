@@ -8,7 +8,11 @@ import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
 import { setQuote } from "../../../../Redux/actions/app";
 import moment from "moment";
 import ForwardMessage from "../ForwardMessage";
-import { DARKLIGHT, SECONDARYLIGHT, WHITE } from "../../../../Theme/colorConstant";
+import {
+  DARKLIGHT,
+  SECONDARYLIGHT,
+  WHITE,
+} from "../../../../Theme/colorConstant";
 import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
 import RenderAttachment from "../../../../Components/Utils/RenderAttachment";
 
@@ -22,7 +26,6 @@ function UserMessage(props) {
   });
 
   const [forwardModel, setForwardModel] = useState(false);
-  const dispatch = useDispatch();
   const loggedInUser = auth_user?.elsemployees_empid;
   const image = props.sender.from_userpicture;
   const attachments = props.sender.message_attachment;
@@ -49,30 +52,13 @@ function UserMessage(props) {
       message_originalname: props.sender.message_originalname || null,
     },
   };
-  
+
   // function to open image/video
   const openImage = useCallback((e) => {
     setMedia(e.target.src);
     setOpenModel(true);
   }, []);
   // function to collect data for quote messages
-  const quoteData = useCallback(() => {
-    const quoteMsg = {
-      from_username: props.sender.from_username,
-      message_body:
-        props.sender.message_attachment || props.sender.message_body,
-      message_id: props.sender.message_id,
-      attachment: props.sender.message_attachment,
-    };
-    dispatch(setQuote(quoteMsg));
-    setOption(false);
-  }, [
-    dispatch,
-    props.sender.from_username,
-    props.sender.message_attachment,
-    props.sender.message_body,
-    props.sender.message_id,
-  ]);
 
   const attachmentStyle = {
     display: "flex",
@@ -81,72 +67,6 @@ function UserMessage(props) {
       props.sender.message_from === loggedInUser ? "flex-end" : "flex-start",
     alignItems: "center",
   };
-
-  const downloadAttachment = useCallback((file) => {
-    const attachList = file.split(",");
-    attachList.forEach((attachment) => {
-      const anchor = document.createElement("a");
-      anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
-      anchor.download = attachment;
-      anchor.click();
-    });
-  }, []);
-
-  const QuotedMessage = React.memo(() => {
-    return (
-      <>
-        {props.sender.message_quotebody !== "null" ? (
-          <a
-            className="sendQuotedMsg"
-            href={"#" + props.sender.message_quoteid}
-            style={{
-              borderBottom:
-                props.sender.message_from === loggedInUser
-                  ? "1px solid #000"
-                  : "none",
-            }}
-          >
-            <p className="qName">{props.sender.message_quoteuser}</p>
-            <p className="qMsg">{props.sender.message_quotebody}</p>
-          </a>
-        ) : null}
-      </>
-    );
-  });
-
- 
-
-  const MessageOptions = React.memo(() => {
-    return (
-      <div
-        className="optionsContainer"
-        style={{
-          [props.sender?.message_from === loggedInUser ? "right" : "left"]:
-            "100%",
-        }}
-      >
-        <div className="options">
-          <p
-            onClick={() => {
-              setForwardModel(true);
-            }}
-          >
-            Forward
-          </p>
-          <p onClick={quoteData}>Quote</p>
-          {props.sender?.message_attachment ? (
-            <p
-              onClick={() =>
-                downloadAttachment(props.sender?.message_attachment)
-              }
-            >
-              Download
-            </p>
-          ) : null}
-        </div>
-      </div>
-    );
-  });
 
   const messageToBackground = isNightMode ? DARKLIGHT : "#f0f4f8";
 
@@ -215,7 +135,7 @@ function UserMessage(props) {
             <RenderAttachment
               attachments={attachments}
               fileName={props.sender.message_originalname}
-              onOpenImage={(e)=> openImage(e)}
+              onOpenImage={(e) => openImage(e)}
             />
           </div>
         ) : null}
@@ -231,7 +151,9 @@ function UserMessage(props) {
             }}
           >
             <div>
-              {props.sender.message_quotebody ? <QuotedMessage /> : null}
+              {props.sender.message_quotebody ? (
+                <QuotedMessage sender={props.sender} />
+              ) : null}
               <div
                 style={{
                   background:
@@ -252,7 +174,7 @@ function UserMessage(props) {
                 {props.sender.message_body}
               </div>
             </div>
-            
+
             <div
               className="msgOption"
               ref={menuDiv}
@@ -262,14 +184,20 @@ function UserMessage(props) {
               }}
             >
               <MoreVertIcon />
-              {option ? <MessageOptions /> : null}
+              {option ? (
+                <MessageOptions
+                  setForwardModel={setForwardModel}
+                  sender={props.sender}
+                  setOption={setOption}
+                />
+              ) : null}
             </div>
           </div>
         ) : null}
         <ViewAttachment
           src={media}
           openModel={openModel}
-          handClose={(state)=> setOpenModel(state)}
+          handClose={(state) => setOpenModel(state)}
         />
         <Modal
           isOpen={forwardModel}
@@ -287,5 +215,96 @@ function UserMessage(props) {
     </div>
   );
 }
+
+const MessageOptions = React.memo((props) => {
+  const { auth_user } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+    };
+  });
+
+  const loggedInUser = auth_user?.elsemployees_empid;
+  const dispatch = useDispatch();
+
+  const quoteData = useCallback(() => {
+    const quoteMsg = {
+      from_username: props.sender.from_username,
+      message_body:
+        props.sender.message_attachment || props.sender.message_body,
+      message_id: props.sender.message_id,
+      attachment: props.sender.message_attachment,
+    };
+    dispatch(setQuote(quoteMsg));
+    props.setOption(false);
+  }, [dispatch, props]);
+
+  const downloadAttachment = useCallback((file) => {
+    const attachList = file.split(",");
+    attachList.forEach((attachment) => {
+      const anchor = document.createElement("a");
+      anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
+      anchor.download = attachment;
+      anchor.click();
+    });
+  }, []);
+
+  return (
+    <div
+      className="optionsContainer"
+      style={{
+        [props.sender?.message_from === loggedInUser ? "right" : "left"]:
+          "100%",
+      }}
+    >
+      <div className="options">
+        <p
+          onClick={() => {
+            props.setForwardModel(true);
+          }}
+        >
+          Forward
+        </p>
+        <p onClick={quoteData}>Quote</p>
+        {props.sender?.message_attachment ? (
+          <p
+            onClick={() => downloadAttachment(props.sender?.message_attachment)}
+          >
+            Download
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+});
+
+const QuotedMessage = React.memo((props) => {
+  const { auth_user } = useSelector((store) => {
+    return {
+      auth_user: store.auth.auth_user || {},
+    };
+  });
+
+  const loggedInUser = auth_user?.elsemployees_empid;
+
+  return (
+    <>
+      {props.sender.message_quotebody !== "null" ? (
+        <a
+          className="sendQuotedMsg"
+          href={"#" + props.sender.message_quoteid}
+          style={{
+            borderBottom:
+              props.sender.message_from === loggedInUser
+                ? "1px solid #000"
+                : "none",
+          }}
+        >
+          <p className="qName">{props.sender.message_quoteuser}</p>
+          <p className="qMsg">{props.sender.message_quotebody}</p>
+        </a>
+      ) : null}
+    </>
+  );
+});
 
 export default UserMessage;

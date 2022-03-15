@@ -2,7 +2,7 @@ import { Button, Typography } from "@material-ui/core";
 import React from "react";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 
-const RenderAttachment = ({attachments,fileName,onOpenImage}) => {
+const RenderAttachment = ({attachments,fileName,onOpenImage,options}) => {
     return attachments.split(",").map((attachment, id) => {
       const DownloadButton = () => {
         return (
@@ -73,6 +73,7 @@ const RenderAttachment = ({attachments,fileName,onOpenImage}) => {
         
         return (
           <div className="attachView" key={id}>
+            {options && options}
             <div className="file">
               <FileCopyIcon />
               <Typography variant="button">{name}</Typography>

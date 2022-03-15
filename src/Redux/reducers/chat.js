@@ -12,6 +12,7 @@ import {
   SET_MAKE_CALL,
   SET_CALL_ACCEPTED,
   SET_HEADER_DATA,
+  SET_ONLINE_USERS,
 } from "../constant/chat";
 
 const initState = {
@@ -26,76 +27,81 @@ const initState = {
   makeCall: false,
   isCallAccepted: false,
   active: {},
+  onlineUsers: [],
 };
 
 export default (state = initState, action) => {
   switch (action.type) {
     case SET_ACTIVE_USER:
-      return (state = {
+      return{
         ...state,
         active_user: action.active_user,
-      });
+      };
     case SET_ACTIVE_GROUP:
-      return (state = {
+      return {
         ...state,
         active_group: action.active_group,
-      });
+      };
     case SET_CONTACT_USERS:
-      return (state = {
+      return {
         ...state,
         contacts: action.contacts,
-      });
+      };
     case SET_USER_GROUPS:
-      return (state = {
+      return {
         ...state,
         groups: Object.assign([], action.groups),
-      });
-
+      };
     case SET_GROUP_MEM_INFO:
-      return (state = {
+      return {
         ...state,
         groupMemInfo: action.groups,
-      });
+      };
     case SET_IS_TYPING:
-      return (state = {
+      return {
         ...state,
         isTyping: action.typing,
-      });
+      };
     case SET_TOTAL_CONTACTS:
-      return (state = {
+      return {
         ...state,
         contacts: action.contacts,
-      });
+      };
     case SET_ALL_CONTACTS:
-      return (state = {
+      return {
         ...state,
         allContacts: action.contacts,
-      });
+      };
     case SET_ALL_GROUPS:
-      return (state = {
+      return {
         ...state,
         allGroups: action.allGroups,
-      });
+      };
     case SET_ON_CALL_COMING:
-      return (state = {
+      return {
         ...state,
         call: action.calling,
-      });
+      };
     case SET_MAKE_CALL:
-      return (state = {
+      return {
         ...state,
         makeCall: action.call,
-      });
+      };
     case SET_CALL_ACCEPTED:
-      return (state = {
+      return {
         ...state,
         isCallAccepted: action.call,
-      });
+      };
     case SET_HEADER_DATA:
-      return (state = {
+      return {
         ...state,
         active: action.data,
-      });
+      };
+    case SET_ONLINE_USERS:
+      return {
+        ...state,
+        onlineUsers: action.onlineUsers,
+      };
     default:
       return state;
   }

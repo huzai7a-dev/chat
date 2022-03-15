@@ -9,3 +9,10 @@ export const init = (empId = 0) => {
 export const getSocket = (empId = 0) => {
     return !socket ? init(empId) : socket;
 }
+
+export const removeSocket = () => {
+    if(socket) {
+        socket.disconnect();
+    }
+    socket = null;
+}

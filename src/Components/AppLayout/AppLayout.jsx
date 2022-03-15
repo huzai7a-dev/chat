@@ -2,10 +2,8 @@ import React from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
-import CssBaseline from "@material-ui/core/CssBaseline";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
@@ -83,9 +81,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function AppLayout({ children }) {
+const AppLayout = React.memo(({ children }) => {
   const dispatch = useDispatch();
-  const { header, sideBarCollapsed,isNightMode } = useSelector((store) => {
+  const { header, sideBarCollapsed, isNightMode } = useSelector((store) => {
     return {
       header: store.chat.active || {},
       sideBarCollapsed: store.app.sideBarCollapsed || false,
@@ -172,4 +170,6 @@ export default function AppLayout({ children }) {
       </main>
     </div>
   );
-}
+});
+
+export default AppLayout;

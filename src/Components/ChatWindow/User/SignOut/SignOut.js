@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { DARKMAIN, LIGHT } from "../../../../Theme/colorConstant";
 import { logout } from "../../../../api/auth";
 import { useHistory } from "react-router";
+import { removeSocket } from "../../../../config/socket";
 
 function SignOut({ setMenuOpen }) {
   const history = useHistory();
@@ -19,6 +20,7 @@ function SignOut({ setMenuOpen }) {
   const signOut = useCallback(async() => {
     try {
       dispacth(logout({data:{user_id:auth_user.elsemployees_empid}}));
+      removeSocket()
       history.replace('/');
     }
     catch(err){

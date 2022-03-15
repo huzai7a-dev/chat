@@ -1,5 +1,4 @@
-import React, { useEffect, createRef, useState, useCallback } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import React, { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import _ from "lodash";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,11 +12,11 @@ import UserMessage from "./UserMessage/UserMessage";
 import { mergeArray } from "../../../helper/util";
 import { getMoreUserMessages, getUserMessages } from "../../../api/message";
 import "./MessageTextContainer.css";
-// import { getSocket } from "../../../socket";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 function MessageTextContainer() {
-  const [hasMore, setHasMore] = useState(true);
-  const { auth_user, active_user, userMessages, isNightMode } = useSelector(
+
+  const { auth_user, active_user, userMessages } = useSelector(
     (store) => {
       return {
         auth_user: store.auth.auth_user || {},
@@ -27,13 +26,9 @@ function MessageTextContainer() {
       };
     }
   );
-  useEffect(() => {
-    setHasMore(true);
-  }, [active_user]);
 
   const dispatch = useDispatch();
-  const image = active_user?.elsemployees_image;
-  const messageContainer = createRef();
+  const messageContainer = useRef();
 
   useEffect(() => {
     const params = {
@@ -49,40 +44,101 @@ function MessageTextContainer() {
   //function to always scroll on bottom
   const scrollToBottom = useCallback(() => {
     const scroll =
-      messageContainer.current.scrollHeight -
-      messageContainer.current.clientHeight;
-    messageContainer.current.scrollTo(0, scroll);
-  }, [messageContainer]);
+      messageContainer.current?.scrollHeight -
+      messageContainer.current?.clientHeight;
+    messageContainer.current?.scrollTo(0, scroll);
+  }, []);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [active_user, scrollToBottom]);
+    if(active_user) {
+      scrollToBottom()
+    }
+  }, [scrollToBottom, active_user]);
 
-  // if there is no message this component will render
-  const NoChat = React.memo(() => {
-    return (
-      <div className="noChat">
-        {image ? (
-          <Avatar
-            style={{ width: "60px", height: "60px" }}
-            color="primary"
-            src={`/bizzportal/public/img/${image}`}
-          />
-        ) : (
-          <Avatar style={{ width: "60px", height: "60px" }} color="primary">
-            {active_user?.elsemployees_name[0]}
-          </Avatar>
-        )}
+  if (!userMessages.length) return <CircularProgress />
+  return (
+    <div
+      className="messageTextContainer"
+      ref={messageContainer}
+      id="scrollableDiv"
+      style={{ display: "flex", flexDirection: "column-reverse" }}
+    >
+      {userMessages.length === 0 ? (
+        <NoChat />
+      ) : (
+        <Messages />
+      )}
+    </div>
+  );
+}
 
-        <Typography
-          variant="h5"
-          color={isNightMode ? "primary" : "textSecondary"}
-        >
-          {active_user?.elsemployees_name}
-        </Typography>
-      </div>
-    );
-  });
+// if there is no message this component will render
+const NoChat = React.memo(() => {
+  const { active_user, isNightMode } = useSelector(
+    (store) => {
+      return {
+        isNightMode: store.app.mode || false,
+        active_user: store.chat.active_user || {},
+      };
+    }
+  );
+  const image = active_user?.elsemployees_image;
+  return (
+    <div className="noChat">
+      {image ? (
+        <Avatar
+          style={{ width: "60px", height: "60px" }}
+          color="primary"
+          src={`/bizzportal/public/img/${image}`}
+        />
+      ) : (
+        <Avatar style={{ width: "60px", height: "60px" }} color="primary">
+          {active_user?.elsemployees_name[0]}
+        </Avatar>
+      )}
+
+      <Typography
+        variant="h5"
+        color={isNightMode ? "primary" : "textSecondary"}
+      >
+        {active_user?.elsemployees_name}
+      </Typography>
+    </div>
+  );
+});
+
+const Messages = React.memo(() => {
+  const dispatch = useDispatch();
+  const [hasMore, setHasMore] = useState(true);
+  const { userMessages, isNightMode, auth_user, active_user } = useSelector(
+    (store) => {
+      return {
+        auth_user: store.auth.auth_user || {},
+        active_user: store.chat.active_user || {},
+        userMessages: store.message.userMessages || [],
+        isNightMode: store.app.mode || false,
+      };
+    }
+  );
+
+  const groupedByMessages = _.chain(userMessages)
+    // Group the elements of Array based on `date` property
+    .groupBy((m) => {
+      return moment(m.fullTime).calendar({
+        sameDay: "[Today]",
+        nextWeek: "dddd",
+        lastDay: "[Yesterday]",
+        lastWeek: "dddd",
+        sameElse: "DD/MM/YYYY",
+      });
+    })
+    // `key` is group's name (date), `value` is the array of objects
+    .reduce((result, value, key) => {
+      result[key] = value;
+      return result;
+    }, {})
+    .value();
+
   const fetchMoreMessages = useCallback(async () => {
     const lastMsgId = userMessages[userMessages.length - 1].message_id;
     const params = {
@@ -107,114 +163,86 @@ function MessageTextContainer() {
     userMessages,
   ]);
 
-  const Messages = React.memo(() => {
-    const groupedByMessages = _.chain(userMessages)
-      // Group the elements of Array based on `date` property
-      .groupBy((m) => {
-        return moment(m.fullTime).calendar({
-          sameDay: "[Today]",
-          nextWeek: "dddd",
-          lastDay: "[Yesterday]",
-          lastWeek: "dddd",
-          sameElse: "DD/MM/YYYY",
-        });
-      })
-      // `key` is group's name (date), `value` is the array of objects
-      .reduce((result, value, key) => {
-        result[key] = value;
-        return result;
-      }, {})
-      .value();
+  useEffect(() => {
+    if(active_user) {
+      setHasMore(true);
+    }
+  }, [active_user])
+
+  const renderItem = useMemo(() => Object.keys(groupedByMessages).map((key, id) => {
+    const groupedByMessage = groupedByMessages[key];
+    let headMessage = groupedByMessage[0];
+    let tailMessage = groupedByMessage[0];
 
     return (
-      <InfiniteScroll
-        dataLength={userMessages.length}
-        next={fetchMoreMessages}
-        inverse={true}
-        hasMore={hasMore}
-        loader={
-          <div style={{ textAlign: "center" }}>
-            <CircularProgress />
-          </div>
-        }
-        scrollableTarget="scrollableDiv"
-        style={{ display: "flex", flexDirection: "column-reverse" }}
-      >
-        {Object.keys(groupedByMessages)?.map((key, id) => {
-          const groupedByMessage = groupedByMessages[key];
-          let headMessage = groupedByMessage[0];
-          let tailMessage = groupedByMessage[0];
-          
-          return (
-            <div key={id}>
-              <div className="dividerContainer">
-                <div
-                  className="divider"
-                  style={{
-                    background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
-                    
-                  }}
-                />
-                <Typography
-                  variant="body2"
-                  align="center"
-                  style={{ padding: "0px 5px", color: isNightMode ?  WHITE : BLACK}}
-                >
-                  {key}
-                </Typography>
-                <div
-                  className="divider"
-                  style={{
-                    background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
-                  }}
-                />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column-reverse" }}>
-                {groupedByMessage?.map((message, messageIndex) => {
-                  
-                  if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
-                    headMessage = message
-                  }
+      <div key={id}>
+        <div className="dividerContainer">
+          <div
+            className="divider"
+            style={{
+              background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
 
-                  groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
-                    if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
-                      tailMessage = nextMessage
-                    }
-                  })
-                  
-                  return (
-                    <UserMessage
-                      sender={message}
-                      key={message?.message_id}
-                      head={headMessage}
-                      tail={tailMessage}
-                    />
-                  )
-                })}
-              </div>
-            </div>
-          );
-        })}
-      </InfiniteScroll>
+            }}
+          />
+          <Typography
+            variant="body2"
+            align="center"
+            style={{ padding: "0px 5px", color: isNightMode ? WHITE : BLACK }}
+          >
+            {key}
+          </Typography>
+          <div
+            className="divider"
+            style={{
+              background: isNightMode ? DARKLIGHT : "rgba(0, 0, 0, 0.1)",
+            }}
+          />
+        </div>
+        <div style={{ display: "flex", flexDirection: "column-reverse" }}>
+          {groupedByMessage?.map((message, messageIndex) => {
+
+            if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+              headMessage = message
+            }
+
+            groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
+              if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
+                tailMessage = nextMessage
+              }
+            })
+
+            return (
+              <UserMessage
+                sender={message}
+                key={message?.message_id}
+                head={headMessage}
+                tail={tailMessage}
+              />
+            )
+          })}
+        </div>
+      </div>
     );
-  });
+
+  }), [groupedByMessages, isNightMode])
 
   return (
-    <div
-      className="messageTextContainer"
-      ref={messageContainer}
-      id="scrollableDiv"
+    <InfiniteScroll
+      dataLength={userMessages.length}
+      next={fetchMoreMessages}
+      inverse={true}
+      hasMore={hasMore}
+      loader={
+        <div style={{ textAlign: "center" }}>
+          <CircularProgress />
+        </div>
+      }
+      scrollableTarget="scrollableDiv"
       style={{ display: "flex", flexDirection: "column-reverse" }}
     >
-      {userMessages.length === 0 ? (
-        <NoChat />
-      ) : (
-        <>
-          <Messages />
-        </>
-      )}
-    </div>
+      {renderItem}
+    </InfiniteScroll>
   );
-}
+});
 
 export default React.memo(MessageTextContainer);

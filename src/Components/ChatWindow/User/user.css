@@ -21,7 +21,7 @@
 .user .signOut .MuiButton-label {
   font-size: 0.7rem;
 }
-.user__info .onlineStatus {
+.onlineStatus {
   width: 10px;
   height: 10px;
   background: #76d275;

@@ -1,37 +1,32 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography, CircularProgress } from "@material-ui/core";
 import moment from "moment";
 import SearchedUser from "./SearchedUser/SearchedUser";
-import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../../../api/chat";
+import { getContactsUser, getUserGroups, seenGroupMessage } from "../../../api/chat";
 import AppUser from "../../Utils/AppUser/AppUser";
-import { setActiveChat, setActiveGroup, setHeaderData } from "../../../Redux/actions/chat";
-import { attachments_url, profile_url } from "../../../constants/apiConstants";
-import { quote } from "../../../Redux/Action";
+import { setActiveGroup, setHeaderData } from "../../../Redux/actions/chat";
+import { attachments_url } from "../../../constants/apiConstants";
 import { setSideBar } from "../../../Redux/actions/app";
 import { getSocket } from "../../../config/socket";
 import "./chatUserContainer.css";
+import ContactList from "./ContactList";
 // import { getSocket } from "";
 
-function ChatUserContainer({ tabValue }) {
+const ChatUserContainer = React.memo(({ tabValue }) => {
   const {
-    active_user,
     auth_user,
     userSearch,
     searchText,
     active_group,
-    contacts,
     groups
   } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
-      active_user: store.chat.active_user || {},
       active_group:store.chat.active_group||{}, 
-      userSearch: store.app?.userSearch || {},
+      userSearch: store.app?.userSearch || [],
       searchText: store.app?.searchText || "",
-      isNightMode: store.app.mode || false,
-      contacts:store.chat.contacts|| [],
       groups:store.chat.groups|| [],
     };
   });
@@ -70,97 +65,6 @@ function ChatUserContainer({ tabValue }) {
   useEffect(()=>{
     getGroupList()
   },[getGroupList])
-  
-  const ContactList = React.memo(() => {
-
-    const onClickUser = (user) => {
-      history.push(`/user/${user.elsemployees_empid}`);
-      dispatch(setActiveChat(user));
-      const paramData = {
-        message_to: user.elsemployees_empid,
-      };
-      dispatch(quote(null));
-      if (window.innerWidth < 700) {
-        dispatch(setSideBar(true));
-      }
-      dispatch(
-        setHeaderData({
-          activeType: "user",
-          activeName: user?.elsemployees_name,
-          activeId: user?.elsemployees_empid,
-        })
-      );
-      if (user.unseen == 1) {
-        const socket = getSocket(auth_user?.elsemployees_empid);
-        socket.emit("seen", paramData);
-      }
-
-      if (user.unseen > 0) {
-        const seenParams = {
-          data: {
-            user_id: user?.elsemployees_empid,
-            loginuser_id: auth_user?.elsemployees_empid,
-          },
-        };
-
-        dispatch(seenMessage(seenParams))
-          .then(() => {
-            const contactParams = {
-              data: {
-                loginuser_id: auth_user.elsemployees_empid,
-                user_id: auth_user.elsemployees_empid,
-              },
-            };
-            const socket = getSocket(auth_user?.elsemployees_empid);
-            socket.emit("seen", paramData);
-            dispatch(getContactsUser(contactParams));
-          })
-          .catch((err) => console.warn(err));
-      }
-    };
-    if (!contactsLoaded)
-      return (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <CircularProgress />
-        </div>
-      );
-
-    return (
-      <div className="chatUserList">
-        {contacts?.length > 0 ? (
-          contacts.map((contact) => (
-            <AppUser
-              key={contact?.elsemployees_empid}
-              userName={contact?.elsemployees_name}
-              lastMessage={
-                contact?.last_msg.message_body && contact?.last_msg.message_body !== "null"
-                  ? contact?.last_msg.message_body
-                  : "Attachment"
-              }
-              activeUser={
-                active_user?.elsemployees_empid == contact?.elsemployees_empid
-              }
-              date={moment(contact?.last_msg.created_at).format("LT")}
-              handleClick={() => onClickUser(contact)}
-              userImage={contact?.elsemployees_image}
-              path={profile_url}
-              unseen={contact.unseen}
-            />
-          ))
-        ) : (
-          <Typography>No Contacts</Typography>
-        )}
-      </div>
-    );
-  });
 
   function sortedGroup(a, b) {
     if (
@@ -268,7 +172,8 @@ function ChatUserContainer({ tabValue }) {
       </div>
     );
   });
-  const SearchedList = React.memo(() => {
+
+  const renderSearchList = useMemo(() => {
     return (
       <div className="searchedUser">
         {userSearch?.map((user, id) => (
@@ -276,22 +181,22 @@ function ChatUserContainer({ tabValue }) {
         ))}
       </div>
     );
-  });
+  }, [userSearch]);
 
   return (
     <div className="container">
       {/* <SwitchTabs /> */}
       {!searchText ? (
         <div className="chatUserContainer">
-          {tabValue == "People" ? <ContactList /> : <GroupList />}
+          {tabValue == "People" ? <ContactList contactsLoaded={contactsLoaded} /> : <GroupList />}
         </div>
       ) : (
         <div className="chatUserContainer">
-          <SearchedList />
+          {renderSearchList}
         </div>
       )}
     </div>
   );
-}
+});
 
-export default React.memo(ChatUserContainer);
+export default ChatUserContainer;
