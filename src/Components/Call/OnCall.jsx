@@ -13,7 +13,7 @@ import { DANGER, WHITE } from "../../Theme/colorConstant";
 import Ringing from "../AnimationComponents/Ringing";
 import { useDispatch, useSelector } from "react-redux";
 import { getActiveUsers } from "../../api/chat";
-import { remotelyNotify } from "../../api/app";
+import { notifyMissedCall } from "../../api/app";
 
 const OnCall = React.memo((props) => {
   const { callUser, onRejectOutgoingCall } = props;
@@ -34,7 +34,7 @@ const OnCall = React.memo((props) => {
           setCallStatus("Ringing")
           callUser(callingTo);
         } else {
-          dispatch(remotelyNotify({ user_id: callingTo.elsemployees_empid }))
+          dispatch(notifyMissedCall({ user_id: callingTo.elsemployees_empid }))
           alert(`${callingTo.elsemployees_name} is unavailable at the moment`);
           if(onRejectOutgoingCall) onRejectOutgoingCall()
         }

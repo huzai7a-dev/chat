@@ -11,3 +11,14 @@ export const remotelyNotify = (params = {}) => (dispatch, getState) => {
     params.method = "POST";
     return dispatch(apiCall(params));
 };
+
+export const notifyMissedCall = (params = {}) => (dispatch, getState) => {
+    params.path = `/worker/${params.user_id}`;
+    params.method = "POST";
+    params.data = {
+        title: "Missed Call",
+        text: `${getState().auth?.elsemployees_name || getState().auth?.elsemployees_empid} wants to call`,
+        type: "message",
+    }
+    return dispatch(apiCall(params));
+};
