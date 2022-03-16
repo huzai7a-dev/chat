@@ -1,5 +1,9 @@
 import webpush from "web-push";
-import connection from "./db";
+import { deleteSubscription, getSubscriptionByUser, saveSubscription } from "./subscription";
+import express from 'express';
+import multer from "multer";
+
+const router = express.Router();
 
 webpush.setGCMAPIKey("AIzaSyDQDWntetf2pfy6AHD2aCElQ19byjRYhew");
 webpush.setVapidDetails(
@@ -8,74 +12,44 @@ webpush.setVapidDetails(
   "xhtf5iVxz1x8ILcTYdglXca-FQfVIk39T_cJvHCYGLE"
 );
 
-export const getSubscriptionByUser = (user_id) =>
-  new Promise((resolve, reject) => {
-    connection.get(
-      `SELECT * FROM Subscription WHERE user_id = ${user_id}`,
-      (error, result) => {
-        if (error) {
-          reject(error);
-        }
-
-        const subscription = {
-          endpoint: result?.endpoint,
-          expirationTime: result?.expirationTime,
-          keys: {
-            p256dh: result?.p256dh,
-            auth: result?.auth,
-          },
-        };
-
-        resolve(subscription);
-      }
-    );
-  });
-
-export const saveSubscription = (user_id, subscription) =>
-  new Promise((resolve, reject) => {
-    // console.log(user_id, subscription)
-    connection.run(
-      `INSERT INTO Subscription(user_id,endpoint,expirationTime,p256dh,auth)
-  VALUES('${user_id}','${subscription.endpoint}','${subscription.expirationTime}','${subscription.keys.p256dh}','${subscription.keys.auth}')
-  ON CONFLICT(user_id)
-  DO UPDATE SET endpoint='${subscription.endpoint}',expirationTime='${subscription.expirationTime}',p256dh='${subscription.keys.p256dh}',auth='${subscription.keys.auth}'`,
-  // [user_id, subscription.endpoint, subscription.expirationTime, subscription.keys.p256dh, subscription.keys.auth],
-  (results, error) => {
-        if (error) {
-          return reject(error);
-        }
-        console.log("Subscription saved", results, error);
-        resolve(results);
-      }
-    );
-  });
-
-  export const getSubscriptions = () => new Promise((resolve, reject) => {
-    connection.all(`SELECT * FROM Subscription`, (error, rows)=> {
-      if(error) {
-        reject(error);
-      } else {
-        resolve(rows);
-      }
-    })
-})
-
 export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification") => {
   const subscription = await getSubscriptionByUser(user_id);
   if(subscription) {
-    return webpush.sendNotification(subscription, typeof dataToSend == typeof "" ? dataToSend : JSON.stringify(dataToSend)).catch((err) => {
-      if (err.statusCode === 404 || err.statusCode === 410) {
-        console.log(
-          "Subscription has expired or is no longer valid: ",
-          subscription,
-          err
-        );
-        subscription?.unsubscribe();
-      } else {
-        throw err;
-      }
-    });
+    try {
+      return await webpush.sendNotification(
+        subscription, 
+        typeof dataToSend == typeof "" ? dataToSend : JSON.stringify(dataToSend)
+      )
+    } catch(e) {
+      console.log("Trigger Push Message Error", e);
+      deleteSubscription(user_id)
+      subscription?.unsubscribe();
+    }
   }
   return null;
 };
 
+router.post("/save-subs", async (req, res) => {
+  if (!req.body.user_id || !req.body.subscription) {
+    return;
+  }
+
+  await saveSubscription(req.body.user_id, req.body.subscription);
+  res.setHeader("Content-Type", "application/json");
+  res.send(JSON.stringify({ data: { success: true } }));
+});
+
+router.post("/:user_id/trigger", multer({dest: "./uploads"}).single('image'),  async(req, res) => {
+  try {
+    const notification = {
+      title: req.body?.title || "John Doe",
+      text: req.body?.text ||  "You are next",
+      image: req.file || null,
+    };
+    res.status(200).send(await triggerPushMsg(req.params.user_id, notification))
+  } catch(e) {
+    res.status(500).send(e)
+  }
+});
+
+export default router;

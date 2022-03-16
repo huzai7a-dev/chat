@@ -5,12 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { DARKMAIN, LIGHT } from "../../../../Theme/colorConstant";
 import { logout } from "../../../../api/auth";
 import { useHistory } from "react-router";
-import { removeSocket } from "../../../../config/socket";
 
 function SignOut({ setMenuOpen }) {
   const history = useHistory();
 
-  const dispacth = useDispatch()
+  const dispatch = useDispatch()
   const {isNightMode,auth_user } = useSelector((store) => {
     return {
       isNightMode:store.app.mode || false,
@@ -19,14 +18,13 @@ function SignOut({ setMenuOpen }) {
   });
   const signOut = useCallback(async() => {
     try {
-      dispacth(logout({data:{user_id:auth_user.elsemployees_empid}}));
-      removeSocket()
+      dispatch(logout({data:{user_id:auth_user.elsemployees_empid}}));
       history.replace('/');
     }
     catch(err){
       console.log(err)
     }
-  },[auth_user.elsemployees_empid, dispacth, history]);
+  },[auth_user.elsemployees_empid, dispatch, history]);
 
   return (
     <div className="signOut"  style={{background: isNightMode ? DARKMAIN: LIGHT}}>

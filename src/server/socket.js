@@ -1,7 +1,9 @@
 import { Server } from "socket.io";
 import axios from "axios";
 import { triggerPushMsg } from "./webpush";
+import express from 'express';
 
+const router = express.Router();
 const socketMappings = {};
 
 export const withSocket = (app) => {
@@ -22,6 +24,7 @@ export const withSocket = (app) => {
         title: data?.message_originalname,
         text: data?.message_body,
         image: data?.from_userpicture,
+        type:"message",
       };
       triggerPushMsg(data?.message_to, notification);
       workspaces.to(socketMappings[data?.message_to])?.emit("messaging", data);
@@ -39,6 +42,7 @@ export const withSocket = (app) => {
               title: `${data?.from_username} in ${data?.group_name}`,
               text: data?.message_body,
               image: data?.from_userpicture,
+              type:"message",
             };
 
             if (participant.elsemployees_empid != data.user_id) {
@@ -110,6 +114,13 @@ export const withSocket = (app) => {
     });
 
     socket.on("call-user", async (data) => {
+      const notification = {
+        title: "Incoming Call",
+        text: `${data?.fromUser?.elsemployees_name || data?.from} is calling`,
+        image: data?.fromUser?.elsemployees_image,
+        type:"call",
+      };
+      triggerPushMsg(data?.to, notification);
       workspaces.to(socketMappings[data.to])?.emit("call-made", data);
     });
 
@@ -156,4 +167,8 @@ export const withSocket = (app) => {
   return app;
 };
 
-export const getActiveUsers = () => Object.keys(socketMappings)
+router.get('/active-users', (req, res) => {
+  return res.json(Object.keys(socketMappings))
+});
+
+export default router;

@@ -5,9 +5,10 @@ import express from "express";
 import cors from 'cors';
 import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
-import { getSubscriptions } from "./server/webpush";
+import socketRoutes from './server/socket'
+import webpushRoutes from './server/webpush'
+import subscriptionRoutes, { getSubscriptions } from "./server/subscription";
 import { GREY, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, BLACK, SECONDARYMAIN, SECONDARYLIGHT, WHITE } from "./Theme/colorConstant";
-import { getActiveUsers } from "./server/socket";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
@@ -37,8 +38,10 @@ const server = express()
   .use(express.static(process.env.RAZZLE_PUBLIC_DIR))
   .use(express.json())
   .use(express.urlencoded({ extended: true }))
-  .get('/socket/active-users', (req, res) => res.json(getActiveUsers()))
   .get('/dialpad',(req, res) => res.sendFile('dialpad.html', {root:process.env.RAZZLE_PUBLIC_DIR}))
+  .get('/socket', socketRoutes)
+  .use('/subscription', subscriptionRoutes)
+  .use('/worker', webpushRoutes)
   .use(proxyRoutes)
   .get("/*", (req, res) => {
     const context = {};

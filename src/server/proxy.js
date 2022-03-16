@@ -1,7 +1,6 @@
 import express from "express";
 import axios from "axios";
 import multer from "multer";
-import { getSubscriptions, saveSubscription, triggerPushMsg } from "./webpush";
 import { getFormData } from "./db";
 
 const router = express.Router();
@@ -85,39 +84,8 @@ router.use("/bizzportal/*", (req, res) => {
     });
 });
 
-router.use("/service-worker", async (req, res) => {
+router.get("/service-worker", async (req, res) => {
   return res.sendFile(`${process.cwd()}\\src\\service_worker.js`);
 });
-
-router.post("/worker/save-subs", async (req, res) => {
-  if (!req.body.user_id || !req.body.subscription) {
-    return;
-  }
-
-  await saveSubscription(req.body.user_id, req.body.subscription);
-  res.setHeader("Content-Type", "application/json");
-  res.send(JSON.stringify({ data: { success: true } }));
-});
-
-router.get("/subscription", async(req, res) => {
-  try {
-    res.status(200).send(await getSubscriptions());
-  } catch(e) {
-    res.send(500).send(e);
-  }
-})
-
-router.get("/worker/trigger/:user_id", async(req, res) => {
-  try {
-    const notification = {
-      title: "John Doe",
-      text: "You are next",
-      image: null,
-    };
-    res.status(200).send(await triggerPushMsg(req.params.user_id, notification))
-  } catch(e) {
-    res.status(500).send(e)
-  }
-})
 
 export default router;

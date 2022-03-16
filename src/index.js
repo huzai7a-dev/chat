@@ -1,15 +1,15 @@
-import express from 'express';
 import { withSocket } from './server/socket';
 import http from 'http';
+
 let app = require('./server').default;
-const server = http.createServer(express().use((req, res) => app.handle(req, res)));
-withSocket(server);
+let server = withSocket(http.createServer(app));
 
 if (module.hot) {
   module.hot.accept('./server', function() {
     console.log('🔁  HMR Reloading `./server`...');
     try {
       app = require('./server').default;
+      server = withSocket(http.createServer(app));
     } catch (error) {
       console.error(error);
     }
