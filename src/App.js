@@ -41,8 +41,8 @@ const App = () => {
     dispatch(setNightMode(theme == "dark"));
   }, [dispatch]);
 
-  useSocket();
   useWorker();
+  useSocket();
 
   const { renderOnCall, renderIncomingAlert, renderOngoingCall } = useCalling();
 

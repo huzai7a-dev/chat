@@ -20,13 +20,17 @@ export const withSocket = (app) => {
     }, 5000)
 
     socket.on("messaging", async (data) => {
-      const notification = {
-        title: data?.message_originalname,
-        text: data?.message_body,
-        image: data?.from_userpicture,
-        type:"message",
-      };
-      triggerPushMsg(data?.message_to, notification);
+      try {
+        const notification = {
+          title: data?.message_originalname,
+          text: data?.message_body,
+          image: data?.from_userpicture,
+          type:"message",
+        };
+        await triggerPushMsg(data?.message_to, notification);
+      } catch(e) {
+        console.log(e);
+      }
       workspaces.to(socketMappings[data?.message_to])?.emit("messaging", data);
     });
 
@@ -38,15 +42,18 @@ export const withSocket = (app) => {
         })
         .then((res) => {
           res.data.participants?.forEach((participant) => {
-            const notification = {
-              title: `${data?.from_username} in ${data?.group_name}`,
-              text: data?.message_body,
-              image: data?.from_userpicture,
-              type:"message",
-            };
-
             if (participant.elsemployees_empid != data.user_id) {
-              triggerPushMsg(participant.elsemployees_empid, notification);
+              try {
+                const notification = {
+                  title: `${data?.from_username} in ${data?.group_name}`,
+                  text: data?.message_body,
+                  image: data?.from_userpicture,
+                  type:"message",
+                };
+                triggerPushMsg(participant.elsemployees_empid, notification);
+              } catch(e) {
+                console.log(e);
+              }
               workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
                 "messaging",
                 data
@@ -114,13 +121,21 @@ export const withSocket = (app) => {
     });
 
     socket.on("call-user", async (data) => {
-      const notification = {
-        title: "Incoming Call",
-        text: `${data?.fromUser?.elsemployees_name || data?.from} is calling`,
-        image: data?.fromUser?.elsemployees_image,
-        type:"call",
-      };
-      triggerPushMsg(data?.to, notification);
+      try {
+        const notification = {
+          title: "Incoming Call",
+          text: `${data?.fromUser?.elsemployees_name || data?.from} is calling`,
+          image: data?.fromUser?.elsemployees_image,
+          type:"incoming-call",
+          data: {
+            offer: data?.offer,
+            from: data?.from,
+          }
+        };
+        await triggerPushMsg(data?.to, notification);
+      } catch(e) {
+        console.log(e)
+      }
       workspaces.to(socketMappings[data.to])?.emit("call-made", data);
     });
 

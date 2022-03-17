@@ -8,7 +8,6 @@ export const getSubscriptionByUser = (user_id) => new Promise((resolve, reject) 
     const query = `SELECT * FROM ${TABLE_NAME} WHERE user_id = ${user_id}`;
     connection.get(query, (error, result) => {
         if (error) return reject(error);
-        console.log(result);
         const subscription = {
             endpoint: result?.endpoint,
             expirationTime: result?.expirationTime,
@@ -33,7 +32,6 @@ export const saveSubscription = (user_id, subscription) => new Promise((resolve,
 
     connection.run(query, (results, error) => {
         if (error) return reject(error);
-        console.log("Subscription saved", results, error);
         resolve(results);
     });
 });

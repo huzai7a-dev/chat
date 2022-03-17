@@ -22,8 +22,9 @@ export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification")
       )
     } catch(e) {
       console.log("Trigger Push Message Error", e);
-      deleteSubscription(user_id)
       subscription?.unsubscribe();
+      deleteSubscription(user_id).catch(() => e);
+      throw e;
     }
   }
   return null;
@@ -45,10 +46,11 @@ router.post("/:user_id/trigger", multer({dest: "./uploads"}).single('image'),  a
       title: req.body?.title || "John Doe",
       text: req.body?.text ||  "You are next",
       image: req.file || null,
+      type: req.body?.type || "message"
     };
     res.status(200).send(await triggerPushMsg(req.params.user_id, notification))
   } catch(e) {
-    res.status(500).send(e)
+    res.status(404).send("Cannot send notification to the user at the moment")
   }
 });
 

@@ -1,9 +1,7 @@
 import { Avatar, Box,Tooltip } from "@material-ui/core";
 import React, { useCallback, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-// import Modal from "react-modal";
 import Modal from "@mui/material/Modal";
-
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import moment from "moment";
 import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
