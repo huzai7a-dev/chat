@@ -1,7 +1,7 @@
 self.addEventListener("activate", () => {
   const user_id = new URL(location).searchParams.get('user_id');
   self.registration.pushManager.getSubscription().then(async (subscription) => {
-    if(!subscription) return;
+    if (!subscription) return;
     const response = await fetch("/worker/save-subs", {
       method: "POST",
       mode: "same-origin",
@@ -25,35 +25,63 @@ self.addEventListener("activate", () => {
 
 self.addEventListener("push", (event) => {
   const notification = event.data.json();
-
-  const promiseChain = self.registration.showNotification(notification.title, {
+  const data = {
     body: notification.text,
     icon: notification.image ? `/bizzportal/public/img/${notification.image}` : '/BizzWorldLogo.png',
-    // actions: [{
-    //   action: "Open Chat",
-    //   title: "BizzChat",
-    //   icon: "/favicon.png"
-    // }],
     badge: "/BizzWorldLogo.png",
+    data: notification.data,
     vibrate: [200, 100, 200, 100, 200, 100, 200]
-  });
+  }
 
+  if (notification.type == 'incoming-call') {
+    data.actions = [
+      {
+        action: "accept",
+        title: "Accept",
+      },
+      {
+        action: "reject",
+        title: "Reject",
+      }
+    ];
+  }
+
+  const promiseChain = self.registration.showNotification(notification.title, data);
   event.waitUntil(promiseChain);
 });
 
-self.addEventListener('notificationclick', function (event) {
-  console.log('On notification click: ', event.notification);
-  event.notification.close();
+const processCallingEvent = (client, event) => {
+  if (client.focus) client.focus();
+  switch (event.action) {
+    case "reject": {
+      return client.postMessage({
+        type: "call::reject",
+      })
+    }
+    case "accept": {
+      return client.postMessage({
+        type: "call::accept",
+        data: event.notification.data
+      })
+    }
+    default: {
+      if (client.focus) client.focus();
+    }
+  }
+}
 
-  // event.waitUntil(clients.matchAll({
-  //   type: "window"
-  // }).then(function(clientList) {
-  //   for (var i = 0; i < clientList.length; i++) {
-  //     var client = clientList[i];
-  //     if (client.url == '/' && 'focus' in client)
-  //       return client.focus();
-  //   }
-  //   if (clients.openWindow)
-  //     return clients.openWindow('/');
-  // }));
+self.addEventListener('notificationclick', function (event) {
+  event.waitUntil(self.clients.matchAll({ includeUncontrolled: true, type: 'window' }).then(function (clientList) {
+    if (clientList.length) {
+      for (let i = 0; i < clientList.length; i++) {
+        const client = clientList[i];
+        processCallingEvent(client, event)
+      }
+    } else {
+      self.clients.openWindow(self.location.origin).then(client => {
+        processCallingEvent(client, event)
+      });
+    }
+  }));
+  event.notification.close();
 });

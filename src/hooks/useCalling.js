@@ -11,16 +11,17 @@ import ToReceiveCall from "../Components/Call/ToReceiveCall";
 import { setActiveCaller, setCallingToUser } from "../Redux/actions/call";
 
 const useCalling = () => {
+  
   const dispatch = useDispatch();
   const [incomingOffer, setIncomingOffer] = useState();
 
   const { auth_user, callingTo, activeCaller } = useSelector((store) => {
-      return {
-        callingTo: store.call.callingTo,
-        activeCaller: store.call.activeCaller,
-        auth_user: store.auth.auth_user || {},
-      };
-    }
+    return {
+      callingTo: store.call.callingTo,
+      activeCaller: store.call.activeCaller,
+      auth_user: store.auth.auth_user || {},
+    };
+  }
   );
 
   const { acceptCall, callUser, processAfterAccept, requestEndCall, endCall } = useRTCClient();
@@ -28,9 +29,9 @@ const useCalling = () => {
   const onAcceptIncomingCall = useCallback(() => {
     acceptCall(incomingOffer);
     dispatch(setActiveCaller(incomingOffer.fromUser))
-}, [incomingOffer, acceptCall, dispatch])
+  }, [incomingOffer, acceptCall, dispatch])
 
-const onRejectIncomingCall = useCallback(() => {
+  const onRejectIncomingCall = useCallback(() => {
     requestEndCall(incomingOffer.from);
     setIncomingOffer();
     dispatch(setCallingToUser())
@@ -42,7 +43,30 @@ const onRejectIncomingCall = useCallback(() => {
     setIncomingOffer();
     dispatch(setCallingToUser())
     dispatch(setActiveCaller())
-  }, [requestEndCall, callingTo, dispatch])
+  }, [requestEndCall, callingTo, dispatch]);
+
+  const registerSWCallActions = useCallback(async () => {
+    if (!("Notification" in window)) return console.log("Not");
+    if (Notification.permission !== "granted") return console.log("Per");
+    if (!("serviceWorker" in navigator)) return console.log("SW");
+
+    navigator.serviceWorker.addEventListener('message', event => {
+      const { type, data } = event.data
+      switch(type) {
+        case "call::accept": {
+          if(data) {
+            acceptCall(data);
+            setIncomingOffer(data);
+          }
+          return;
+        }
+        case "call::reject": {
+          return 
+        }
+      }
+    });
+
+  },[acceptCall])
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid);
@@ -53,6 +77,10 @@ const onRejectIncomingCall = useCallback(() => {
       socket.off("call-made");
     };
   }, [auth_user.elsemployees_empid, dispatch]);
+
+  useEffect(() => {
+    registerSWCallActions();
+  }, [registerSWCallActions])
 
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid);
@@ -68,15 +96,15 @@ const onRejectIncomingCall = useCallback(() => {
   useEffect(() => {
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.on("end-call", async () => {
-        dispatch(setCallingToUser())
-        dispatch(setActiveCaller())
-        setIncomingOffer();
-        endCall();
+      dispatch(setCallingToUser())
+      dispatch(setActiveCaller())
+      setIncomingOffer();
+      endCall();
     });
     return () => {
       socket.off("end-call");
     };
-  }, [auth_user, endCall, dispatch, incomingOffer]);
+  }, [auth_user, endCall, dispatch]);
 
   useEffect(() => {
     const socket = getSocket(auth_user?.elsemployees_empid);
@@ -105,7 +133,7 @@ const onRejectIncomingCall = useCallback(() => {
 
   const renderOngoingCall = useMemo(() => {
     return (
-        <OnCalling onReject={incomingOffer ? onRejectIncomingCall : onRejectOutgoingCall}/>
+      <OnCalling onReject={incomingOffer ? onRejectIncomingCall : onRejectOutgoingCall} />
     );
   }, [incomingOffer, onRejectIncomingCall, onRejectOutgoingCall]);
 
