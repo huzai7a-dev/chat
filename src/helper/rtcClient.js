@@ -57,7 +57,7 @@ export const useRTCClient = () => {
       });
 
       peerConnection.addEventListener("icecandidate", (event) => {
-        if (event.candidate && event.candidate.candidate) {
+        if (event.candidate) {
           socket.emit("icecandidate-sent", {
             candidate: JSON.stringify(event.candidate),
             user_id: user.elsemployees_empid,
@@ -68,7 +68,7 @@ export const useRTCClient = () => {
       peerConnection.addEventListener("connectionstatechange", (event) => {
         if (peerConnection.connectionState === "disconnected") {
           try {
-            requestEndCall();
+            requestEndCall(user.elsemployees_empid);
           } catch(e) {
             console.log(e)
           }
@@ -111,7 +111,7 @@ export const useRTCClient = () => {
       });
 
       peerConnection.addEventListener("icecandidate", (event) => {
-        if (event.candidate && peerConnection.localDescription?.type) {
+        if (event.candidate) {
           socket.emit("icecandidate-sent", {
             candidate: JSON.stringify(event.candidate),
             user_id: data.from,
@@ -119,15 +119,15 @@ export const useRTCClient = () => {
         }
       });
 
-      peerConnection.addEventListener("connectionstatechange", (event) => {
-        if (peerConnection.connectionState === "disconnected") {
-          try {
-            requestEndCall();
-          } catch(e) {
-            console.log(e)
-          }
-        }
-      });
+      // peerConnection.addEventListener("connectionstatechange", (event) => {
+      //   if (peerConnection.connectionState === "disconnected") {
+      //     try {
+      //       requestEndCall(data.to);
+      //     } catch(e) {
+      //       console.log(e)
+      //     }
+      //   }
+      // });
 
       localStream.current.getTracks().forEach((track) => peerConnection.addTrack(track, localStream.current));
       await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
@@ -141,7 +141,7 @@ export const useRTCClient = () => {
       });
       setPeerConnection(peerConnection);
     },
-    [auth_user?.elsemployees_empid, requestEndCall]
+    [auth_user?.elsemployees_empid]
   );
 
   const processAfterAccept = useCallback(async (data) => {
