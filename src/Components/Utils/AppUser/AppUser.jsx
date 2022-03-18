@@ -2,7 +2,7 @@ import { Box, Typography, Avatar, Badge } from "@material-ui/core";
 import React from "react";
 import { useSelector } from "react-redux";
 import { BLACK, DARKACTIVE, LIGHTACTIVE, WHITE } from "../../../Theme/colorConstant";
-
+import './user.css'
 function AppUser({
   userName,
   userImage,
@@ -42,6 +42,7 @@ function AppUser({
       paddingX={1}
       paddingY={1.2}
       marginX={0.8}
+      className="chat__user"
     >
       <Box display="flex" alignItems="center" marginRight={0.8} position="relative">
         {!(userImage == "null" || userImage == null) ? (

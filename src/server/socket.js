@@ -27,7 +27,7 @@ export const withSocket = (app) => {
           image: data?.from_userpicture,
           type:"message",
         };
-        await triggerPushMsg(data?.message_to, notification);
+        triggerPushMsg(data?.message_to, notification);
       } catch(e) {
         console.log(e);
       }
@@ -132,7 +132,7 @@ export const withSocket = (app) => {
             from: data?.from,
           }
         };
-        await triggerPushMsg(data?.to, notification);
+        triggerPushMsg(data?.to, notification);
       } catch(e) {
         console.log(e)
       }

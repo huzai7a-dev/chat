@@ -1,0 +1,6 @@
+.chat__user {
+    transition: .2s;
+}
+.chat__user:hover {
+    background-color: var(--chat-primary-light);
+}

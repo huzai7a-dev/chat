@@ -118,7 +118,7 @@ const OnCalling = React.memo((props) => {
             src={`/bizzportal/public/img/${activeCaller?.elsemployees_image}`}
             style={{ height: "80px", width: "80px", margin: "1rem" }}
           >
-            {activeCaller?.elsemployees_name?.[0] || "A"}
+            {activeCaller?.elsemployees_name?.[0]}
           </Avatar>
           <Timer />
         </Box>

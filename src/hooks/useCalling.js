@@ -28,7 +28,14 @@ const useCalling = () => {
 
   const onAcceptIncomingCall = useCallback(() => {
     acceptCall(incomingOffer);
-    dispatch(setActiveCaller(incomingOffer.fromUser))
+    if(incomingOffer.fromUser) {
+      dispatch(setActiveCaller(incomingOffer.fromUser))
+    } else {
+      dispatch(setActiveCaller({
+        elsemployees_empid: incomingOffer.from,
+        elsemployees_name: incomingOffer.from,
+      }))
+    }
   }, [incomingOffer, acceptCall, dispatch])
 
   const onRejectIncomingCall = useCallback(() => {
@@ -57,6 +64,10 @@ const useCalling = () => {
           if(data) {
             acceptCall(data);
             setIncomingOffer(data);
+            dispatch(setActiveCaller({
+              elsemployees_empid: data.from,
+              elsemployees_name: data.from,
+            }))
           }
           return;
         }

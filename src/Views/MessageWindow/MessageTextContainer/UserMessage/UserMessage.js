@@ -15,7 +15,8 @@ import {
 } from "../../../../Theme/colorConstant";
 import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
 import RenderAttachment from "../../../../Components/Utils/RenderAttachment";
-
+import DoneAllIcon from "@mui/icons-material/DoneAll";
+import CheckIcon from "@mui/icons-material/Check";
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
     return {
@@ -194,6 +195,9 @@ function UserMessage(props) {
             </div>
           </div>
         ) : null}
+        <div style={{ textAlign: "right" }}>
+          <ReadStatus sender={props.sender} active_user={active_user} />
+        </div>
         <ViewAttachment
           src={media}
           openModel={openModel}
@@ -306,5 +310,23 @@ const QuotedMessage = React.memo((props) => {
     </>
   );
 });
+
+const ReadStatus = (props) => {
+  if (
+    parseInt(props.sender?.seen) === 1 &&
+    parseInt(props.sender?.message_to) !==
+      parseInt(props.active_user?.elsemployees_empid)
+  ) {
+    return <DoneAllIcon color="primary" fontSize="small" />;
+  } else if (
+    parseInt(props.sender?.seen) !== 1 &&
+    parseInt(props.sender?.message_to) !==
+      parseInt(props.active_user?.elsemployees_empid)
+  ) {
+    return <CheckIcon fontSize="small" />;
+  } else {
+    return null;
+  }
+};
 
 export default UserMessage;

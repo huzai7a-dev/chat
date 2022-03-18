@@ -6,12 +6,12 @@ const defaultRTCConfig = {
   offerToReceiveVideo: true,
 };
 
-window.createNewPeerConnection = (configuration = defaultRTCConfig) => {
+window.createNewPeerConnection = (configuration) => {
   pc = new RTCPeerConnection(configuration);
   return pc;
 };
 
-window.getPeerConnection = (configuration = defaultRTCConfig) => {
+window.getPeerConnection = (configuration) => {
   if (pc) return pc;
   else return createNewPeerConnection(configuration)
 };
