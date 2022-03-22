@@ -4,76 +4,68 @@ import { Notify } from "../helper/notify";
 export const getSignupUsers = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/getSignupUsers";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessGetSignupUsers, onFailureGetSignupUsers));
-  };
-  
-  const onSuccessGetSignupUsers = (response, params) => (dispatch) => {
-    console.log('onSuccessGetSignupUsers',response)
-  };
-  
-  const onFailureGetSignupUsers = (error, params) => (dispatch) => {
-    console.log("onFailureGetSignupUsers", error);
+    return dispatch(apiCall(params));
   };
 
 // ****************************************************************************
 export const declineUser = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/approveDeclineSignupUsers";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessDeclineUser, onFailureDeclineUser));
+    return dispatch(apiCall(params, onSuccessDeclineUser));
   };
-  const onSuccessDeclineUser = (response, params) => (dispatch) => {
+  const onSuccessDeclineUser = (response) => () => {
     console.log('onSuccessDeclineUser',response)
     Notify(response.data.message,'success')
 
-  };
-  
-  const onFailureDeclineUser = (error, params) => (dispatch) => {
-    console.log("onFailureDeclineUser", error);
   };
   // ****************************************************************************
   export const approveUser = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/approveDeclineSignupUsers";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessApproveUser, onFailureApproveUser));
+    return dispatch(apiCall(params, onSuccessApproveUser));
   };
   
-  const onSuccessApproveUser = (response, params) => (dispatch) => {
+  const onSuccessApproveUser = (response) => () => {
     console.log('onSuccessApproveUser',response)
     Notify(response.data.message,'success')
   };
-  
-  const onFailureApproveUser = (error, params) => (dispatch) => {
-    console.log("onFailureApproveUser", error);
-  };
+
   // ****************************************************************************
   
   export const getApproveUsers = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/getApproveUsers";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessGetApproveUsers, onFailuregetApproveUsers));
+    return dispatch(apiCall(params));
   };
   
-  const onSuccessGetApproveUsers = (response, params) => (dispatch) => {
-    console.log('onSuccessGetApproveUsers',response)
-  };
-  
-  const onFailuregetApproveUsers = (error, params) => (dispatch) => {
-    console.log("onFailuregetApproveUsers", error);
-  };
   // ****************************************************************************
   
   export const getDeclineUsers = (params = {}) => (dispatch) => {
     params.path = "/api/bwccrm/getDeclineUsers";
     params.method = "POST";
-    return dispatch(apiCall(params, onSuccessGetDeclineUsers, onFailureGetDeclineUsers));
+    return dispatch(apiCall(params));
   };
+
+  /***************************************************************************** */
   
-  const onSuccessGetDeclineUsers = (response, params) => (dispatch) => {
-    console.log('onSuccessGetDeclineUsers',response)
+  export const deleteMessage = (params = {}) => (dispatch) => {
+    params.path = "/api/bwccrm/deletemessage";
+    params.method = "POST";
+    return dispatch(apiCall(params));
   };
+  // ****************************************************************************
   
-  const onFailureGetDeclineUsers = (error, params) => (dispatch) => {
-    console.log("onFailureGetDeclineUsers", error);
+  export const deleteGroupMessage = (params = {}) => (dispatch) => {
+    params.path = "/api/bwccrm/deletegroupmessage";
+    params.method = "POST";
+    return dispatch(apiCall(params));
+  };
+  // ****************************************************************************
+  
+  export const deleteGroup = (params = {}) => (dispatch) => {
+    params.path = "/api/bwccrm/deletegroup";
+    params.method = "POST";
+    return dispatch(apiCall(params));
   };
   // ****************************************************************************
   

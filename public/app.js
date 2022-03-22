@@ -61,7 +61,7 @@ const App = React.memo(() => {
         myNumber: urlParams.get("number"),
       });
     }
-  }, []);
+  }, [dispatch, urlParams]);
 
   const { renderCallingState, renderHeader } = window.useCalling(state.myNumber);
 
