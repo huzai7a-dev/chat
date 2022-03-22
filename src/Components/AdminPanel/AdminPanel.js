@@ -78,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
       duration: theme.transitions.duration.leavingScreen,
     }),
     marginLeft: -drawerWidth,
-    width: (props) => (props ? "100vw" : `calc(100vw - ${drawerWidth}px)`),
+    width: (props) => (props ? "85vw" : `calc(85vw - ${drawerWidth}px)`),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",

@@ -12,8 +12,8 @@ export const apiCall = (params, onSuccess, onFailure) => (dispatch, getState) =>
           : Object.assign(
               {},
               {
-                user_id: parseInt(getState().auth.user?.user_id),
-                role_id: parseInt(getState().auth.user?.role_id),
+                user_id: parseInt(getState().auth.auth_user?.elsemployees_empid),
+                role_id: parseInt(getState().auth.auth_user?.elsemployees_roleid),
               },
               params.data
             ),
@@ -27,16 +27,18 @@ export const apiCall = (params, onSuccess, onFailure) => (dispatch, getState) =>
       .then((response) => {
         // OnSuccess common validations
         if(onSuccess) dispatch(onSuccess(response, params));
+        else console.log("onSuccess", response)
         resolve(response);
       })
       .catch((err) => {
         // onFailure common validations
         if(onFailure) dispatch(onFailure(err, params));
+        else console.log("onFailure", err)
         reject(err);
       });
   });
 
-const getHeaders = (params = {}) => (dispatch) => {
+const getHeaders = (params = {}) => () => {
   const a = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",

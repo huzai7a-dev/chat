@@ -1,8 +1,11 @@
-import React from "react";
-import { Box, Avatar, makeStyles, Typography,Button } from "@material-ui/core";
+import React, { useCallback } from "react";
+import { Box, Avatar, IconButton,Button } from "@material-ui/core";
 import { BLACK, PRIMARYMAIN, WHITE } from "../../../Theme/colorConstant";
 import { useDispatch, useSelector } from "react-redux";
 import { getAdminGroupMessages } from "../../../api/message";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { deleteGroup } from "../../../api/admin";
+import { getAllGroups } from "../../../api/chat";
 
 function Group({ group,setHasMessages }) {
   const { auth_user, isNightMode} = useSelector((store) => {
@@ -22,9 +25,25 @@ function Group({ group,setHasMessages }) {
     dispatch(getAdminGroupMessages(params)).then(() => {
       setHasMessages(true);
     })
-  }
+  };
+
+  const onDeleteGroup = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          group_id: group.group_id,
+        }
+      }
+      await dispatch(deleteGroup(params))
+      await dispatch(getAllGroups(params));
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }, [group, dispatch]);
+
   return (
-    <Button style={{display:"block",width:"100%",margin:"10px 0px"}} onClick={getMessages}>
+    <Button style={{ display:"flex", alignItems:"center",justifyContent:'space-between', flexDirection: 'row', width:"100%",margin:"10px 0px"}} onClick={getMessages}>
       <Box display="flex" alignItems="center">
         <Box m={1}>
           {group.group_image == null ? (
@@ -36,6 +55,11 @@ function Group({ group,setHasMessages }) {
           )}
         </Box>
         <Box style={{color: isNightMode ? WHITE: BLACK}}>{group.group_name}</Box>
+      </Box>
+      <Box>
+        <IconButton onClick={onDeleteGroup}>
+          <DeleteIcon />
+        </IconButton>
       </Box>
     </Button>
   );

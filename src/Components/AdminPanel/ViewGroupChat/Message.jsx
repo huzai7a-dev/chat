@@ -1,15 +1,17 @@
 import { Box, makeStyles, Typography, Avatar } from "@material-ui/core";
-import React from "react";
+import React, { useState, useCallback } from "react";
 import {
   PRIMARYLIGHT,
   SECONDARYDARK,
   SECONDARYMAIN,BLACK,WHITE
 } from "../../../Theme/colorConstant";
 import moment from 'moment'
-import { useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import RenderAttachment from "../../Utils/RenderAttachment";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { deleteGroupMessage } from "../../../api/admin";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   message: {
     alignSelf: (props) =>
       props.message.from_userid == props.toId ? "end" : "start",
@@ -39,6 +41,8 @@ const useStyles = makeStyles((theme) => ({
 
 function Message(props) {
   const classes = useStyles(props);
+  const [option, setOption] = useState(false);
+  const dispatch = useDispatch();
   const {isNightMode} = useSelector(store => {
     return {
       isNightMode: store.app.mode
@@ -51,6 +55,20 @@ function Message(props) {
       props.message.from_userid === props.toId ? "flex-start" : "flex-end",
     alignItems: "center",
   };
+
+  const onDeleteMessage = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          groupmessage_id: props.message?.groupmessage_id
+        }
+      };
+      await dispatch(deleteGroupMessage(params));
+      if(props.onUpdate) props.onUpdate()
+    } catch (e) {
+      console.log(e);
+    }
+  }, [dispatch, props])
 
   return (
     <Box className={classes.message}>
@@ -78,9 +96,47 @@ function Message(props) {
           </Box>
         )}
         {props.message.groupmessage_body !== null && (
+          <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Box className={classes.messageBody}>
-            <Typography variant="caption">{props.message.groupmessage_body}</Typography>
+            <Typography variant="caption">
+              {props.message.groupmessage_body}
+            </Typography>
           </Box>
+          <div
+            className="msgOption"
+            style={option ? { display: "flex", position:'relative' } : null}
+            onClick={() => {
+              setOption((o) => !o);
+            }}
+          >
+            <MoreVertIcon />
+            {option ? (
+              <div
+                className="optionsContainer"
+                style={{
+                  [props.message.from_userid === props.toId
+                    ? "right"
+                    : "left"]: "100%",
+                }}
+              >
+                <div className="options">
+                  <p
+                    onClick={onDeleteMessage}
+                  >
+                    Delete
+                  </p>
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
         )}
       </Box>
     </Box>

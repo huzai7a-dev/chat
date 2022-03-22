@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "./Message";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { getMoreUserMessages } from "../../../api/message";
+import { getAdminUserMessages, getMoreUserMessages } from "../../../api/message";
 import { mergeArray } from "../../../helper/util";
 import {
   setAdminUserMessages,
@@ -39,6 +39,10 @@ function MessageContainer(props) {
       isNightMode: store.message.mode || false,
     };
   });
+  
+  const fetchMessages = async () => {
+    dispatch(getAdminUserMessages());
+  }
 
   const fetchMoreMessages = async () => {
     const lastMsgId = messages[messages.length - 1].message_id;
@@ -59,7 +63,7 @@ function MessageContainer(props) {
 
   const renderItems = useMemo(() => messages.map((message) => {
     return (
-      <Message key={message.message_id} message={message} toId={props.toId} />
+      <Message onUpdate={fetchMessages} key={message.message_id} message={message} toId={props.toId} />
     );
   }), [messages, props.toId]);
 

@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllContacts } from "../../../api/chat";
 import ToUser from "./ToUser";
 import FromUser from "./FromUser";
-import { getAdminUserMessages } from "../../../api/message";
 import MessageContainer from "./MessageContainer";
 import { filterList } from "../../../helper/util";
 import { BLACK, WHITE } from "../../../Theme/colorConstant";
@@ -54,7 +53,7 @@ function ViewMessages() {
       },
     };
     dispatch(getAllContacts(params));
-  }, []);
+  }, [dispatch, auth_user]);
 
   const handleToUser =(e)=>{
         setTo(e.target.value);        
@@ -93,7 +92,8 @@ function ViewMessages() {
   };
 
   const getMessages = () => {
-    dispatch(getAdminUserMessages(params)).then((res) => {
+    dispatch(
+      (params)).then(() => {
       setHasMessages(true);
     });
   };

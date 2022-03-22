@@ -26,14 +26,11 @@ function ViewGroupChat() {
     };
   });
   const dispatch = useDispatch();
-  const params = {
-    data: {
-      user_id: 1,
-    },
-  };
+  
   useEffect(() => {
-    dispatch(getAllGroups(params));
-  }, []);
+    dispatch(getAllGroups());
+  }, [dispatch]);
+  
   const handleSearch = (e)=>{
     setSearchGroup(e.target.value);
     if (searchGroup.length) {
