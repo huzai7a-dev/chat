@@ -10,7 +10,7 @@ import {
 } from "../constant/message";
 
 const initState = {
-  userMessages: [],
+  userMessages: null,
   adminUserMessages: [],
   adminGroupMessages: [],
   groupMessages: [],

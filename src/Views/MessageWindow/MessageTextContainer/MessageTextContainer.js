@@ -21,7 +21,7 @@ function MessageTextContainer() {
       return {
         auth_user: store.auth.auth_user || {},
         active_user: store.chat.active_user || {},
-        userMessages: store.message.userMessages || [],
+        userMessages: store.message.userMessages,
         isNightMode: store.app.mode || false,
       };
     }
@@ -55,7 +55,7 @@ function MessageTextContainer() {
     }
   }, [scrollToBottom, active_user]);
 
-  if (!userMessages.length) return <CircularProgress />
+  if (!userMessages) return <CircularProgress />
   return (
     <div
       className="messageTextContainer"
