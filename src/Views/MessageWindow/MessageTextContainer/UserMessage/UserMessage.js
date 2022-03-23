@@ -17,6 +17,9 @@ import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
 import RenderAttachment from "../../../../Components/Utils/RenderAttachment";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
 import CheckIcon from "@mui/icons-material/Check";
+import { deleteMessage } from "../../../../api/admin";
+import { ADMIN } from "../../../../Role";
+import { getUserMessages } from "../../../../api/message";
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
     return {
@@ -25,7 +28,6 @@ function UserMessage(props) {
       isNightMode: store.app.mode || false,
     };
   });
-
   const [forwardModel, setForwardModel] = useState(false);
   const loggedInUser = auth_user?.elsemployees_empid;
   const image = props.sender.from_userpicture;
@@ -223,12 +225,38 @@ function UserMessage(props) {
 const MessageOptions = React.memo((props) => {
   const { auth_user } = useSelector((store) => {
     return {
-      auth_user: store.auth.auth_user || {},
+      auth_user: store.auth.auth_user,
     };
   });
 
   const loggedInUser = auth_user?.elsemployees_empid;
+  const role = auth_user?.elsemployees_roleid;
   const dispatch = useDispatch();
+
+  const fetchMessages = useCallback(async () => {
+    const params = {
+      data:{
+        from_id: auth_user?.elsemployees_empid,
+        to_id: props.sender.message_from,
+        user_id: auth_user?.elsemployees_empid,
+      }
+    }
+    dispatch(getUserMessages(params));
+  }, [dispatch, auth_user, props.sender])
+
+  const onDeleteMessage = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          message_id: props.sender.message_id
+        }
+      };
+      await dispatch(deleteMessage(params));
+      fetchMessages();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [fetchMessages, dispatch, props])
 
   const quoteData = useCallback(() => {
     const quoteMsg = {
@@ -268,6 +296,13 @@ const MessageOptions = React.memo((props) => {
         >
           Forward
         </p>
+        {role == ADMIN ? (
+          <p
+            onClick={onDeleteMessage}
+          >
+            Delete
+          </p> 
+        ) : null}
         <p onClick={quoteData}>Quote</p>
         {props.sender?.message_attachment ? (
           <p

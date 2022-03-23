@@ -35,7 +35,7 @@ function Group({ group,setHasMessages }) {
         }
       }
       await dispatch(deleteGroup(params))
-      await dispatch(getAllGroups(params));
+      await dispatch(getAllGroups());
     }
     catch (e) {
       console.log(e);
@@ -58,7 +58,7 @@ function Group({ group,setHasMessages }) {
       </Box>
       <Box>
         <IconButton onClick={onDeleteGroup}>
-          <DeleteIcon />
+          <DeleteIcon style={{color:isNightMode && WHITE}}/>
         </IconButton>
       </Box>
     </Button>

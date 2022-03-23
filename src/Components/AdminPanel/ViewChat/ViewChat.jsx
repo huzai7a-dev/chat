@@ -9,6 +9,7 @@ import FromUser from "./FromUser";
 import MessageContainer from "./MessageContainer";
 import { filterList } from "../../../helper/util";
 import { BLACK, WHITE } from "../../../Theme/colorConstant";
+import { getAdminUserMessages } from "../../../api/message";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -92,8 +93,7 @@ function ViewMessages() {
   };
 
   const getMessages = () => {
-    dispatch(
-      (params)).then(() => {
+    dispatch(getAdminUserMessages(params)).then(() => {
       setHasMessages(true);
     });
   };

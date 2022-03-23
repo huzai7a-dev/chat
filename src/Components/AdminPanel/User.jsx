@@ -1,7 +1,5 @@
 import React from "react";
 import { Box, Typography, Avatar, Button } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
-import DoneIcon from "@material-ui/icons/Done";
 import {
   BLACK,
   DANGER,

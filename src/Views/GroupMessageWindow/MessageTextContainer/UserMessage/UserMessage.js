@@ -9,14 +9,16 @@ import { setQuote } from "../../../../Redux/actions/app";
 import ForwardMessage from "./ForwardMessage";
 import RenderAttachment from "../../../../Components/Utils/RenderAttachment"
 import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
-
+import { ADMIN } from '../../../../Role/index';
+import { deleteGroupMessage } from "../../../../api/admin";
+import { getGroupMessages } from "../../../../api/message";
 
 function UserMessage({ chatgroup, ...props }) {
   const { auth_user, active_user, seenData } = useSelector((store) => {
     return {
-      auth_user: store.auth.auth_user || {},
-      active_user: store.auth.auth_user || {},
-      seenData: store.message.groupMessages.seendata || [],
+      auth_user: store.auth.auth_user,
+      active_user: store.auth.auth_user,
+      seenData: store.message.groupMessages.seendata
     };
   });
   const dispatch = useDispatch();
@@ -51,6 +53,7 @@ function UserMessage({ chatgroup, ...props }) {
   const image = chatgroup.from_userpicture;
   const loggedInUser = auth_user?.elsemployees_empid;
   const user = chatgroup.from_userid;
+  const role = auth_user?.elsemployees_roleid;
   // function to open image/video
   const openImage = (e) => {
     setMedia(e.target.src);
@@ -68,6 +71,29 @@ function UserMessage({ chatgroup, ...props }) {
     dispatch(setQuote(quoteMsg));
     setOption(false);
   };
+
+  const fetchMessages = useCallback(() => {
+    const params = {
+      data: {
+        group_id: chatgroup.groupmessage_id,
+      },
+    };
+    dispatch(getGroupMessages(params));
+  }, [dispatch, chatgroup])
+
+  const onDeleteMessage = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          groupmessage_id: chatgroup.groupmessage_id
+        }
+      };
+      await dispatch(deleteGroupMessage(params));
+      fetchMessages();
+    } catch (e) {
+      console.log(e);
+    }
+  }, [dispatch, chatgroup, fetchMessages])
 
   const downloadAttachment = (file) => {
     const attachList = file.split(",");
@@ -205,6 +231,13 @@ function UserMessage({ chatgroup, ...props }) {
                     >
                       Forward
                     </p>
+                    {role == ADMIN ? (
+                      <p
+                        onClick={onDeleteMessage}
+                      >
+                        Delete
+                      </p> 
+                    ) : null}
                     <p onClick={quoteData}>Quote</p>
                     {chatgroup.groupmessage_attachment ? (
                       <p

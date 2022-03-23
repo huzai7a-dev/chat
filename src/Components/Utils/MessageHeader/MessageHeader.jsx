@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import "./MessageHeader.css";
 import { IconButton, Typography } from "@material-ui/core";
@@ -12,15 +12,20 @@ import {
 } from "../../../Redux/actions/app";
 import { setCallingToUser } from "../../../Redux/actions/call";
 import { BLACK, WHITE } from "../../../Theme/colorConstant";
+import DeleteIcon from "@material-ui/icons/Delete";
+import { deleteGroup } from "../../../api/admin";
+import { getUserGroups } from "../../../api/chat";
+import { setActiveGroup, setHeaderData } from "../../../Redux/actions/chat";
 
 const MessageHeader = () => {
   const history = useHistory();
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { header, isNightMode, active_user } = useSelector((store) => {
+  const { header, isNightMode, active_user, auth_user } = useSelector((store) => {
     return {
       active_user: store.chat.active_user,
+      auth_user: store.auth.auth_user,
       header: store.chat.active || {},
       isNightMode: store.app.mode || false,
     };
@@ -30,6 +35,24 @@ const MessageHeader = () => {
     e.preventDefault();
     history.replace(`${location.pathname}#gallery`);
   };
+  
+  const onDeleteGroup = useCallback(async () => {
+    try {
+      const params = {
+        data: {
+          group_id: header.activeId,
+        }
+      }
+      await dispatch(deleteGroup(params))
+      await dispatch(getUserGroups({data: { loginuser_id: auth_user?.elsemployees_empid }}));
+      dispatch(setActiveGroup({}))
+      dispatch(setHeaderData({}));
+      history.push("/");
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }, [header, dispatch, history, auth_user]);
 
   return (
     <div className="message__header">
@@ -61,6 +84,15 @@ const MessageHeader = () => {
         </div>
       </div>
       <div className="message__header__right">
+        {header.activeType == "group" ? (
+          <IconButton
+            onClick={onDeleteGroup}
+          >
+            <DeleteIcon 
+              color="primary"
+              style={{ width: "30px", height: "30px" }}/>
+          </IconButton>
+        ): null}
         <IconButton
           onClick={() => dispatch(setCallingToUser(active_user))}
         >
