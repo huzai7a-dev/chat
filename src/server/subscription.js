@@ -8,6 +8,7 @@ export const getSubscriptionByUser = (user_id) => new Promise((resolve, reject) 
     const query = `SELECT * FROM ${TABLE_NAME} WHERE user_id = ${user_id}`;
     connection.get(query, (error, result) => {
         if (error) return reject(error);
+        if(!result) return resolve(result);
         const subscription = {
             endpoint: result?.endpoint,
             expirationTime: result?.expirationTime,

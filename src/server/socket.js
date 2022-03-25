@@ -20,6 +20,7 @@ export const withSocket = (app) => {
     }, 5000)
 
     socket.on("messaging", async (data) => {
+      workspaces.to(socketMappings[data?.message_to])?.emit("messaging", data);
       try {
         const notification = {
           title: data?.message_originalname,
@@ -27,11 +28,10 @@ export const withSocket = (app) => {
           image: data?.from_userpicture,
           type:"message",
         };
-        triggerPushMsg(data?.message_to, notification);
+        await triggerPushMsg(data?.message_to, notification);
       } catch(e) {
         console.log(e);
       }
-      workspaces.to(socketMappings[data?.message_to])?.emit("messaging", data);
     });
 
     socket.on("group-messaging", (data) => {
@@ -41,8 +41,12 @@ export const withSocket = (app) => {
           group_id: data.group_id,
         })
         .then((res) => {
-          res.data.participants?.forEach((participant) => {
+          res.data.participants?.forEach(async (participant) => {
             if (participant.elsemployees_empid != data.user_id) {
+              workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
+                "messaging",
+                data
+              );
               try {
                 const notification = {
                   title: `${data?.from_username} in ${data?.group_name}`,
@@ -50,14 +54,10 @@ export const withSocket = (app) => {
                   image: data?.from_userpicture,
                   type:"message",
                 };
-                triggerPushMsg(participant.elsemployees_empid, notification);
+                await triggerPushMsg(participant.elsemployees_empid, notification);
               } catch(e) {
                 console.log(e);
               }
-              workspaces.to(socketMappings[participant.elsemployees_empid])?.emit(
-                "messaging",
-                data
-              );
             }
           });
         })
@@ -121,6 +121,7 @@ export const withSocket = (app) => {
     });
 
     socket.on("call-user", async (data) => {
+      workspaces.to(socketMappings[data.to])?.emit("call-made", data);
       try {
         const notification = {
           title: "Incoming Call",
@@ -132,11 +133,10 @@ export const withSocket = (app) => {
             from: data?.from,
           }
         };
-        triggerPushMsg(data?.to, notification);
+        await triggerPushMsg(data?.to, notification);
       } catch(e) {
         console.log(e)
       }
-      workspaces.to(socketMappings[data.to])?.emit("call-made", data);
     });
 
     socket.on("icecandidate-sent", async (data) => {
@@ -185,5 +185,11 @@ export const withSocket = (app) => {
 router.get('/active-users', (req, res) => {
   return res.json(Object.keys(socketMappings))
 });
+
+router.post('/dialpad/send-text', (req, res) => {
+  console.log(typeof req.body);
+  console.log(req.body);
+  return res.json({});
+})
 
 export default router;

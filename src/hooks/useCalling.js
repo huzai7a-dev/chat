@@ -122,6 +122,8 @@ const useCalling = () => {
     socket.on("icecandidate-receive", async (data) => {
       const peerConnection = getPeerConnection();
       try {
+        console.log(peerConnection.remoteDescription)
+        if(peerConnection.remoteDescription)
         await peerConnection.addIceCandidate(
           new RTCIceCandidate(JSON.parse(data))
         );
