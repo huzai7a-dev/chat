@@ -1,5 +1,6 @@
 window.env = {
-    "SOCKET_URL": "https://chat.bizzworld.local"
+    "SOCKET_URL": "http://localhost:3000",
+    "companyName": "Bizzworld Communications",
 }
 
 window.Context = React.createContext({});

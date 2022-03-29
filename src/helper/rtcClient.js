@@ -6,7 +6,7 @@ import { getSocket } from "../config/socket";
 const offerOptions = {
   offerToReceiveAudio: true,
   offerToReceiveVideo: false,
-  voiceActivityDetection: false,
+  iceRestart : true,
 };
 
 export const useRTCClient = () => {
@@ -45,7 +45,7 @@ export const useRTCClient = () => {
       if (devices.filter((d) => d.kind == "audioinput").length == 0) return alert("No Input media detected");
       const peerConnection = getPeerConnection();
       const socket = getSocket(auth_user.elsemployees_empid);
-      localStream.current = localStream.current || (await navigator.mediaDevices.getUserMedia({ audio: true }));
+      localStream.current = localStream.current || (await navigator.mediaDevices.getUserMedia({ audio: true, video: false }));
 
       const remoteVideo = document.querySelector("audio#remoteVideo");
       if (!remoteVideo) return console.log("Element missing");
@@ -65,15 +65,15 @@ export const useRTCClient = () => {
         }
       });
 
-      peerConnection.addEventListener("connectionstatechange", (event) => {
-        if (peerConnection.connectionState === "disconnected") {
-          try {
-            requestEndCall(user.elsemployees_empid);
-          } catch(e) {
-            console.log(e)
-          }
-        }
-      });
+      // peerConnection.addEventListener("connectionstatechange", (event) => {
+      //   if (peerConnection.connectionState === "disconnected") {
+      //     try {
+      //       requestEndCall(user.elsemployees_empid);
+      //     } catch(e) {
+      //       console.log(e)
+      //     }
+      //   }
+      // });
 
       localStream.current.getTracks().forEach((track) => peerConnection.addTrack(track, localStream.current));
       peerConnection.addStream(localStream.current);
@@ -90,7 +90,7 @@ export const useRTCClient = () => {
         fromUser: auth_user,
       });
     },
-    [auth_user, requestEndCall]
+    [auth_user]
   );
 
   const acceptCall = useCallback(async (data) => {
@@ -99,7 +99,7 @@ export const useRTCClient = () => {
       const peerConnection = getPeerConnection();
       const socket = getSocket(auth_user?.elsemployees_empid);
 
-      localStream.current = localStream.current || (await navigator.mediaDevices.getUserMedia({ audio: true }));
+      localStream.current = localStream.current || (await navigator.mediaDevices.getUserMedia({ audio: true, video: false }));
 
       const remoteVideo = document.querySelector("audio#remoteVideo");
       if (!remoteVideo) return console.log("Element missing");

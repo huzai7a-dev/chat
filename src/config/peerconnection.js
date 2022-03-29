@@ -6,7 +6,7 @@ const defaultRTCConfig = {
   offerToReceiveVideo: true,
 };
 
-export const createNewPeerConnection = (configuration) => {
+export const createNewPeerConnection = (configuration = defaultRTCConfig) => {
   pc = new RTCPeerConnection(configuration);
 
   // pc.addEventListener("icecandidate", (event) => {
@@ -27,7 +27,7 @@ export const createNewPeerConnection = (configuration) => {
   return pc;
 };
 
-export const getPeerConnection = (configuration) => {
+export const getPeerConnection = (configuration = defaultRTCConfig) => {
   if (pc) return pc;
   else return createNewPeerConnection(configuration)
 };

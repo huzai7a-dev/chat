@@ -113,11 +113,18 @@ const Dialpad = React.memo((props) => {
     });
   }, [dispatch])
 
+  const onContact = () => {
+    dispatch({
+      type: "SET_SHOW_CONTACTS",
+      showContacts: true
+    });
+  }
+
   return (
     <React.Fragment>
       {renderLinearDialPad}
       {renderSpecialDialPad}
-      <button type="button" className="btn btn-link dialpad__action" onClick={props.onReject}>
+      <button type="button" className="btn btn-link dialpad__action" onClick={onContact}>
         <span className={`mdi mdi-chat-processing`} style={{ color: "var(--bs-primary)", fontSize: "2.5rem" }}></span>
       </button>
       {state.callingTo ? (
@@ -137,7 +144,6 @@ const Dialpad = React.memo((props) => {
 });
 
 const Avatar = React.memo((props) => {
-
 
   return (
     <div className="avatar__container">
@@ -276,9 +282,7 @@ window.useCalling = (number) => {
     socket.on("icecandidate-receive", async (data) => {
       const peerConnection = getPeerConnection();
       try {
-        await peerConnection.addIceCandidate(
-          new RTCIceCandidate(JSON.parse(data))
-        );
+        await peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(data)));
       } catch (e) {
         console.error(data, e);
       }
@@ -358,7 +362,7 @@ window.useCalling = (number) => {
 
   const renderCallingState = React.useMemo(() => {
     if (state.incomingOffer && callStatus == "Incoming") return renderOnIncomingCall;
-    if (state.callingTo || callStatus == "On Call") return renderOngoingCall
+    if (state.callingTo || (state.incomingOffer && state.incomingOffer.from)) return renderOngoingCall
     return renderDialpad;
   }, [renderDialpad, callStatus, state.callingTo, state.incomingOffer, renderOngoingCall, renderOnIncomingCall])
 
