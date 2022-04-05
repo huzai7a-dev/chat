@@ -4,6 +4,10 @@ import express from 'express';
 const router = express.Router();
 const TABLE_NAME = "Subscription";
 
+connection.run(
+    `CREATE TABLE IF NOT EXISTS ${TABLE_NAME} (user_id TEXT PRIMARY KEY, endpoint TEXT, expirationTime TEXT, p256dh TEXT, auth TEXT)`
+);
+
 export const getSubscriptionByUser = (user_id) => new Promise((resolve, reject) => {
     const query = `SELECT * FROM ${TABLE_NAME} WHERE user_id = ${user_id}`;
     connection.get(query, (error, result) => {

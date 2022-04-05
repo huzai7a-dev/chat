@@ -7,7 +7,8 @@ import { renderToString } from "react-dom/server";
 import proxyRoutes from './server/proxy'
 import socketRoutes from './server/socket'
 import webpushRoutes from './server/webpush'
-import subscriptionRoutes, { getSubscriptions } from "./server/subscription";
+import subscriptionRoutes from "./server/subscription";
+import fcmRoutes from "./server/fcmToken";
 import { GREY, LIGHT, PRIMARYLIGHT, PRIMARYMAIN, BLACK, SECONDARYMAIN, SECONDARYLIGHT, WHITE } from "./Theme/colorConstant";
 
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
@@ -41,11 +42,11 @@ const server = express()
   .get('/dialpad',(req, res) => res.sendFile('dialpad.html', {root:process.env.RAZZLE_PUBLIC_DIR}))
   .use('/socket', socketRoutes)
   .use('/subscription', subscriptionRoutes)
+  .use('/fcm-token', fcmRoutes)
   .use('/worker', webpushRoutes)
   .use(proxyRoutes)
   .get("/*", (req, res) => {
     const context = {};
-    getSubscriptions();
     const markup = renderToString(
       <StaticRouter context={context} location={req.url}>
         <App />
@@ -89,7 +90,7 @@ const server = express()
   </head>
     <body>
         <div id="root">${markup}</div>
-        <audio id="remoteVideo" autoPlay></audio>
+        <audio id="remoteVideo"></audio>
         ${jsScriptTagsFromAssets(assets, "client", " defer crossorigin")}
     </body>
 </html>`

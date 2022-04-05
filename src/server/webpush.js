@@ -2,14 +2,15 @@ import webpush from "web-push";
 import { deleteSubscription, getSubscriptionByUser, saveSubscription } from "./subscription";
 import express from 'express';
 import multer from "multer";
+import { saveFCMToken } from "./fcmToken";
 
 const router = express.Router();
 
-webpush.setGCMAPIKey("AIzaSyDQDWntetf2pfy6AHD2aCElQ19byjRYhew");
+webpush.setGCMAPIKey(process.env.RAZZLE_GCM_API);
 webpush.setVapidDetails(
-  "mailto:avidhaus.ahsan@gmail.com",
-  "BCGDIfnAeJn_Pkpz9nFdOjbLNDsGE15JKZbVwNMlJquDYx5DtmVyJWuRXBDUmB2qhakY43zrEOrc5VgL_7VFcvY",
-  "xhtf5iVxz1x8ILcTYdglXca-FQfVIk39T_cJvHCYGLE"
+  process.env.RAZZLE_VAPID_SUBJECT,
+  process.env.RAZZLE_VAPID_PUBLIC_KEY,
+  process.env.RAZZLE_VAPID_PRIVATE_KEY
 );
 
 export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification") => {
@@ -52,6 +53,17 @@ router.post("/:user_id/trigger", multer({dest: "./uploads"}).single('image'),  a
   } catch(e) {
     res.status(404).send("Cannot send notification to the user at the moment")
   }
+});
+
+router.post("/save-token", async (req, res) => {
+  if (!req.body.user_id || !req.body.token) {
+    return;
+  }
+
+  await saveFCMToken(req.body.user_id, req.body.token);
+  res.setHeader("Content-Type", "application/json");
+  res.send(JSON.stringify({ data: { success: true } }));
+
 });
 
 export default router;

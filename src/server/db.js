@@ -16,10 +16,6 @@ const connection = new sqlite3.Database(
   }
 );
 
-connection.run(
-  `CREATE TABLE IF NOT EXISTS Subscription (user_id TEXT PRIMARY KEY, endpoint TEXT, expirationTime TEXT, p256dh TEXT, auth TEXT)`
-);
-
 const appendArray = (formData, key, arrValue) => {
   arrValue.forEach((value, index) => {
     if (isMoment(value)) {

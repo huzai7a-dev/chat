@@ -10,7 +10,7 @@ const ToReceiveCall = React.memo((props) => {
 
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="space-around" className="onAnswerContainer">
-      <audio loop autoPlay>
+      <audio loop>
         <source src="/audio/incoming.wav" type="audio/wav" />
       </audio>
       <Box display="flex" flexDirection="column" alignItems="center">

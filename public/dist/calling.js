@@ -310,7 +310,7 @@ window.useCalling = (number) => {
           </div>
         </div>
         {callStatus == "Incoming" ? (
-          <audio loop autoPlay>
+          <audio loop>
             <source src="/audio/incoming.wav" type="audio/wav" />
           </audio>
         ): null}
@@ -329,7 +329,7 @@ window.useCalling = (number) => {
           </button>
         </div>
         {callStatus == "Ringing" ? (
-          <audio loop autoPlay>
+          <audio loop>
             <source src="/audio/waiting.wav" type="audio/wav" />
           </audio>
         ): null}

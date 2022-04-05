@@ -50,7 +50,7 @@ const OnCall = React.memo((props) => {
 
   return (
     <div className="onCallContainer">
-      <audio loop autoPlay>
+      <audio loop>
         <source src="/audio/waiting.wav" type="audio/wav" />
       </audio>
       <Box p={2}>
