@@ -21,7 +21,7 @@ import { setQuote } from "../../../Redux/actions/app";
 // import { getSocket } from "../../../socket";
 import { getContactsUser } from "../../../api/chat";
 import { sendMessage } from "../../../api/message";
-import Utils, { getFileFromBlob, placeCaretAtEnd } from "../../../helper/util";
+import Utils, { getFileFromBlob } from "../../../helper/util";
 import { setUserMessages } from "../../../Redux/actions/message";
 import { DARKLIGHT, DANGER, PRIMARYLIGHT, PRIMARYMAIN, BLACK, WHITE, LIGHT } from "../../../Theme/colorConstant";
 import { useReactMediaRecorder } from "react-media-recorder";
@@ -30,6 +30,8 @@ import Recorder from "../../../Components/Recorder/Recorder";
 import { getSocket } from "../../../config/socket";
 import LinearProgress from '@material-ui/core/LinearProgress';
 // import Recorder from "../../Recorder/Recorder";
+
+// textInput.current.textContent || textInput.current.innerText || "";
 
 const useStyles = makeStyles({
   sendBtn: {
@@ -73,7 +75,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       echoCancellation: true,
     });
 
-  const [message, setMessage] = useState("");
   const [isRecording, setRecording] = useState(false);
   const [pastedImg, setPastedImg] = useState([]);
   const [isEmojiActive, setIsEmojiActive] = useState(false);
@@ -122,7 +123,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       user_id: active_user?.elsemployees_empid,
       tPerson: auth_user?.elsemployees_empid,
       name: active_user.elsemployees_name,
-      msgQty: message,
+      msgQty: textInput.current?.textContent || textInput.current?.innerText || "",
     };
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
@@ -130,7 +131,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     active_user?.elsemployees_empid,
     active_user.elsemployees_name,
     auth_user?.elsemployees_empid,
-    message,
   ]);
 
   const deleteAttachment = useCallback(
@@ -143,23 +143,17 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
 
   // clear typed messages when chat window changes
   useEffect(() => {
-    setMessage("");
+    if (textInput.current) {
+      textInput.current.innerText = "";
+    }
   }, [active_user]);
+
   // focus input field when page in load
   useEffect(() => {
     if (searchText.length < 1 && textInput.current) {
       textInput.current.focus();
     }
   }, [active_user, quote, searchText.length]);
-
-  useEffect(() => {
-    if (message.length > 0) {
-      typing();
-    }
-    if (message.length < 1) {
-      leaveTyping();
-    }
-  }, [leaveTyping, message, typing]);
 
   const AttachmentPreview = useMemo(() => {
     return attachment.map((item, index) => {
@@ -222,23 +216,17 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     }
     setRecording(false);
     setVisibleAudio(false);
-    setMessage("");
     setIsEmojiActive(false);
     setAttachment([]);
     setPastedImg([]);
     dispatch(setQuote(null));
   }, [dispatch, setAttachment]);
-  useEffect(() => {
-    placeCaretAtEnd(textInput.current);
-  }, [message]);
+
   // send message on enter
   const SendMessageOnEnter = (e) => {
-    if (e.key === "Enter" && e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      setMessage(`${message}\n`); // jump to next line
-      textInput.current.innerText = `${message}\n`;
-    } else if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+      const message = e.target?.textContent || e.target?.innerText || "";
       if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
         SendMessage();
       }
@@ -257,14 +245,13 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     }
   }, [attachment, mediaBlobUrl, pastedImg]);
   const SendMessage = useCallback(async () => {
-    setToDefault();
     const attachmentFile = await userAttachment();
     const messageParams = {
       data: {
         user_id: auth_user?.elsemployees_empid,
         loginuser_id: auth_user?.elsemployees_empid,
         message_to: active_user?.elsemployees_empid,
-        message_body: message || null,
+        message_body: textInput.current?.textContent || textInput.current?.innerText || "",
         message_quoteid: quote?.message_id || null,
         message_quotebody: quote?.message_body || null,
         message_quoteuser: quote?.from_username || null,
@@ -277,48 +264,48 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       },
     };
     messageParams.data = Utils.getFormData(messageParams.data);
-    await dispatch(sendMessage(messageParams))
-      .then((res) => {
-        // setScrollDown(res);
-        setProgress(0)
-        const attachments = res.data.data.message_attachment;
-        const socketParams = {
-          message_originalname: auth_user?.elsemployees_name,
-          user_id: auth_user?.elsemployees_empid,
-          message_to: active_user?.elsemployees_empid,
-          message_body: message,
-          from_userpicture: auth_user?.elsemployees_image,
-          message_quoteid: quote?.message_id || null,
-          message_quotebody: quote?.message_body || null,
-          message_quoteuser: quote?.from_username || null,
-          message_attachment: attachments || null,
-          message_id: Date.now(),
-          fullTime: moment().format("Y-MM-D, h:mm:ss"),
-          messageOn: "user",
-        };
+    try {
+      const res = await dispatch(sendMessage(messageParams))
+      // setScrollDown(res);
+      setProgress(0)
+      const attachments = res.data.data.message_attachment;
+      const socketParams = {
+        message_originalname: auth_user?.elsemployees_name,
+        user_id: auth_user?.elsemployees_empid,
+        message_to: active_user?.elsemployees_empid,
+        message_body: textInput.current?.textContent || textInput.current?.innerText || "",
+        from_userpicture: auth_user?.elsemployees_image,
+        message_quoteid: quote?.message_id || null,
+        message_quotebody: quote?.message_body || null,
+        message_quoteuser: quote?.from_username || null,
+        message_attachment: attachments || null,
+        message_id: Date.now(),
+        fullTime: moment().format("Y-MM-D, h:mm:ss"),
+        messageOn: "user",
+      };
 
-        const socket = getSocket(auth_user?.elsemployees_empid);
-        socket.emit("messaging", socketParams);
-        dispatch(setUserMessages([res.data?.data, ...userMessages]));
-        const getContactsParams = {
-          data: {
-            loginuser_id: auth_user.elsemployees_empid,
-            user_id: auth_user.elsemployees_empid,
-          },
-        };
-        dispatch(getContactsUser(getContactsParams));
-      })
-      .catch((err) => {
-        setProgress(0);
-        console.warn(err);
-      });
+      const socket = getSocket(auth_user?.elsemployees_empid);
+      socket.emit("messaging", socketParams);
+      dispatch(setUserMessages([res.data?.data, ...userMessages]));
+      const getContactsParams = {
+        data: {
+          loginuser_id: auth_user.elsemployees_empid,
+          user_id: auth_user.elsemployees_empid,
+        },
+      };
+      dispatch(getContactsUser(getContactsParams));
+    }
+    catch (err) {
+      setProgress(0);
+      console.warn(err);
+    }
+    setToDefault();
   }, [
     active_user?.elsemployees_empid,
     auth_user.elsemployees_empid,
     auth_user?.elsemployees_image,
     auth_user?.elsemployees_name,
     dispatch,
-    message,
     quote?.from_username,
     quote?.message_body,
     quote?.message_id,
@@ -327,14 +314,20 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     userMessages,
   ]);
 
-  const onEmojiSelect = useCallback(
-    (event) => {
-      setMessage(`${message}${event.native}`);
-      textInput.current.innerText = `${message}${event.native}`;
-      placeCaretAtEnd(textInput.current);
-    },
-    [message]
-  );
+  const onEmojiSelect = useCallback((event) => {
+    const text = event.target?.textContent || event.target?.innerText || "";
+    textInput.current.innerText = `${text}${event.native}`
+  }, []);
+
+  const onChangeMessage = (e) => {
+    const text = e.target?.textContent || e.target?.innerText || "";
+    if (text.length > 0) {
+      typing();
+    }
+    if (text.length < 1) {
+      leaveTyping();
+    }
+  }
 
   const Emoji = React.memo(() => {
     return (
@@ -366,16 +359,16 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       style={
         attachment.length
           ? {
-              background: isNightMode ? DARKLIGHT : LIGHT,
-              height: "40vh",
-              width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
-            }
+            background: isNightMode ? DARKLIGHT : LIGHT,
+            height: "40vh",
+            width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
+          }
           : { width: sideBarCollapsed ? "100%" : "calc(100% - 350px)" }
       }
     >
       <div className="attachmentPreview">{attachment && AttachmentPreview}</div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
-        {progress ? (<LinearProgress value={progress} style={{width: "100%", margin: "1rem 0"}}/>) : null}
+        {progress ? (<LinearProgress value={progress} style={{ width: "100%", margin: "1rem 0" }} />) : null}
         <div className="inputContainer">
           {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
@@ -423,9 +416,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
                   <div
                     className="inputField"
                     ref={textInput}
-                    onKeyUp={(e) => {
-                      setMessage(e.target.innerText);
-                    }}
+                    onKeyUp={onChangeMessage}
                     onPasteCapture={(e) => {
                       setPastedImg(e.clipboardData.files);
                     }}
@@ -452,10 +443,10 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
               status={status}
             />
           )}
-          {message.length > 0 ||
-          attachment.length > 0 ||
-          pastedImg.length > 0 ||
-          (isRecording && status !== "recording") ? (
+          {(textInput.current?.textContent || textInput.current?.innerText || "").length > 0 ||
+            attachment.length > 0 ||
+            pastedImg.length > 0 ||
+            (isRecording && status !== "recording") ? (
             <IconButton onClick={SendMessage} className={classes.sendBtn}>
               <SendIcon style={{ color: "red !important" }} />
             </IconButton>

@@ -19,7 +19,6 @@ import { setQuote } from "../../../Redux/actions/app";
 import Utils, {
   filterList,
   getFileFromBlob,
-  placeCaretAtEnd,
 } from "../../../helper/util";
 import { sendGroupMessage } from "../../../api/message";
 import {
@@ -38,7 +37,7 @@ import { useReactMediaRecorder } from "react-media-recorder";
 import Recorder from "../../../Components/Recorder/Recorder";
 import User from "../../../Components/AdminPanel/User";
 import { getSocket } from "../../../config/socket";
-import {useOutsideAlerter} from '../../../hooks/useOutsideClick';
+import { useOutsideAlerter } from '../../../hooks/useOutsideClick';
 const useStyles = makeStyles({
   sendBtn: {
     width: "50px",
@@ -105,8 +104,6 @@ function MessageInput({
       audio: true,
       echoCancellation: true,
     });
-
-  const [message, setMessage] = useState("");
   const [isEmojiActive, setIsEmojiActive] = useState(false);
   const [isRecording, setRecording] = useState(false);
   const textInput = useRef();
@@ -123,11 +120,11 @@ function MessageInput({
   }, []);
 
   useOutsideAlerter(menuDiv, onClickOutside);
-  const onEmojiClick = (event) => {
-    setMessage(`${message}${event.native}`);
-    textInput.current.innerText = `${message}${event.native}`;
-    placeCaretAtEnd(textInput.current);
-  };
+
+  const onEmojiSelect = useCallback((event) => {
+    const text = event.target?.textContent || event.target?.innerText || "";
+    textInput.current.innerText = `${text}${event.native}`
+  }, []);
 
   const getParticipants = useCallback(async () => {
     const params = {
@@ -222,7 +219,6 @@ function MessageInput({
     }
     setVisibleAudio(false);
     setRecording(false);
-    setMessage("");
     setIsEmojiActive(false);
     setAttachment([]);
     setPastedImg([]);
@@ -243,14 +239,11 @@ function MessageInput({
     stopRecording();
     setVisibleAudio(true);
   };
+
   const SendMessageOnEnter = (e) => {
-    if (e.key === "Enter" && e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      setMessage(`${message}\n`); // jump to next line
-      textInput.current.innerText = `${message}\n`;
-      placeCaretAtEnd(textInput.current);
-    } else if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
+      const message = e.target?.textContent || e.target?.innerText || "";
       if (message.length > 0 || attachment.length > 0 || pastedImg.length > 0) {
         SendMessage();
       }
@@ -271,14 +264,13 @@ function MessageInput({
   }, [attachment, mediaBlobUrl, pastedImg]);
 
   const SendMessage = useCallback(async () => {
-    setToDefault();
     const attachmentFile = await userAttachment();
     const messageParams = {
       data: {
         user_id: auth_user?.elsemployees_empid,
         loginuser_id: auth_user?.elsemployees_empid,
         group_id: active_group?.group_id,
-        message_body: message || null,
+        message_body: textInput.current?.textContent || textInput.current?.innerText || "",
         message_quoteid: quote?.message_id || null,
         message_quotebody: quote?.groupmessage_body || null,
         message_quoteuser: quote.from_username || null,
@@ -291,61 +283,62 @@ function MessageInput({
       },
     };
     messageParams.data = Utils.getFormData(messageParams.data);
-    dispatch(sendGroupMessage(messageParams))
-      .then((res) => {
-        setProgress(0)
-        setScrollDown(res);
-        dispatch(
-          setGroupMessages({
-            ...groupMessages,
-            messages: [res.data.data, ...groupMessages.messages],
-          })
-        );
-        const seenParams = {
+    try {
+      const res = await dispatch(sendGroupMessage(messageParams))
+      setProgress(0)
+      setScrollDown(res);
+      dispatch(
+        setGroupMessages({
+          ...groupMessages,
+          messages: [res.data.data, ...groupMessages.messages],
+        })
+      );
+      const seenParams = {
+        data: {
+          group_id: active_group.group_id,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      };
+      dispatch(seenGroupMessage(seenParams)).then(() => {
+        const getGroupParams = {
           data: {
-            group_id: active_group.group_id,
+            loginuser_id: auth_user?.elsemployees_empid,
             user_id: auth_user?.elsemployees_empid,
           },
         };
-        dispatch(seenGroupMessage(seenParams)).then(() => {
-          const getGroupParams = {
-            data: {
-              loginuser_id: auth_user?.elsemployees_empid,
-              user_id: auth_user?.elsemployees_empid,
-            },
-          };
-          dispatch(getUserGroups(getGroupParams));
-        });
-
-        const attachments = res.data.data.groupmessage_attachment;
-        const socketParams = {
-          from_username: auth_user?.elsemployees_name,
-          from_userpicture: auth_user?.elsemployees_image,
-          user_id: auth_user?.elsemployees_empid,
-          loginuser_id: auth_user?.elsemployees_empid,
-          group_id: active_group?.group_id,
-          group_name: active_group?.group_name,
-          message_body: message,
-          message_id: Date.now(),
-          fullTime: moment().format("Y-MM-D, h:mm:ss"),
-          message_quoteid: res.data.quote ? res.data.quote?.message_id : null,
-          message_quotebody: res.data.quote
-            ? res.data.quote?.groupmessage_body
-            : null,
-          message_quoteuser: res.data.quote
-            ? res.data.quote?.from_username
-            : null,
-          messageOn: "group",
-          groupmessage_attachment: attachments || null,
-        };
-
-        const socket = getSocket(auth_user?.elsemployees_empid);
-        socket.emit("group-messaging", socketParams);
-      })
-      .catch((err) => {
-        setProgress(0);
-        console.warn(err)
+        dispatch(getUserGroups(getGroupParams));
       });
+
+      const attachments = res.data.data.groupmessage_attachment;
+      const socketParams = {
+        from_username: auth_user?.elsemployees_name,
+        from_userpicture: auth_user?.elsemployees_image,
+        user_id: auth_user?.elsemployees_empid,
+        loginuser_id: auth_user?.elsemployees_empid,
+        group_id: active_group?.group_id,
+        group_name: active_group?.group_name,
+        message_body: textInput.current?.textContent || textInput.current?.innerText || "",
+        message_id: Date.now(),
+        fullTime: moment().format("Y-MM-D, h:mm:ss"),
+        message_quoteid: res.data.quote ? res.data.quote?.message_id : null,
+        message_quotebody: res.data.quote
+          ? res.data.quote?.groupmessage_body
+          : null,
+        message_quoteuser: res.data.quote
+          ? res.data.quote?.from_username
+          : null,
+        messageOn: "group",
+        groupmessage_attachment: attachments || null,
+      };
+
+      const socket = getSocket(auth_user?.elsemployees_empid);
+      socket.emit("group-messaging", socketParams);
+    }
+    catch (err) {
+      setProgress(0);
+      console.warn(err)
+    }
+    setToDefault();
   }, [
     active_group.group_id,
     active_group?.group_name,
@@ -354,7 +347,6 @@ function MessageInput({
     auth_user?.elsemployees_name,
     dispatch,
     groupMessages,
-    message,
     quote.from_username,
     quote?.groupmessage_body,
     quote?.message_id,
@@ -390,10 +382,10 @@ function MessageInput({
       style={
         attachment.length
           ? {
-              background: isNightMode ? DARKMAIN : LIGHT,
-              height: "40vh",
-              width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
-            }
+            background: isNightMode ? DARKMAIN : LIGHT,
+            height: "40vh",
+            width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
+          }
           : { width: sideBarCollapsed ? "100%" : "calc(100% - 350px)" }
       }
     >
@@ -401,7 +393,7 @@ function MessageInput({
         {attachment ? AttachmentPreview : null}
       </div>
       <div onKeyDown={SendMessageOnEnter} className="messageInput">
-      {progress ? <LinearProgress value={progress} style={{width: "100%", margin: "1rem 0px"}}/>: null}
+        {progress ? <LinearProgress value={progress} style={{ width: "100%", margin: "1rem 0px" }} /> : null}
         <div className="inputContainer">
           {visibleAudio && <audio src={mediaBlobUrl} controls />}
           {!isRecording ? (
@@ -446,7 +438,7 @@ function MessageInput({
                     >
                       {participants
                         .filter((v) =>
-                          filterList(v.elsemployees_name, message.substring(1))
+                          filterList(v.elsemployees_name, (textInput.current?.textContent || textInput.current?.innerText || "").substring(1))
                         )
                         .map((user) => (
                           <User
@@ -462,15 +454,14 @@ function MessageInput({
                   <div
                     className="inputField"
                     ref={textInput}
-                    onKeyDown={(e) => {
-                      setMessage(e.target.innerText);
-                    }}
                     onPasteCapture={(e) => {
                       setPastedImg(e.clipboardData.files);
                     }}
                     onKeyUp={mentionUser}
                     data-placeholder={"Type a Message"}
                     contentEditable={true}
+                    spellCheck={true}
+                  // onBlur={leaveTyping}
                   />
                   <IconButton
                     ref={menuDiv}
@@ -501,10 +492,10 @@ function MessageInput({
               status={status}
             />
           )}
-          {message.length > 0 ||
-          attachment.length > 0 ||
-          pastedImg.length > 0 ||
-          (isRecording && status !== "recording") ? (
+          {(textInput.current?.textContent || textInput.current?.innerText || "").length > 0 ||
+            attachment.length > 0 ||
+            pastedImg.length > 0 ||
+            (isRecording && status !== "recording") ? (
             <IconButton className={classes.sendBtn} onClick={SendMessage}>
               <SendIcon />
             </IconButton>
