@@ -24,19 +24,19 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
   } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
-      active_group:store.chat.active_group||{}, 
+      active_group: store.chat.active_group || {},
       userSearch: store.app?.userSearch || [],
       searchText: store.app?.searchText || "",
-      groups:store.chat.groups|| [],
+      groups: store.chat.groups || [],
     };
   });
 
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const [contactsLoaded,setcontactsLoaded] = useState(false)
-  const [groupsLoaded,setGroupsLoaded] = useState(false)
-  const getContactList = useCallback(async ()=> {
+  const [contactsLoaded, setcontactsLoaded] = useState(false)
+  const [groupsLoaded, setGroupsLoaded] = useState(false)
+  const getContactList = useCallback(async () => {
     const params = {
       data: {
         loginuser_id: auth_user.elsemployees_empid,
@@ -45,26 +45,26 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
     };
     await dispatch(getContactsUser(params));
     setcontactsLoaded(true)
-  },[auth_user.elsemployees_empid, dispatch])
+  }, [auth_user.elsemployees_empid, dispatch])
 
-  useEffect(()=>{
+  useEffect(() => {
     getContactList()
-  },[auth_user.elsemployees_empid, dispatch, getContactList])
+  }, [auth_user.elsemployees_empid, dispatch, getContactList])
 
-  const getGroupList = useCallback(async()=>{
-      const params = {
-        data: {
-          loginuser_id: auth_user?.elsemployees_empid,
-          user_id: auth_user?.elsemployees_empid,
-        },
-      };
-      await dispatch(getUserGroups(params));
-      setGroupsLoaded(true)
-  },[auth_user?.elsemployees_empid, dispatch])
+  const getGroupList = useCallback(async () => {
+    const params = {
+      data: {
+        loginuser_id: auth_user?.elsemployees_empid,
+        user_id: auth_user?.elsemployees_empid,
+      },
+    };
+    await dispatch(getUserGroups(params));
+    setGroupsLoaded(true)
+  }, [auth_user?.elsemployees_empid, dispatch])
 
-  useEffect(()=>{
+  useEffect(() => {
     getGroupList()
-  },[getGroupList])
+  }, [getGroupList])
 
   function sortedGroup(a, b) {
     if (
@@ -78,56 +78,56 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
     }
   }
   const GroupList = React.memo(() => {
-    const onClickGroup=(group)=>{
-      history.push(`/group/${group.group_id}`);
+    const onClickGroup = (group) => {
       dispatch(setActiveGroup(group));
-    if (window.innerWidth < 700) {
-      dispatch(setSideBar(true));
-    }
-    dispatch(
-      setHeaderData({
-        activeType: "group",
-        activeName: group.group_name,
-        activeId: group.group_id,
-        other: {
-          membersLength: group?.memberid.split("").length,
-        },
-      })
-    );
-    
-    const seenParams = {
-      data: {
-        group_id: group.group_id,
-        user_id: auth_user?.elsemployees_empid,
-      },
-    };
-
-    if (group?.groupunseenmesg) {
-      dispatch(seenGroupMessage(seenParams)).then(() => {
-        const socketParams = {
-          group_id: active_group.group_id,
-          user_id: auth_user?.elsemployees_empid,
-          info: "real time seen",
-        };
-        const socket = getSocket(auth_user?.elsemployees_empid);
-        socket.emit("group-seen", socketParams);
-        const params = {
-          data: {
-            loginuser_id: auth_user?.elsemployees_empid,
-            user_id: auth_user?.elsemployees_empid,
+      if (window.innerWidth < 700) {
+        dispatch(setSideBar(true));
+      }
+      dispatch(
+        setHeaderData({
+          activeType: "group",
+          activeName: group.group_name,
+          activeId: group.group_id,
+          other: {
+            membersLength: group?.memberid.split("").length,
           },
-        };
-        dispatch(getUserGroups(params));
-      });
-    }
+        })
+      );
+    
+      const seenParams = {
+        data: {
+          group_id: group.group_id,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      };
+
+      if (group?.groupunseenmesg) {
+        dispatch(seenGroupMessage(seenParams)).then(() => {
+          const socketParams = {
+            group_id: active_group.group_id,
+            user_id: auth_user?.elsemployees_empid,
+            info: "real time seen",
+          };
+          const socket = getSocket(auth_user?.elsemployees_empid);
+          socket.emit("group-seen", socketParams);
+          const params = {
+            data: {
+              loginuser_id: auth_user?.elsemployees_empid,
+              user_id: auth_user?.elsemployees_empid,
+            },
+          };
+          dispatch(getUserGroups(params));
+        });
+      }
+      history.push(`/group/${group.group_id}`);
     }
 
     const renderLastMessageText = useCallback((group) => {
-      if(group.lastmessage !== "null" && group.lastmessage ) {
+      if (group.lastmessage !== "null" && group.lastmessage) {
         return group.lastmessage
-      } else if(group?.attachment) {
+      } else if (group?.attachment) {
         return "Attachment"
-      } else if(parseInt(group.created_by) == parseInt(auth_user.elsemployees_empid)) {
+      } else if (parseInt(group.created_by) == parseInt(auth_user.elsemployees_empid)) {
         return "You created this group";
       } else {
         return "Be the first to initiate conversation";

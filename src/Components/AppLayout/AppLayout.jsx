@@ -85,7 +85,7 @@ const AppLayout = React.memo(({ children }) => {
   const dispatch = useDispatch();
   const { header, sideBarCollapsed, isNightMode } = useSelector((store) => {
     return {
-      header: store.chat.active || {},
+      header: store.chat.active,
       sideBarCollapsed: store.app.sideBarCollapsed || false,
       isNightMode: store.app.mode || false,
     };

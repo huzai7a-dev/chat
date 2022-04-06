@@ -1,7 +1,7 @@
 import { Avatar, Box,Tooltip } from "@material-ui/core";
 import React, { useCallback, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Modal from "@mui/material/Modal";
+import Modal from "react-modal";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import moment from "moment";
 import { useOutsideAlerter } from "../../../../hooks/useOutsideClick";
@@ -12,6 +12,7 @@ import ViewAttachment from "../../../../Components/Utils/ViewAttachment";
 import { ADMIN } from '../../../../Role/index';
 import { deleteGroupMessage } from "../../../../api/admin";
 import { getGroupMessages } from "../../../../api/message";
+import "../../../MessageWindow/MessageTextContainer/UserMessage/userMessage.css";
 
 function UserMessage({ chatgroup, ...props }) {
   const { auth_user, active_user, seenData } = useSelector((store) => {
@@ -225,9 +226,7 @@ function UserMessage({ chatgroup, ...props }) {
                 >
                   <div className="options">
                     <p
-                      onClick={() => {
-                        setForwardModel(true);
-                      }}
+                      onClick={() => setForwardModel(true)}
                     >
                       Forward
                     </p>

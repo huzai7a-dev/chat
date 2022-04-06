@@ -23,14 +23,16 @@ const MessageHeader = () => {
   const location = useLocation();
   const dispatch = useDispatch();
 
-  const { header, isNightMode, active_user, auth_user } = useSelector((store) => {
-    return {
-      active_user: store.chat.active_user,
-      auth_user: store.auth.auth_user,
-      header: store.chat.active || {},
-      isNightMode: store.app.mode || false,
-    };
-  });
+  const { header, isNightMode, active_user, auth_user } = useSelector(
+    (store) => {
+      return {
+        active_user: store.chat.active_user,
+        auth_user: store.auth.auth_user,
+        header: store.chat.active,
+        isNightMode: store.app.mode || false,
+      };
+    }
+  );
 
   const role = auth_user.elsemployees_roleid;
 
@@ -38,21 +40,22 @@ const MessageHeader = () => {
     e.preventDefault();
     history.replace(`${location.pathname}#gallery`);
   };
-  
+
   const onDeleteGroup = useCallback(async () => {
     try {
       const params = {
         data: {
-          group_id: header.activeId,
-        }
-      }
-      await dispatch(deleteGroup(params))
-      await dispatch(getUserGroups({data: { loginuser_id: auth_user?.elsemployees_empid }}));
-      dispatch(setActiveGroup({}))
+          group_id: header?.activeId,
+        },
+      };
+      await dispatch(deleteGroup(params));
+      await dispatch(
+        getUserGroups({ data: { loginuser_id: auth_user?.elsemployees_empid } })
+      );
+      dispatch(setActiveGroup({}));
       dispatch(setHeaderData({}));
       history.push("/");
-    }
-    catch (e) {
+    } catch (e) {
       console.log(e);
     }
   }, [header, dispatch, history, auth_user]);
@@ -60,17 +63,14 @@ const MessageHeader = () => {
   return (
     <div className="message__header">
       <div className="message__header__left">
-        <Typography
-          variant="h5"
-          style={{ color: isNightMode ? WHITE : BLACK }}
-        >
+        <Typography variant="h5" style={{ color: isNightMode ? WHITE : BLACK }}>
           {header?.activeName}
         </Typography>
         <div className="left__options">
           <Typography variant="body2" onClick={openGallery}>
             Gallery{" "}
           </Typography>
-          {header.activeType == "group" && header?.other.membersLength > 0 && (
+          {header?.activeType == "group" && header?.other?.membersLength > 0 && (
             <>
               <Typography variant="body2" style={{ margin: "0 5px" }}>
                 {" "}
@@ -87,25 +87,22 @@ const MessageHeader = () => {
         </div>
       </div>
       <div className="message__header__right">
-        {header.activeType == "group" && role == ADMIN ? (
-          <IconButton
-            onClick={onDeleteGroup}
-          >
-            <DeleteIcon 
+        {header?.activeType == "group" && role == ADMIN ? (
+          <IconButton onClick={onDeleteGroup}>
+            <DeleteIcon
               color="primary"
-              style={{ width: "30px", height: "30px" }}/>
+              style={{ width: "30px", height: "30px" }}
+            />
           </IconButton>
-        ): null}
-        <IconButton
-          onClick={() => dispatch(setCallingToUser(active_user))}
-        >
+        ) : null}
+        <IconButton onClick={() => dispatch(setCallingToUser(active_user))}>
           <PhoneIcon
             color="primary"
             style={{ width: "30px", height: "30px" }}
           />
         </IconButton>
 
-        {header.activeType == "group" && (
+        {header?.activeType == "group" && (
           <div>
             <IconButton onClick={() => dispatch(setEditGroupModelState(true))}>
               <GroupAddIcon
