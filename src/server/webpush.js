@@ -2,7 +2,7 @@ import webpush from "web-push";
 import { deleteSubscription, getSubscriptionByUser, saveSubscription } from "./subscription";
 import express from 'express';
 import multer from "multer";
-import { saveFCMToken } from "./fcmToken";
+import { saveFCMToken, getFCMTokenByUser, sendNotificationToFCMToken } from "./fcmToken";
 
 const router = express.Router();
 
@@ -15,17 +15,28 @@ webpush.setVapidDetails(
 
 export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification") => {
   const subscription = await getSubscriptionByUser(user_id);
-  if(subscription) {
+  if (subscription) {
     try {
-      return await webpush.sendNotification(
-        subscription, 
+      await webpush.sendNotification(
+        subscription,
         typeof dataToSend == typeof "" ? dataToSend : JSON.stringify(dataToSend)
       )
-    } catch(e) {
+    } catch (e) {
       console.log("Trigger Push Message Error", e);
       subscription?.unsubscribe();
       deleteSubscription(user_id).catch(() => e);
       throw e;
+    }
+  }
+  const deviceToken = await getFCMTokenByUser(user_id)
+  if (deviceToken) {
+    try {
+      await sendNotificationToFCMToken(
+        user_id,
+        typeof dataToSend == typeof "" ? dataToSend : JSON.stringify(dataToSend)
+      );
+    } catch (e) {
+      console.log(e)
     }
   }
   return null;
@@ -41,16 +52,16 @@ router.post("/save-subs", async (req, res) => {
   res.send(JSON.stringify({ data: { success: true } }));
 });
 
-router.post("/:user_id/trigger", multer({dest: "./uploads"}).single('image'),  async(req, res) => {
+router.post("/:user_id/trigger", multer({ dest: "./uploads" }).single('image'), async (req, res) => {
   try {
     const notification = {
       title: req.body?.title || "John Doe",
-      text: req.body?.text ||  "You are next",
+      text: req.body?.text || "You are next",
       image: req.file || null,
       type: req.body?.type || "message"
     };
     res.status(200).send(await triggerPushMsg(req.params.user_id, notification))
-  } catch(e) {
+  } catch (e) {
     res.status(404).send("Cannot send notification to the user at the moment")
   }
 });

@@ -6,7 +6,7 @@ import fs from 'fs';
 const sqlite3 = require('sqlite3').verbose();
 
 const connection = new sqlite3.Database(
-  path.resolve(process.cwd(), "subscriptions.db"),
+  path.resolve(process.cwd(), "db.sqlite3"),
   sqlite3.OPEN_READWRITE,
   (err) => {
     if (err) {

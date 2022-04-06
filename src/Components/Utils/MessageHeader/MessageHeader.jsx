@@ -16,6 +16,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { deleteGroup } from "../../../api/admin";
 import { getUserGroups } from "../../../api/chat";
 import { setActiveGroup, setHeaderData } from "../../../Redux/actions/chat";
+import { ADMIN } from "../../../Role";
 
 const MessageHeader = () => {
   const history = useHistory();
@@ -30,6 +31,8 @@ const MessageHeader = () => {
       isNightMode: store.app.mode || false,
     };
   });
+
+  const role = auth_user.elsemployees_roleid;
 
   const openGallery = (e) => {
     e.preventDefault();
@@ -84,7 +87,7 @@ const MessageHeader = () => {
         </div>
       </div>
       <div className="message__header__right">
-        {header.activeType == "group" ? (
+        {header.activeType == "group" && role == ADMIN ? (
           <IconButton
             onClick={onDeleteGroup}
           >
