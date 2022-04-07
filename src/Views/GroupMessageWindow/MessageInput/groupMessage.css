@@ -1,13 +1,9 @@
 .inputAttachContainer {
-  position: fixed;
-  bottom: 0;
   transition: 0.2s;
+  margin-bottom: 1rem;
 }
 .messageInput {
   width: 100%;
-  height: auto;
-  position: absolute;
-  bottom: 10px;
   white-space: pre-wrap;
 }
 .inputContainer {

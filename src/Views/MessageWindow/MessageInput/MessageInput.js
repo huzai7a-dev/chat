@@ -361,9 +361,8 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
           ? {
             background: isNightMode ? DARKLIGHT : LIGHT,
             height: "40vh",
-            width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
           }
-          : { width: sideBarCollapsed ? "100%" : "calc(100% - 350px)" }
+          : {  }
       }
     >
       <div className="attachmentPreview">{attachment && AttachmentPreview}</div>

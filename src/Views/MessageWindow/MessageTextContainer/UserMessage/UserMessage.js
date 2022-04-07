@@ -238,7 +238,7 @@ const MessageOptions = React.memo((props) => {
 
   const fetchMessages = useCallback(async () => {
     const params = {
-      data:{
+      data: {
         from_id: auth_user?.elsemployees_empid,
         to_id: active_user?.elsemployees_empid,
         user_id: auth_user?.elsemployees_empid,
@@ -256,7 +256,7 @@ const MessageOptions = React.memo((props) => {
       };
       await dispatch(deleteMessage(params));
       fetchMessages();
-      dispatch(getContactsUser({data: {loginuser_id: auth_user?.elsemployees_empid,}}));
+      dispatch(getContactsUser({ data: { loginuser_id: auth_user?.elsemployees_empid, } }));
     } catch (e) {
       console.log(e);
     }
@@ -300,12 +300,15 @@ const MessageOptions = React.memo((props) => {
         >
           Forward
         </p>
+        <p onClick={() => navigator.clipboard.writeText(props.sender.message_body)}>
+          Copy
+        </p>
         {role == ADMIN ? (
           <p
             onClick={onDeleteMessage}
           >
             Delete
-          </p> 
+          </p>
         ) : null}
         <p onClick={quoteData}>Quote</p>
         {props.sender?.message_attachment ? (
@@ -354,13 +357,13 @@ const ReadStatus = (props) => {
   if (
     parseInt(props.sender?.seen) === 1 &&
     parseInt(props.sender?.message_to) !==
-      parseInt(props.active_user?.elsemployees_empid)
+    parseInt(props.active_user?.elsemployees_empid)
   ) {
     return <DoneAllIcon color="primary" fontSize="small" />;
   } else if (
     parseInt(props.sender?.seen) !== 1 &&
     parseInt(props.sender?.message_to) !==
-      parseInt(props.active_user?.elsemployees_empid)
+    parseInt(props.active_user?.elsemployees_empid)
   ) {
     return <CheckIcon fontSize="small" />;
   } else {

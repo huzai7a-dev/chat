@@ -232,6 +232,9 @@ function UserMessage({ chatgroup, ...props }) {
                     >
                       Forward
                     </p>
+                    <p onClick={() => navigator.clipboard.writeText(chatgroup.groupmessage_body)}>
+                      Copy
+                    </p>
                     {role == ADMIN ? (
                       <p
                         onClick={onDeleteMessage}

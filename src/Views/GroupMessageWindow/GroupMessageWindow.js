@@ -37,7 +37,7 @@ function GroupMessageWindow() {
         <Box
           display="flex"
           justifyContent="space-between"
-          style={{ width: "100%" }}
+          style={{ width: "100%", height: "100%" }}
         >
           <div className="message__window" {...getRootProps()}>
             {/* <MessageWindowHeader /> */}

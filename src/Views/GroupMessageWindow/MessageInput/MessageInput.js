@@ -384,9 +384,9 @@ function MessageInput({
           ? {
             background: isNightMode ? DARKMAIN : LIGHT,
             height: "40vh",
-            width: sideBarCollapsed ? "100%" : "calc(100% - 350px)",
+            
           }
-          : { width: sideBarCollapsed ? "100%" : "calc(100% - 350px)" }
+          : { }
       }
     >
       <div className="attachmentPreview">
