@@ -20,11 +20,13 @@ import CheckIcon from "@mui/icons-material/Check";
 import { deleteMessage } from "../../../../api/admin";
 import { ADMIN } from "../../../../Role";
 import { getUserMessages } from "../../../../api/message";
+import { getContactsUser } from "../../../../api/chat";
+
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
-      active_user: store.auth.auth_user || {},
+      active_user: store.chat.active_user || {},
       isNightMode: store.app.mode || false,
     };
   });
@@ -223,9 +225,10 @@ function UserMessage(props) {
 }
 
 const MessageOptions = React.memo((props) => {
-  const { auth_user } = useSelector((store) => {
+  const { auth_user, active_user } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user,
+      active_user: store.chat.active_user || {},
     };
   });
 
@@ -237,12 +240,12 @@ const MessageOptions = React.memo((props) => {
     const params = {
       data:{
         from_id: auth_user?.elsemployees_empid,
-        to_id: props.sender.message_from,
+        to_id: active_user?.elsemployees_empid,
         user_id: auth_user?.elsemployees_empid,
       }
     }
     dispatch(getUserMessages(params));
-  }, [dispatch, auth_user, props.sender])
+  }, [dispatch, auth_user, active_user])
 
   const onDeleteMessage = useCallback(async () => {
     try {
@@ -253,10 +256,11 @@ const MessageOptions = React.memo((props) => {
       };
       await dispatch(deleteMessage(params));
       fetchMessages();
+      dispatch(getContactsUser({data: {loginuser_id: auth_user?.elsemployees_empid,}}));
     } catch (e) {
       console.log(e);
     }
-  }, [fetchMessages, dispatch, props])
+  }, [fetchMessages, dispatch, props, auth_user])
 
   const quoteData = useCallback(() => {
     const quoteMsg = {

@@ -13,12 +13,13 @@ import { ADMIN } from '../../../../Role/index';
 import { deleteGroupMessage } from "../../../../api/admin";
 import { getGroupMessages } from "../../../../api/message";
 import "../../../MessageWindow/MessageTextContainer/UserMessage/userMessage.css";
+import { getUserGroups } from "../../../../api/chat";
 
 function UserMessage({ chatgroup, ...props }) {
   const { auth_user, active_user, seenData } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user,
-      active_user: store.auth.auth_user,
+      active_user: store.chat.active_user,
       seenData: store.message.groupMessages.seendata
     };
   });
@@ -76,7 +77,7 @@ function UserMessage({ chatgroup, ...props }) {
   const fetchMessages = useCallback(() => {
     const params = {
       data: {
-        group_id: chatgroup.groupmessage_id,
+        group_id: chatgroup.group_id,
       },
     };
     dispatch(getGroupMessages(params));
@@ -91,10 +92,11 @@ function UserMessage({ chatgroup, ...props }) {
       };
       await dispatch(deleteGroupMessage(params));
       fetchMessages();
+      dispatch(getUserGroups({data: {loginuser_id: auth_user?.elsemployees_empid,}}));
     } catch (e) {
       console.log(e);
     }
-  }, [dispatch, chatgroup, fetchMessages])
+  }, [dispatch, chatgroup, fetchMessages, auth_user])
 
   const downloadAttachment = (file) => {
     const attachList = file.split(",");
