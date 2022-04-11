@@ -85,7 +85,6 @@ function MessageInput({
     groupMessages,
     isNightMode,
     searchText,
-    sideBarCollapsed,
   } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
@@ -96,7 +95,7 @@ function MessageInput({
       searchText: store.app.searchText || "",
       sideBarCollapsed: store.app.sideBarCollapsed || false,
     };
-  });
+  })
 
   const { status, startRecording, stopRecording, mediaBlobUrl } =
     useReactMediaRecorder({
@@ -106,6 +105,7 @@ function MessageInput({
     });
   const [isEmojiActive, setIsEmojiActive] = useState(false);
   const [isRecording, setRecording] = useState(false);
+  const [debounce, setDebounce] = useState(false);
   const textInput = useRef();
   const dispatch = useDispatch();
   const [pastedImg, setPastedImg] = useState([]);
@@ -264,6 +264,8 @@ function MessageInput({
   }, [attachment, mediaBlobUrl, pastedImg]);
 
   const SendMessage = useCallback(async () => {
+    if(debounce) return;
+    setDebounce(true);
     const attachmentFile = await userAttachment();
     const messageParams = {
       data: {
@@ -338,18 +340,15 @@ function MessageInput({
       setProgress(0);
       console.warn(err)
     }
+    setDebounce(false);
     setToDefault();
   }, [
-    active_group.group_id,
-    active_group?.group_name,
-    auth_user?.elsemployees_empid,
-    auth_user?.elsemployees_image,
-    auth_user?.elsemployees_name,
+    active_group,
+    auth_user,
     dispatch,
     groupMessages,
-    quote.from_username,
-    quote?.groupmessage_body,
-    quote?.message_id,
+    quote,
+    debounce,
     setScrollDown,
     setToDefault,
     userAttachment,

@@ -80,6 +80,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
   const [isEmojiActive, setIsEmojiActive] = useState(false);
   const [visibleAudio, setVisibleAudio] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [debounce, setDebounce] = useState(false);
   const textInput = useRef();
   const classes = useStyles(isRecording);
   const dispatch = useDispatch();
@@ -245,6 +246,8 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     }
   }, [attachment, mediaBlobUrl, pastedImg]);
   const SendMessage = useCallback(async () => {
+    if(debounce) return;
+    setDebounce(true);
     const attachmentFile = await userAttachment();
     const messageParams = {
       data: {
@@ -300,18 +303,16 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       console.warn(err);
     }
     setToDefault();
+    setDebounce(false);
   }, [
     active_user?.elsemployees_empid,
-    auth_user.elsemployees_empid,
-    auth_user?.elsemployees_image,
-    auth_user?.elsemployees_name,
+    auth_user,
     dispatch,
-    quote?.from_username,
-    quote?.message_body,
-    quote?.message_id,
+    quote,
     setToDefault,
     userAttachment,
     userMessages,
+    debounce,
   ]);
 
   const onEmojiSelect = useCallback((event) => {
