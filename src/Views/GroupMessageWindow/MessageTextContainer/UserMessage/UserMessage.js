@@ -14,6 +14,7 @@ import { deleteGroupMessage } from "../../../../api/admin";
 import { getGroupMessages } from "../../../../api/message";
 import "../../../MessageWindow/MessageTextContainer/UserMessage/userMessage.css";
 import { getUserGroups } from "../../../../api/chat";
+import { copyTextToClipboard } from "../../../../helper/util";
 
 function UserMessage({ chatgroup, ...props }) {
   const { auth_user, active_user, seenData } = useSelector((store) => {
@@ -74,15 +75,6 @@ function UserMessage({ chatgroup, ...props }) {
     setOption(false);
   };
 
-  const fetchMessages = useCallback(() => {
-    const params = {
-      data: {
-        group_id: chatgroup.group_id,
-      },
-    };
-    dispatch(getGroupMessages(params));
-  }, [dispatch, chatgroup])
-
   const onDeleteMessage = useCallback(async () => {
     try {
       const params = {
@@ -91,12 +83,12 @@ function UserMessage({ chatgroup, ...props }) {
         }
       };
       await dispatch(deleteGroupMessage(params));
-      fetchMessages();
+      dispatch(getGroupMessages({data: {group_id: chatgroup.group_id}}));
       dispatch(getUserGroups({data: {loginuser_id: auth_user?.elsemployees_empid,}}));
     } catch (e) {
       console.log(e);
     }
-  }, [dispatch, chatgroup, fetchMessages, auth_user])
+  }, [dispatch, chatgroup, auth_user])
 
   const downloadAttachment = (file) => {
     const attachList = file.split(",");
@@ -107,7 +99,6 @@ function UserMessage({ chatgroup, ...props }) {
       anchor.click();
     });
   };
-
   return (
     <div
       id={chatgroup.groupmessage_id}
@@ -122,7 +113,7 @@ function UserMessage({ chatgroup, ...props }) {
               width: "40px",
               height: "40px",
               visibility:
-                props.head?.groupmessage_id == chatgroup?.groupmessage_id
+                props.tail?.groupmessage_id == chatgroup?.groupmessage_id
                   ? "visible"
                   : "hidden",
             }}
@@ -157,7 +148,7 @@ function UserMessage({ chatgroup, ...props }) {
                     : "flex-end",
               }}
             >
-              <p>{moment(props.head?.fullTime).format("LT")}</p>
+              <p>{moment(props.head?.fullTime || props.tail?.fullTime).format("LT")}</p>
             </div>
           )}
         </div>
@@ -232,7 +223,7 @@ function UserMessage({ chatgroup, ...props }) {
                     >
                       Forward
                     </p>
-                    <p onClick={() => navigator.clipboard.writeText(chatgroup.groupmessage_body)}>
+                    <p onClick={() => copyTextToClipboard(chatgroup.groupmessage_body)}>
                       Copy
                     </p>
                     {role == ADMIN ? (

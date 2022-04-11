@@ -21,6 +21,7 @@ import { deleteMessage } from "../../../../api/admin";
 import { ADMIN } from "../../../../Role";
 import { getUserMessages } from "../../../../api/message";
 import { getContactsUser } from "../../../../api/chat";
+import { copyTextToClipboard } from '../../../../helper/util';
 
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
@@ -92,7 +93,7 @@ function UserMessage(props) {
               width: "40px",
               height: "40px",
               visibility:
-                props.head.message_id == props.sender.message_id
+                props.tail.message_id == props.sender.message_id
                   ? "visible"
                   : "hidden",
             }}
@@ -300,7 +301,7 @@ const MessageOptions = React.memo((props) => {
         >
           Forward
         </p>
-        <p onClick={() => navigator.clipboard.writeText(props.sender.message_body)}>
+        <p onClick={() => copyTextToClipboard(props.sender.message_body)}>
           Copy
         </p>
         {role == ADMIN ? (

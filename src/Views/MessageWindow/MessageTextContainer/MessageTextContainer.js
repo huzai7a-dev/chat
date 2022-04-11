@@ -201,13 +201,17 @@ const Messages = React.memo(() => {
         <div style={{ display: "flex", flexDirection: "column-reverse" }}>
           {groupedByMessage?.map((message, messageIndex) => {
 
-            if (headMessage.from_userid != message.from_userid || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
+            if (headMessage.message_from != message.message_from || moment(headMessage.fullTime).diff(moment(message.fullTime), 'm') > 1) {
               headMessage = message
             }
 
-            groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
-              if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
+            groupedByMessage?.slice(messageIndex)?.every((nextMessage, nextIndex) => {
+              if(message.message_from != nextMessage?.message_from) {
+                return false;
+              }
+              if (moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
                 tailMessage = nextMessage
+                return true
               }
             })
 

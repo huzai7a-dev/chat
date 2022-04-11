@@ -218,9 +218,13 @@ const Messages = React.memo(() => {
                   headMessage = message
                 }
 
-                groupedByMessage?.slice(messageIndex)?.forEach((nextMessage, nextIndex) => {
-                  if (message.from_userid == nextMessage?.from_userid || moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
+                groupedByMessage?.slice(messageIndex)?.every((nextMessage, nextIndex) => {
+                  if(message.from_userid != nextMessage?.from_userid) {
+                    return false;
+                  }
+                  if (moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
                     tailMessage = nextMessage
+                    return true
                   }
                 })
                 
