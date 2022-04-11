@@ -23,7 +23,7 @@ const appendArray = (formData, key, arrValue) => {
 }
 
 const appendObject = (formData, mainKey, obj) => {
-    Object.keys(obj).forEach((key, index) => {
+    Object.keys(obj).forEach((key) => {
         const value = obj[key];
         if (isMoment(value)) {
             return formData.append(`${mainKey}[${key}]`, value.format("YYYY-MM-DD"));
@@ -68,6 +68,22 @@ export const getCSSColor = (key) => {
         return "";
     }
 }
+
+export const copyTextToClipboard = (text) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+  
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.log('Oops, unable to copy');
+    }
+
+    document.body.removeChild(textArea);
+  }
 
 class Utils {
     static getFormData(obj = {}) {
