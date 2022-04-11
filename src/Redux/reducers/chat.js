@@ -36,10 +36,12 @@ export default (state = initState, action) => {
       return{
         ...state,
         active_user: action.active_user,
+        active_group: initState.active_group,
       };
     case SET_ACTIVE_GROUP:
       return {
         ...state,
+        active_user: initState.active_user,
         active_group: action.active_group,
       };
     case SET_CONTACT_USERS:

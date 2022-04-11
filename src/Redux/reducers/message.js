@@ -1,3 +1,4 @@
+import { SET_ACTIVE_GROUP, SET_ACTIVE_USER } from "../constant/chat";
 import {
   SET_GROUP_MESSAGES,
   SET_USER_MESSAGES,
@@ -32,7 +33,16 @@ export default (state = initState, action) => {
         ...state,
         groupMessages: action.groupMessages,
       });
-
+      case SET_ACTIVE_USER:
+        return (state = {
+          ...state,
+          userMessages: initState.userMessages,
+        })
+      case SET_ACTIVE_GROUP:
+        return (state = {
+          ...state,
+          groupMessages: initState.groupMessages,
+        })
     case SET_CONTACTS_TOTAL:
       return (state = {
         ...state,
