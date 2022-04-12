@@ -12,7 +12,6 @@ import { setSideBar } from "../../../Redux/actions/app";
 import { getSocket } from "../../../config/socket";
 import "./chatUserContainer.css";
 import ContactList from "./ContactList";
-// import { getSocket } from "";
 
 const ChatUserContainer = React.memo(({ tabValue }) => {
   const {

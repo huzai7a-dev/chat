@@ -121,11 +121,6 @@ function MessageInput({
 
   useOutsideAlerter(menuDiv, onClickOutside);
 
-  const onEmojiSelect = useCallback((event) => {
-    const text = event.target?.textContent || event.target?.innerText || "";
-    textInput.current.innerText = `${text}${event.native}`
-  }, []);
-
   const getParticipants = useCallback(async () => {
     const params = {
       data: {
@@ -211,6 +206,21 @@ function MessageInput({
     if (searchText.length < 1 && textInput?.current) {
       textInput.current?.focus();
     }
+    
+    const onPaste = (e) => {
+      e.preventDefault()
+      const text = e.clipboardData.getData('text/plain')
+      document.execCommand('insertText', false, text)
+    }
+
+    if (textInput.current) {
+      const el = textInput.current;
+      el?.addEventListener('paste', onPaste);
+      return () => {
+        el?.removeEventListener('paste', onPaste)
+      }
+    }
+
   }, [active_group, quote, searchText.length]);
 
   const setToDefault = useCallback(() => {
@@ -264,7 +274,7 @@ function MessageInput({
   }, [attachment, mediaBlobUrl, pastedImg]);
 
   const SendMessage = useCallback(async () => {
-    if(debounce) return;
+    if (debounce) return;
     setDebounce(true);
     const attachmentFile = await userAttachment();
     const messageParams = {
@@ -383,9 +393,9 @@ function MessageInput({
           ? {
             background: isNightMode ? DARKMAIN : LIGHT,
             height: "40vh",
-            
+
           }
-          : { }
+          : {}
       }
     >
       <div className="attachmentPreview">

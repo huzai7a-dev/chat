@@ -91,7 +91,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
     userMessages,
     isNightMode,
     searchText,
-    sideBarCollapsed,
   } = useSelector((store) => {
     return {
       auth_user: store.auth.auth_user || {},
@@ -101,7 +100,6 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       userMessages: store.message.userMessages || [],
       isNightMode: store.app.mode || false,
       searchText: store.app.searchText || "",
-      sideBarCollapsed: store.app.sideBarCollapsed || false,
     };
   });
 
@@ -146,6 +144,20 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
   useEffect(() => {
     if (textInput.current) {
       textInput.current.innerText = "";
+    }
+
+    const onPaste = (e) => {
+      e.preventDefault()
+      const text = e.clipboardData.getData('text/plain')
+      document.execCommand('insertText', false, text)
+    }
+
+    if (textInput.current) {
+      const el = textInput.current;
+      el?.addEventListener('paste', onPaste);
+      return () => {
+        el?.removeEventListener('paste', onPaste)
+      }
     }
   }, [active_user]);
 
