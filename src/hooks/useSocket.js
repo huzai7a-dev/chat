@@ -3,7 +3,7 @@ import { getSocket, init } from "../config/socket";
 import { useDispatch, useSelector } from "react-redux";
 
 
-import { setActiveGroup, setGroupMemInfo, setNewGroupMessage, setOnlineUsers } from "../Redux/actions/chat";
+import { setActiveGroup, setGroupMemInfo, setIsTyping, setNewGroupMessage, setOnlineUsers } from "../Redux/actions/chat";
 import { getContactsUser, getUserGroups, seenGroupMessage, seenMessage } from "../api/chat";
 import { setGroupMessages, setUserMessages } from "../Redux/actions/message";
 import { getGroupMessages, getUserMessages } from "../api/message";
@@ -213,31 +213,31 @@ const useSocket = () => {
       }
   },[active_group?.group_id, auth_user.elsemployees_empid, dispatch]);
 
-  // useEffect(() => {
-  //   const socket = getSocket(auth_user.elsemployees_empid);
-  //   socket.on('typing', (data)=>{
-  //     dispatch(setIsTyping({
-  //       data,
-  //       status:true
-  //       }));
-  //   })
-  //   return () => {
-  //     socket.off('typing')
-  //   }
-  // },[auth_user.elsemployees_empid, dispatch, messages])
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on('typing', (data)=>{
+      dispatch(setIsTyping({
+        data,
+        status:true
+        }));
+    })
+    return () => {
+      socket.off('typing')
+    }
+  },[auth_user.elsemployees_empid, dispatch, messages])
 
-  // useEffect(() => {
-  //   const socket = getSocket(auth_user.elsemployees_empid);
-  //   socket.on('leaveTyping', (data)=>{
-  //     dispatch(setIsTyping({
-  //       data,
-  //       status:false
-  //     }));
-  //   })
-  //   return () => {
-  //     socket.off('leaveTyping')
-  //   }
-  // },[auth_user.elsemployees_empid, dispatch])
+  useEffect(() => {
+    const socket = getSocket(auth_user.elsemployees_empid);
+    socket.on('leaveTyping', (data)=>{
+      dispatch(setIsTyping({
+        data,
+        status:false
+      }));
+    })
+    return () => {
+      socket.off('leaveTyping')
+    }
+  },[auth_user.elsemployees_empid, dispatch])
   
   useEffect(() => {
     const socket = getSocket(auth_user.elsemployees_empid)

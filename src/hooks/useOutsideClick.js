@@ -9,5 +9,5 @@ export const useOutsideAlerter = (ref, handleClick = () => {}) => {
         };
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
-    }, [ref]);
+    }, [handleClick, ref]);
 }

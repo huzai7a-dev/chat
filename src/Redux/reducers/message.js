@@ -8,6 +8,7 @@ import {
   SET_GROUP_ATTACHMENTS,
   SET_ADMIN_USER_MESSAGES,
   SET_ADMIN_GROUP_MESSAGES,
+  SET_GROUP_SEEN,
 } from "../constant/message";
 
 const initState = {
@@ -19,6 +20,7 @@ const initState = {
   groupAttachments: [],
   gallery: true,
   contacts: [],
+  seen: []
 };
 
 export default (state = initState, action) => {
@@ -33,16 +35,21 @@ export default (state = initState, action) => {
         ...state,
         groupMessages: action.groupMessages,
       });
-      case SET_ACTIVE_USER:
-        return (state = {
-          ...state,
-          userMessages: initState.userMessages,
-        })
-      case SET_ACTIVE_GROUP:
-        return (state = {
-          ...state,
-          groupMessages: initState.groupMessages,
-        })
+    case SET_GROUP_SEEN:
+      return (state = {
+        ...state,
+        seen: action.seen
+      })
+    case SET_ACTIVE_USER:
+      return (state = {
+        ...state,
+        userMessages: initState.userMessages,
+      })
+    case SET_ACTIVE_GROUP:
+      return (state = {
+        ...state,
+        groupMessages: initState.groupMessages,
+      })
     case SET_CONTACTS_TOTAL:
       return (state = {
         ...state,

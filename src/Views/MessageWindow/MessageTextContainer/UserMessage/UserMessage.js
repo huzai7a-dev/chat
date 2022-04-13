@@ -357,13 +357,13 @@ const QuotedMessage = React.memo((props) => {
 const ReadStatus = (props) => {
   if (
     parseInt(props.sender?.seen) === 1 &&
-    parseInt(props.sender?.message_to) !==
+    parseInt(props.sender?.message_to) ==
     parseInt(props.active_user?.elsemployees_empid)
   ) {
     return <DoneAllIcon color="primary" fontSize="small" />;
   } else if (
     parseInt(props.sender?.seen) !== 1 &&
-    parseInt(props.sender?.message_to) !==
+    parseInt(props.sender?.message_to) ==
     parseInt(props.active_user?.elsemployees_empid)
   ) {
     return <CheckIcon fontSize="small" />;
