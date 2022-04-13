@@ -1,18 +1,23 @@
 import { apiCall } from "../helper/api";
-import { setAllContacts, setAllgroups, setContactUsers, setTotalContacts, setUserGroups} from "../Redux/actions/chat";
+import { setAllContacts, setAllgroups, setContactUsers, setTotalContacts, setUserGroups, setContactUsersMeta } from "../Redux/actions/chat";
 
 export const getContactsUser = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getContactsUser";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessGetContactsUser, onFailureGetContactsUser));
+  return dispatch(apiCall(params, onSuccessGetContactsUser));
 };
 
-const onSuccessGetContactsUser = (response, params) => (dispatch) => {
-  dispatch(setContactUsers(response.data.contacts));
-};
-
-const onFailureGetContactsUser = (error, params) => (dispatch) => {
-  console.log("onFailureGetContactsUser", error);
+const onSuccessGetContactsUser = (response) => (dispatch, getState) => {
+  const { data, ...meta } = response.data.contacts || { data: response.data.contacts };
+  if (meta.current_page == 1) {
+    dispatch(setContactUsers(Object.values(data)));
+  } else {
+    let temp = [...(getState().chat.contacts || [])];
+    temp = temp.concat(Object.values(data));
+    temp.filter((value, index, self) => self.findIndex(v => v.elsemployees_empid == value.elsemployees_empid) === index)
+    dispatch(setContactUsers(temp))
+  }
+  dispatch(setContactUsersMeta(meta))
 };
 
 /****************************************************************************************************************/
@@ -20,69 +25,40 @@ const onFailureGetContactsUser = (error, params) => (dispatch) => {
 export const getUserGroups = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getUserGroups";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessGetUserGroups, onFailureGetUserGroups));
+  return dispatch(apiCall(params, onSuccessGetUserGroups));
 };
 
-const onSuccessGetUserGroups = (response, params) => (dispatch) => {
+const onSuccessGetUserGroups = (response) => (dispatch) => {
   console.log("OnSuccessGetUserGroups", response);
   dispatch(setUserGroups(response.data));
 };
-
-const onFailureGetUserGroups = (error, params) => (dispatch) => {
-  console.log("onFailureGetUserGroups", error);
-};
-
 
 /****************************************************************************************************************/
 export const seenMessage = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/makeSeen";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessSeenMessage, onFailureSeenMessage));
+  return dispatch(apiCall(params));
 };
-
-const onSuccessSeenMessage = (response, params) => (dispatch) => {
-  console.log("OnSuccessSeenMessage", response);
-  // dispatch(setUserGroups(response.data));
-};
-
-const onFailureSeenMessage = (error, params) => (dispatch) => {
-  console.log("onFailureSeenMessage", error);
-};
-
 
 /****************************************************************************************************************/
 
 export const seenGroupMessage = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/makegroupmessageseen";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessSeenGroupMessage, onFailureSeenGroupMessage));
+  return dispatch(apiCall(params));
 };
-
-const onSuccessSeenGroupMessage = (response, params) => (dispatch) => {
-  console.log("OnSuccessSeenGroupMessage", response);
-  
-};
-
-const onFailureSeenGroupMessage = (error, params) => (dispatch) => {
-  console.log("onFailureSeenGroupMessage", error);
-};
-
 /****************************************************************************************************************/
 
 export const getContactsTotal = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getContactsTotal";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessgetContactsTotal, onFailuregetContactsTotal));
+  return dispatch(apiCall(params, onSuccessgetContactsTotal));
 };
 
-const onSuccessgetContactsTotal = (response, params) => (dispatch) => {
+const onSuccessgetContactsTotal = (response) => (dispatch) => {
   dispatch(setTotalContacts(response.data.contacts));
   console.log("OnSuccessgetContactsTotal", response);
-  
-};
 
-const onFailuregetContactsTotal = (error, params) => (dispatch) => {
-  console.log("onFailuregetContactsTotal", error);
 };
 
 /****************************************************************************************************************/
@@ -90,34 +66,26 @@ const onFailuregetContactsTotal = (error, params) => (dispatch) => {
 export const getAllContacts = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getContactsTotal";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessgetAllContacts, onFailuregetAllContacts));
+  return dispatch(apiCall(params, onSuccessgetAllContacts));
 };
 
-const onSuccessgetAllContacts = (response, params) => (dispatch) => {
+const onSuccessgetAllContacts = (response) => (dispatch) => {
   dispatch(setAllContacts(response.data.contacts));
   console.log("OnSuccessgetAllContacts", response);
-  
-};
 
-const onFailuregetAllContacts = (error, params) => (dispatch) => {
-  console.log("onFailuregetAllContacts", error);
 };
 /****************************************************************************************************************/
 
 export const getAllGroups = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getAllGroups";
   params.method = "POST";
-  return dispatch(apiCall(params, onSuccessgetAllGroups, onFailuregetAllGroups));
+  return dispatch(apiCall(params, onSuccessgetAllGroups));
 };
 
-const onSuccessgetAllGroups = (response, params) => (dispatch) => {
+const onSuccessgetAllGroups = (response) => (dispatch) => {
   dispatch(setAllgroups(response.data));
   console.log("OnSuccessgetAllGroups", response);
-  
-};
 
-const onFailuregetAllGroups = (error, params) => (dispatch) => {
-  console.log("onFailuregetAllGroups", error);
 };
 /****************************************************************************************************************/
 

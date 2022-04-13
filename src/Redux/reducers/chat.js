@@ -13,6 +13,7 @@ import {
   SET_CALL_ACCEPTED,
   SET_HEADER_DATA,
   SET_ONLINE_USERS,
+  SET_CONTACT_USER_META,
 } from "../constant/chat";
 
 const initState = {
@@ -28,12 +29,13 @@ const initState = {
   isCallAccepted: false,
   active: {},
   onlineUsers: [],
+  contactMeta: {},
 };
 
 export default (state = initState, action) => {
   switch (action.type) {
     case SET_ACTIVE_USER:
-      return{
+      return {
         ...state,
         active_user: action.active_user,
         active_group: initState.active_group,
@@ -104,6 +106,11 @@ export default (state = initState, action) => {
         ...state,
         onlineUsers: action.onlineUsers,
       };
+    case SET_CONTACT_USER_META:
+      return {
+        ...state,
+        contactMeta: action.meta,
+      }
     default:
       return state;
   }

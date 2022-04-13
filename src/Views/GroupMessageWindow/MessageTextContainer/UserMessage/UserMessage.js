@@ -1,5 +1,5 @@
-import { Avatar, Box,Tooltip } from "@material-ui/core";
-import React, { useCallback, useRef, useState } from "react";
+import { Avatar, Box, Tooltip } from "@material-ui/core";
+import React, { useCallback, useRef, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Modal from "react-modal";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -15,6 +15,7 @@ import { getGroupMessages } from "../../../../api/message";
 import "../../../MessageWindow/MessageTextContainer/UserMessage/userMessage.css";
 import { getUserGroups } from "../../../../api/chat";
 import { copyTextToClipboard } from "../../../../helper/util";
+import SeenUsers from "../../../SeenUsers";
 
 function UserMessage({ chatgroup, ...props }) {
   const { auth_user, active_user, seenData } = useSelector((store) => {
@@ -28,15 +29,23 @@ function UserMessage({ chatgroup, ...props }) {
   const [media, setMedia] = useState("");
   const [option, setOption] = useState(false);
   const [openModel, setOpenModel] = useState(false);
+  const [seenModal, showSeenModal] = useState(false);
   const [forwardModel, setForwardModel] = useState(false);
   const attachments = chatgroup.groupmessage_attachment;
   const menuDiv = useRef();
+  const tooltipWrapper = useRef();
 
-  const onClickOutside = useCallback(() => {
+  const onClickOutsideMenu = useCallback(() => {
     setOption(false);
   }, []);
 
-  useOutsideAlerter(menuDiv, onClickOutside);
+  const onClickOutsideTooltip = useCallback(() => {
+    showSeenModal(false);
+  }, []);
+
+  useOutsideAlerter(menuDiv, onClickOutsideMenu);
+  useOutsideAlerter(tooltipWrapper, onClickOutsideTooltip);
+  
   const forwardMessageParams = {
     data: {
       user_id: auth_user?.elsemployees_empid,
@@ -52,7 +61,7 @@ function UserMessage({ chatgroup, ...props }) {
     },
   };
 
-  
+
   const image = chatgroup.from_userpicture;
   const loggedInUser = auth_user?.elsemployees_empid;
   const user = chatgroup.from_userid;
@@ -62,7 +71,7 @@ function UserMessage({ chatgroup, ...props }) {
     setMedia(e.target.src);
     setOpenModel(true);
   };
- 
+
   const quoteData = () => {
     const quoteMsg = {
       from_username: chatgroup.from_username,
@@ -83,8 +92,8 @@ function UserMessage({ chatgroup, ...props }) {
         }
       };
       await dispatch(deleteGroupMessage(params));
-      dispatch(getGroupMessages({data: {group_id: chatgroup.group_id}}));
-      dispatch(getUserGroups({data: {loginuser_id: auth_user?.elsemployees_empid,}}));
+      dispatch(getGroupMessages({ data: { group_id: chatgroup.group_id } }));
+      dispatch(getUserGroups({ data: { loginuser_id: auth_user?.elsemployees_empid, } }));
     } catch (e) {
       console.log(e);
     }
@@ -99,6 +108,17 @@ function UserMessage({ chatgroup, ...props }) {
       anchor.click();
     });
   };
+
+  const renderSeenTooltip = useMemo(() => {
+    if (!seenModal) return "";
+    return (
+      <SeenUsers
+        seen={seenData.filter(s => s.messageid == chatgroup.groupmessage_id && s.userid != active_user?.elsemployees_empid)}
+        group={chatgroup} />
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seenModal]);
+
   return (
     <div
       id={chatgroup.groupmessage_id}
@@ -168,7 +188,7 @@ function UserMessage({ chatgroup, ...props }) {
             <RenderAttachment
               attachments={attachments}
               fileName={chatgroup.groupmessage_originalname}
-              onOpenImage={(e)=> openImage(e)}
+              onOpenImage={(e) => openImage(e)}
             />
           </div>
         ) : null}
@@ -176,28 +196,28 @@ function UserMessage({ chatgroup, ...props }) {
           <div className="recieverQoutMsg__container">
             <div>
 
-            {chatgroup.groupmessage_quotebody &&
-            chatgroup.groupmessage_quotebody !== "null" ? (
-              <a
-                className="sendQuotedMsg"
-                href={"#" + chatgroup.groupmessage_quoteid}
-              >
-                <p className="qName">{chatgroup.groupmessage_quoteuser}</p>
-                <p className="qMsg">{chatgroup.groupmessage_quotebody}</p>
-              </a>
-            ) : null}
-            {chatgroup.groupmessage_body !== null &&
-              chatgroup.groupmessage_body !== "null" && (
-                <div
-                  className={
-                    user !== loggedInUser
-                      ? "senderMessage__text"
-                      : "recieverMessage__text"
-                  }
+              {chatgroup.groupmessage_quotebody &&
+                chatgroup.groupmessage_quotebody !== "null" ? (
+                <a
+                  className="sendQuotedMsg"
+                  href={"#" + chatgroup.groupmessage_quoteid}
                 >
-                  {chatgroup.groupmessage_body}
-                </div>
-              )}
+                  <p className="qName">{chatgroup.groupmessage_quoteuser}</p>
+                  <p className="qMsg">{chatgroup.groupmessage_quotebody}</p>
+                </a>
+              ) : null}
+              {chatgroup.groupmessage_body !== null &&
+                chatgroup.groupmessage_body !== "null" && (
+                  <div
+                    className={
+                      user !== loggedInUser
+                        ? "senderMessage__text"
+                        : "recieverMessage__text"
+                    }
+                  >
+                    {chatgroup.groupmessage_body}
+                  </div>
+                )}
             </div>
             <div
               ref={menuDiv}
@@ -231,7 +251,7 @@ function UserMessage({ chatgroup, ...props }) {
                         onClick={onDeleteMessage}
                       >
                         Delete
-                      </p> 
+                      </p>
                     ) : null}
                     <p onClick={quoteData}>Quote</p>
                     {chatgroup.groupmessage_attachment ? (
@@ -250,25 +270,29 @@ function UserMessage({ chatgroup, ...props }) {
           </div>
         ) : null}
 
-        <Box display="flex" style={{ float: "right" }}>
-          {seenData.map((seen, id) => {
-            return seen.messageid == chatgroup.groupmessage_id &&
-              seen.userid != active_user?.elsemployees_empid ? (
-              <Tooltip title={seen.username}>
+        <Box display="flex" style={{ float: "right" }} onClick={() => showSeenModal(e => !e)}>
+          <Tooltip title={renderSeenTooltip} open={seenModal}>
+            <div ref={tooltipWrapper} style={{display:"flex", flexDirection: 'row'}}>
+            {seenData.map(seen => {
+              return seen.messageid == chatgroup.groupmessage_id &&
+                seen.userid != active_user?.elsemployees_empid ? (
                 <Avatar
-                  key={id}
+                  key={seen.userid}
+                  imgProps={{ title: seen.username }}
                   style={{ height: "20px", width: "20px" }}
                   src={`/bizzportal/public/img/${seen.userpicture}`}
                 />
-              </Tooltip>
-            ) : null;
-          })}
+
+              ) : null;
+            })}
+            </div>
+          </Tooltip>
         </Box>
 
         <ViewAttachment
           src={media}
           openModel={openModel}
-          handClose={(state)=> setOpenModel(state)}
+          handClose={(state) => setOpenModel(state)}
         />
         <Modal
           isOpen={forwardModel}
