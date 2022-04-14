@@ -14,11 +14,12 @@ function AppUser({
   activeUser,
   userId
 }) {
-  const {isNightMode, onlineUsers } = useSelector((store) => {
+
+  const {isNightMode, onlineUsers, isTyping } = useSelector((store) => {
     return {
-      sideBarCollapsed: store.app.sideBarCollapsed || false,
       isNightMode: store.app.mode || false,
-      onlineUsers: store.chat.onlineUsers
+      onlineUsers: store.chat.onlineUsers,
+      isTyping: store.chat?.isTyping || {},
     };
   });
 
@@ -71,7 +72,15 @@ function AppUser({
             overflowX: "hidden",
           }}
         >
-            <Typography variant="caption" style={lastMessageStyles} >{lastMessage}</Typography>
+            {isTyping.data?.tPerson == userId && isTyping.status ? (
+                <div className="chat__typingLoader">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+            ): (
+              <Typography variant="caption" style={lastMessageStyles} >{lastMessage}</Typography>
+            )}
             {unseen ? <Badge style={{position:"absolute",right:"0",bottom:"0",marginRight:"8px",marginBottom:"9.6px"}} badgeContent={unseen} color="primary"/>: null}
         </Box>
       </Box>

@@ -23,8 +23,8 @@ export const triggerPushMsg = async (user_id, dataToSend = "Empty Notification")
       )
     } catch (e) {
       console.log("Trigger Push Message Error", e);
-      subscription?.unsubscribe();
-      deleteSubscription(user_id).catch(() => e);
+      subscription?.unsubscribe?.();
+      deleteSubscription(user_id).catch(() => console.log(e));
       throw e;
     }
   }

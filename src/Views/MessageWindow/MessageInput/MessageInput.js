@@ -122,7 +122,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
       user_id: active_user?.elsemployees_empid,
       tPerson: auth_user?.elsemployees_empid,
       name: active_user.elsemployees_name,
-      msgQty: textInput.current?.textContent || textInput.current?.innerText || "",
+      msgQty: (textInput.current?.textContent || textInput.current?.innerText || "")?.trim(),
     };
     const socket = getSocket(auth_user?.elsemployees_empid);
     socket.emit("leaveTyping", paramData);
@@ -333,11 +333,10 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
   }, []);
 
   const onChangeMessage = (e) => {
-    const text = e.target?.textContent || e.target?.innerText || "";
+    const text = (e.target?.textContent || e.target?.innerText || "")?.trim();
     if (text.length > 0) {
       typing();
-    }
-    if (text.length < 1) {
+    } else {
       leaveTyping();
     }
   }

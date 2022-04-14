@@ -16,13 +16,14 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 function MessageTextContainer() {
 
-  const { auth_user, active_user, userMessages } = useSelector(
+  const { auth_user, active_user, userMessages, isTyping, isNightMode } = useSelector(
     (store) => {
       return {
         auth_user: store.auth.auth_user || {},
         active_user: store.chat.active_user || {},
         userMessages: store.message.userMessages,
         isNightMode: store.app.mode || false,
+        isTyping: store.chat?.isTyping || {},
       };
     }
   );
@@ -50,25 +51,37 @@ function MessageTextContainer() {
   }, []);
 
   useEffect(() => {
-    if(active_user) {
+    if (active_user) {
       scrollToBottom()
     }
   }, [scrollToBottom, active_user]);
 
   if (!userMessages) return <CircularProgress />
   return (
-    <div
-      className="messageTextContainer"
-      ref={messageContainer}
-      id="scrollableDiv"
-      style={{ display: "flex", flexDirection: "column-reverse" }}
-    >
-      {userMessages.length === 0 ? (
-        <NoChat />
-      ) : (
-        <Messages />
+    <>
+      <div
+        className="messageTextContainer"
+        ref={messageContainer}
+        id="scrollableDiv"
+        style={{ display: "flex", flexDirection: "column-reverse" }}
+      >
+        {userMessages.length === 0 ? (
+          <NoChat />
+        ) : (
+          <Messages />
+        )}
+      </div>
+      {isTyping.data?.tPerson == active_user?.elsemployees_empid && isTyping.status && (
+        <div style={{display:"flex", flexDirection: "row", margin: "0.2rem 1rem"}}>
+          <Typography variant="caption" color={isNightMode ? "primary" : "textSecondary"}>{`${active_user?.elsemployees_name} is typing `}</Typography>
+          <div className="chat__typingLoader">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -164,7 +177,7 @@ const Messages = React.memo(() => {
   ]);
 
   useEffect(() => {
-    if(active_user) {
+    if (active_user) {
       setHasMore(true);
     }
   }, [active_user])
@@ -206,7 +219,7 @@ const Messages = React.memo(() => {
             }
 
             groupedByMessage?.slice(messageIndex)?.every((nextMessage, nextIndex) => {
-              if(message.message_from != nextMessage?.message_from) {
+              if (message.message_from != nextMessage?.message_from) {
                 return false;
               }
               if (moment((nextMessage[nextIndex - 1] || message)?.fullTime).diff(moment(nextMessage?.fullTime), 'm') <= 1) {
