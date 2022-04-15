@@ -148,8 +148,12 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
 
     const onPaste = (e) => {
       e.preventDefault()
-      const text = e.clipboardData.getData('text/plain')
-      document.execCommand('insertText', false, text)
+      if(e.clipboardData?.files?.length) {
+        setAttachment(a => [...a, ...e.clipboardData?.files])
+      } else {
+        const text = e.clipboardData.getData('text/plain')
+        document.execCommand('insertText', false, text)
+      }
     }
 
     if (textInput.current) {
@@ -159,7 +163,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
         el?.removeEventListener('paste', onPaste)
       }
     }
-  }, [active_user]);
+  }, [active_user, setAttachment]);
 
   // focus input field when page in load
   useEffect(() => {

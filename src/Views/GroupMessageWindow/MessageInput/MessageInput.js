@@ -209,8 +209,12 @@ function MessageInput({
     
     const onPaste = (e) => {
       e.preventDefault()
-      const text = e.clipboardData.getData('text/plain')
-      document.execCommand('insertText', false, text)
+      if(e.clipboardData?.files?.length) {
+        setAttachment(a => [...a, ...e.clipboardData?.files])
+      } else {
+        const text = e.clipboardData.getData('text/plain')
+        document.execCommand('insertText', false, text)
+      }
     }
 
     if (textInput.current) {
@@ -221,7 +225,7 @@ function MessageInput({
       }
     }
 
-  }, [active_group, quote, searchText.length]);
+  }, [active_group, quote, searchText.length, setAttachment]);
 
   const setToDefault = useCallback(() => {
     if (textInput.current) {

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useCallback } from "react";
 import MessageTextContainer from "./MessageTextContainer/MessageTextContainer";
 import MessageInput from "./MessageInput/MessageInput";
 import "./MessageWindow.css";
@@ -24,9 +24,13 @@ function GroupMessageWindow() {
     };
   });
 
+  const onDrop = useCallback((acceptedFiles) => {
+    setAttachment(a => [...a,...acceptedFiles])
+  }, []);
+
   return (
     <Dropzone
-      onDrop={(acceptedFiles) => setAttachment(acceptedFiles)}
+      onDrop={onDrop}
       noClick={true}
       noKeyboard={true}
       ref={dropzoneRef}

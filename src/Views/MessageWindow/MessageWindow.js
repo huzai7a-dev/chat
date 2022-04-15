@@ -12,7 +12,7 @@ function MessageWindow() {
   const [scrollDown, setScrollDown] = useState("");
 
   const onDrop = useCallback((acceptedFiles) => {
-    setAttachment(acceptedFiles)
+    setAttachment(a => [...a,...acceptedFiles])
   }, []);
 
   return (
