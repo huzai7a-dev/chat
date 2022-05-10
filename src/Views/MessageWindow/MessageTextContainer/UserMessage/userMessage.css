@@ -116,6 +116,9 @@
   cursor: pointer;
   max-width: 500px;
   height: auto;
+  border-radius: 4px !important;
+  position: relative;
+  display: flex;
 }
 .attachView {
   margin: 2px;
@@ -175,6 +178,8 @@
   width: 100px;
   height: auto;
   background: #eff4f8;
+  border: 1px solid var(--chat-grey);
+  border-radius: 0.1rem;
 }
 .anchorText {
   text-decoration: none;

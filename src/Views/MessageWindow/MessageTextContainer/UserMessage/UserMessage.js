@@ -137,12 +137,27 @@ function UserMessage(props) {
         ) : null}
 
         {props.sender?.message_attachment !== null ? (
-          <div className="sentAttachment" style={attachmentStyle}>
+          <div className="sentAttachment" style={{...attachmentStyle, flexDirection: props.sender?.message_from !== loggedInUser ? "row" : "row-reverse"}}>
             <RenderAttachment
               attachments={attachments}
               fileName={props.sender.message_originalname}
               onOpenImage={(e) => openImage(e)}
             />
+            <div
+              className="msgOption"
+              ref={menuDiv}
+              style={{ position: "absolute", right: 0, top: "4%", display: option ?  "flex": "initial"}}
+              onClick={() => setOption(!option)}
+            >
+              <MoreVertIcon />
+              {option ? (
+                <MessageOptions
+                  setForwardModel={setForwardModel}
+                  sender={props.sender}
+                  setOption={setOption}
+                />
+              ) : null}
+            </div>
           </div>
         ) : null}
 

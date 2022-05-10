@@ -190,6 +190,49 @@ function UserMessage({ chatgroup, ...props }) {
               fileName={chatgroup.groupmessage_originalname}
               onOpenImage={(e) => openImage(e)}
             />
+            <div
+              className="msgOption"
+              ref={menuDiv}
+              style={{ position: "absolute", right: 0, top: "4%", display: option ?  "flex": "initial"}}
+              onClick={() => setOption(!option)}
+            >
+              <MoreVertIcon />
+              {option ? (
+                <div
+                  className="optionsContainer"
+                  style={{
+                    [chatgroup?.from_userid === loggedInUser
+                      ? "right"
+                      : "left"]: "100%",
+                  }}
+                >
+                  <div className="options">
+                    <p
+                      onClick={() => setForwardModel(true)}
+                    >
+                      Forward
+                    </p>
+                    {role == ADMIN ? (
+                      <p
+                        onClick={onDeleteMessage}
+                      >
+                        Delete
+                      </p>
+                    ) : null}
+                    <p onClick={quoteData}>Quote</p>
+                    {chatgroup.groupmessage_attachment ? (
+                      <p
+                        onClick={() =>
+                          downloadAttachment(chatgroup.groupmessage_attachment)
+                        }
+                      >
+                        Download
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
+            </div>
           </div>
         ) : null}
         {chatgroup.groupmessage_body ? (
