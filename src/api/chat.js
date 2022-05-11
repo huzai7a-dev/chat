@@ -63,19 +63,6 @@ const onSuccessgetContactsTotal = (response) => (dispatch) => {
 
 /****************************************************************************************************************/
 
-export const getAllContacts = (params = {}) => (dispatch) => {
-  params.path = "/api/bwccrm/getContactsTotal";
-  params.method = "POST";
-  return dispatch(apiCall(params, onSuccessgetAllContacts));
-};
-
-const onSuccessgetAllContacts = (response) => (dispatch) => {
-  dispatch(setAllContacts(response.data.contacts));
-  console.log("OnSuccessgetAllContacts", response);
-
-};
-/****************************************************************************************************************/
-
 export const getAllGroups = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getAllGroups";
   params.method = "POST";

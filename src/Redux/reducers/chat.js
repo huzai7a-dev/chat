@@ -6,7 +6,6 @@ import {
   SET_GROUP_MEM_INFO,
   SET_IS_TYPING,
   SET_TOTAL_CONTACTS,
-  SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
   SET_ON_CALL_COMING,
   SET_MAKE_CALL,
@@ -70,11 +69,6 @@ export default (state = initState, action) => {
       return {
         ...state,
         contacts: action.contacts,
-      };
-    case SET_ALL_CONTACTS:
-      return {
-        ...state,
-        allContacts: action.contacts,
       };
     case SET_ALL_GROUPS:
       return {

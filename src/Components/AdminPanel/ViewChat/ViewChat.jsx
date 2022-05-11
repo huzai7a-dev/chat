@@ -3,11 +3,10 @@ import { Box, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllContacts } from "../../../api/chat";
+import { getContactsTotal } from "../../../api/chat";
 import ToUser from "./ToUser";
 import FromUser from "./FromUser";
 import MessageContainer from "./MessageContainer";
-import { filterList } from "../../../helper/util";
 import { BLACK, WHITE } from "../../../Theme/colorConstant";
 import { getAdminUserMessages } from "../../../api/message";
 
@@ -43,36 +42,30 @@ function ViewMessages() {
     return {
       auth_user: store.auth.auth_user || {},
       isNightMode: store.app.mode || false,
-      contacts: store.chat.allContacts || [],
+      contacts: store.chat.contacts || [],
     };
   });
   const dispatch = useDispatch();
+
   useEffect(() => {
     const params = {
       data: {
         user_id: auth_user?.elsemployees_empid,
       },
     };
-    dispatch(getAllContacts(params));
+    dispatch(getContactsTotal(params));
   }, [dispatch, auth_user]);
 
-  const handleToUser =(e)=>{
-        setTo(e.target.value);        
-        if(to.length > 0){
-            setHasMessages(false)
-        }else {
-            setHasMessages(true)
-        }
-  }
-  const handleFromUser = (e)=>{
+  const handleToUser = (e) => {
+    setTo(e.target.value);
+    setHasMessages(to.length <= 0);
+    
+  };
+  const handleFromUser = (e) => {
     setFrom(e.target.value);
-    if (from.length > 0) {
-        setHasMessages(false);
-    }else {
-        setHasMessages(true)
-    }
-  }
-  
+    setHasMessages(to.length <= 0);
+  };
+
   const selectToUser = (toUser) => {
     setUserSelected(false);
     setTo(toUser.elsemployees_name);
@@ -101,35 +94,43 @@ function ViewMessages() {
   const FromUserList = () => {
     return (
       <div className={classes.userContainer}>
-        {contacts.filter( v => filterList(v.elsemployees_name,from)).map((user) => {
-          return user.elsemployees_name.toLowerCase() ===
-            to.toLowerCase() ? null : (
-            <FromUser
-              user={user}
-              key={user.elsemployees_empid}
-              onSelectUser={selectFromUser}
-            />
-          );
-        })}
+        {contacts
+          .filter((v) =>
+            v.elsemployees_name?.toLowerCase()?.includes(from?.toLowerCase())
+          )
+          .map((user) => {
+            return user.elsemployees_name.toLowerCase() ===
+              to.toLowerCase() ? null : (
+              <FromUser
+                user={user}
+                key={user.elsemployees_empid}
+                onSelectUser={selectFromUser}
+              />
+            );
+          })}
       </div>
     );
   };
+
   const ToUserList = () => {
     return (
       <div className={classes.userContainer}>
-        {contacts.filter(v =>filterList(v.elsemployees_name,to)).map((user) => {
-          return (
-            <ToUser
-              user={user}
-              key={user.elsemployees_empid}
-              onSelectToUser={selectToUser}
-            />
-          );
-        })}
+        {contacts
+          .filter((v) =>
+            v.elsemployees_name?.toLowerCase()?.includes(to?.toLowerCase())
+          )
+          .map((user) => {
+            return (
+              <ToUser
+                user={user}
+                key={user.elsemployees_empid}
+                onSelectToUser={selectToUser}
+              />
+            );
+          })}
       </div>
     );
   };
- 
 
   return (
     <Box style={{ marginBottom: "20px" }}>
@@ -142,17 +143,17 @@ function ViewMessages() {
         >
           <TextField
             label="To"
-            InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}}
-            InputProps={{style: {color: isNightMode ? WHITE: BLACK}}}
-            style={{color: isNightMode ? WHITE: BLACK}}
+            InputLabelProps={{ style: { color: isNightMode ? WHITE : BLACK } }}
+            InputProps={{ style: { color: isNightMode ? WHITE : BLACK } }}
+            style={{ color: isNightMode ? WHITE : BLACK }}
             onChange={handleToUser}
             value={to}
           />
           <TextField
             label="From"
-            InputLabelProps={{style: {color: isNightMode ? WHITE: BLACK}}}
-            InputProps={{style: {color: isNightMode ? WHITE: BLACK}}}
-            style={{color: isNightMode ? WHITE: BLACK}}
+            InputLabelProps={{ style: { color: isNightMode ? WHITE : BLACK } }}
+            InputProps={{ style: { color: isNightMode ? WHITE : BLACK } }}
+            style={{ color: isNightMode ? WHITE : BLACK }}
             onChange={handleFromUser}
             value={from}
             disabled={isUserSelected}

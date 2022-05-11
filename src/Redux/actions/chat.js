@@ -7,7 +7,6 @@ import {
   SET_IS_TYPING,
   SET_NEW_GROUP_MESSAGE,
   SET_TOTAL_CONTACTS,
-  SET_ALL_CONTACTS,
   SET_ALL_GROUPS,
   SET_ON_CALL_COMING,
   SET_MAKE_CALL,
@@ -76,12 +75,6 @@ export const setNewGroupMessage = (newMessage) => {
 export const setTotalContacts = (contacts) => {
   return {
     type: SET_TOTAL_CONTACTS,
-    contacts,
-  };
-};
-export const setAllContacts = (contacts) => {
-  return {
-    type: SET_ALL_CONTACTS,
     contacts,
   };
 };
