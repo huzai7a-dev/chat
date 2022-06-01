@@ -1,23 +1,25 @@
 import React, { useState, useCallback, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
-import { Typography, Box, IconButton, Button } from "@material-ui/core";
+import { Typography, Box, IconButton, Button, FormControl, Select, MenuItem } from "@material-ui/core";
 import { makeStyles } from "@mui/styles";
 import { useSelector, useDispatch } from "react-redux";
-import Modal from "@mui/material/Modal";
 import { useHistory, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { getUserAttachments, getGroupAttachments } from "../../api/message";
-import "./gallerymodal.style.css";
 import { BLACK, WHITE } from "../../Theme/colorConstant";
+import ViewAttachment from "../Utils/ViewAttachment";
+import "./gallerymodal.style.css";
 
-const GalleryModal = React.memo((props) => {
+const GalleryModal = () => {
+
   const classes = useStyle();
   const [attachmentType, setAttachmentType] = useState("all");
   const [attachSrc, setAttachSrc] = useState("");
   const [showGallery, setShowGallery] = useState();
   const [modalVisible, setModalVisible] = useState(false);
   const [attachments, setAttachments] = useState([]);
+  const [mediaName, setMediaName] = useState("");
   const dispatch = useDispatch();
 
   const { auth_user, activeId, activeType, isNightMode } = useSelector((store) => {
@@ -77,31 +79,33 @@ const GalleryModal = React.memo((props) => {
     }
   }, [activeType, getGroupGalleryItems, getUserGalleryItems, showGallery]);
 
-  const openImage = useCallback((e) => {
+  const openImage = useCallback((e, name) => {
     setModalVisible(true);
+    setMediaName(name);
     setAttachSrc(e.target.currentSrc);
   }, []);
 
-  // const renderDropdown = useMemo(() => {
-  //   const handleChange = (e) => {
-  //     setAttachmentType(e.target.value);
-  //   };
-  //   return (
-  //     <FormControl sx={{ minWidth: 80 }}>
-  //       <Select
-  //         value={attachmentType}
-  //         onChange={handleChange}
-  //         displayEmpty
-  //         variant="filled"
-  //         inputProps={{ "aria-label": "Without label" }}
-  //       >
-  //         <MenuItem value="all">All</MenuItem>
-  //         <MenuItem value="media">Media</MenuItem>
-  //         <MenuItem value="files">Files</MenuItem>
-  //       </Select>
-  //     </FormControl>
-  //   );
-  // }, [attachmentType]);
+  const renderDropdown = useMemo(() => {
+    const handleChange = (e) => {
+      setAttachmentType(e.target.value);
+    };
+    return (
+      <FormControl style={{ minWidth: 80 }}>
+        <Select
+          value={attachmentType}
+          onChange={handleChange}
+          displayEmpty
+          variant="filled"
+          style={{ color: isNightMode ? WHITE : BLACK, backgroundColor: "transparent" }}
+          inputProps={{ "aria-label": "Without label" }}
+        >
+          <MenuItem value="all">All</MenuItem>
+          <MenuItem value="media">Media</MenuItem>
+          <MenuItem value="files">Files</MenuItem>
+        </Select>
+      </FormControl>
+    );
+  }, [attachmentType, isNightMode]);
 
   const renderAttachmentsHeader = useMemo(() => {
     return (
@@ -111,15 +115,15 @@ const GalleryModal = React.memo((props) => {
         className={classes.attachmentHeader}
       >
         <IconButton onClick={() => history.replace(location.pathname)}>
-          <CloseIcon style={{color: isNightMode ? WHITE : BLACK }}/>
+          <CloseIcon style={{ color: isNightMode ? WHITE : BLACK }} />
         </IconButton>
         <Typography variant="h5" style={{ flex: "1", textAlign: "center", color: isNightMode ? WHITE : BLACK }}>
           Gallery
         </Typography>
-        {/* {renderDropdown} */}
+        {renderDropdown}
       </Box>
     );
-  }, [classes, location, history, isNightMode]);
+  }, [classes.attachmentHeader, isNightMode, renderDropdown, history, location.pathname]);
 
   const filterAttachment = useCallback(
     (attachment) => {
@@ -192,9 +196,7 @@ const GalleryModal = React.memo((props) => {
             return (
               <div className="attachView" key={id}>
                 <img
-                  onClick={(e) => {
-                    openImage(e);
-                  }}
+                  onClick={openImage}
                   height="auto"
                   width="100%"
                   src={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
@@ -232,8 +234,8 @@ const GalleryModal = React.memo((props) => {
             return (
               <div className="attachView" key={id}>
                 <div className="file" style={{ maxWidth: "100%" }}>
-                  <FileCopyIcon style={{color: isNightMode ? WHITE : BLACK }}/>
-                  <Typography variant="caption" style={{color: isNightMode ? WHITE : BLACK}}>{fileName}</Typography>
+                  <FileCopyIcon style={{ color: isNightMode ? WHITE : BLACK }} />
+                  <Typography variant="caption" style={{ color: isNightMode ? WHITE : BLACK }}>{fileName}</Typography>
                   <DownloadButton />
                 </div>
               </div>
@@ -243,19 +245,6 @@ const GalleryModal = React.memo((props) => {
     });
   }, [attachments, filterAttachment, openImage, isNightMode]);
 
-  const modalStyle = {
-    height: "100vh",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  };
-  const imgStyle = {
-    width: "auto",
-    maxWidth: "100wv",
-    maxHeight: "100vh",
-    display: "block",
-    height: "auto",
-  };
   const galleryWidth = window.innerWidth < 700 ? "100%" : "400px";
   return (
     <Box
@@ -267,23 +256,18 @@ const GalleryModal = React.memo((props) => {
         {attachments?.length > 0 ? (
           renderAttachments
         ) : (
-          <Typography align="center" style={{color: isNightMode ? WHITE : BLACK}}>No Attachments</Typography>
+          <Typography align="center" style={{ color: isNightMode ? WHITE : BLACK }}>No Attachments</Typography>
         )}
       </Box>
-      <Modal
-        open={modalVisible}
-        onClose={() => setModalVisible(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-        style={modalStyle}
-      >
-        <div>
-          <img src={attachSrc} style={imgStyle} />
-        </div>
-      </Modal>
+      <ViewAttachment
+        src={attachSrc}
+        openModel={modalVisible}
+        name={mediaName}
+        handClose={(state) => setModalVisible(state)}
+      />
     </Box>
   );
-});
+};
 
 const useStyle = makeStyles({
   attachmentHeader: {

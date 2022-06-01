@@ -37,6 +37,7 @@ function UserMessage(props) {
   const attachments = props.sender.message_attachment;
   const [openModel, setOpenModel] = useState(false);
   const [media, setMedia] = useState("");
+  const [mediaName, setMediaName] = useState("");
   const [option, setOption] = useState(false);
   const menuDiv = useRef();
   const onClickOutside = useCallback(() => {
@@ -60,8 +61,9 @@ function UserMessage(props) {
   };
 
   // function to open image/video
-  const openImage = useCallback((e) => {
+  const openImage = useCallback((e, name) => {
     setMedia(e.target.src);
+    setMediaName(name)
     setOpenModel(true);
   }, []);
   // function to collect data for quote messages
@@ -141,7 +143,7 @@ function UserMessage(props) {
             <RenderAttachment
               attachments={attachments}
               fileName={props.sender.message_originalname}
-              onOpenImage={(e) => openImage(e)}
+              onOpenImage={openImage}
             />
             <div
               className="msgOption"
@@ -221,6 +223,7 @@ function UserMessage(props) {
         <ViewAttachment
           src={media}
           openModel={openModel}
+          name={mediaName}
           handClose={(state) => setOpenModel(state)}
         />
         <Modal
@@ -292,13 +295,15 @@ const MessageOptions = React.memo((props) => {
 
   const downloadAttachment = useCallback((file) => {
     const attachList = file.split(",");
-    attachList.forEach((attachment) => {
+    const attachmentNames = props.sender?.message_originalname?.split(",")
+    attachList.forEach((attachment, index) => {
+      console.log(attachmentNames, index)
       const anchor = document.createElement("a");
       anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
-      anchor.download = attachment;
+      anchor.download = attachmentNames[index] || attachment;
       anchor.click();
     });
-  }, []);
+  }, [props.sender]);
 
   return (
     <div

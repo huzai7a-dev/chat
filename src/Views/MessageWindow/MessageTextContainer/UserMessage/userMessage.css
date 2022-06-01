@@ -121,10 +121,10 @@
   display: flex;
 }
 .attachView {
-  margin: 2px;
+  margin: 1rem 0.2rem;
 }
 .file {
-  background: var(--chat-light);
+  /* background: var(--chat-light); */
   padding: 10px;
   min-width: 150px;
   display: flex;

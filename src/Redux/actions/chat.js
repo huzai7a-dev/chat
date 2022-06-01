@@ -14,7 +14,8 @@ import {
   SET_DATA_TO_CALL,
   SET_HEADER_DATA,
   SET_ONLINE_USERS,
-  SET_CONTACT_USER_META
+  SET_CONTACT_USER_META,
+  SET_USER_GROUP_META
 } from "../constant/chat";
 
 export const setActiveChat = (active_user) => {
@@ -121,5 +122,11 @@ export const setContactUsersMeta = (meta) => {
   return {
     type: SET_CONTACT_USER_META,
     meta,
+  }
+}
+export const setUserGroupsMeta = (groupMeta) => {
+  return {
+    type: SET_USER_GROUP_META,
+    groupMeta,
   }
 }

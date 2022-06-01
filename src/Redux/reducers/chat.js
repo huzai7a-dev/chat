@@ -13,6 +13,7 @@ import {
   SET_HEADER_DATA,
   SET_ONLINE_USERS,
   SET_CONTACT_USER_META,
+  SET_USER_GROUP_META,
 } from "../constant/chat";
 
 const initState = {
@@ -29,6 +30,7 @@ const initState = {
   active: {},
   onlineUsers: [],
   contactMeta: {},
+  groupMeta: {}
 };
 
 export default (state = initState, action) => {
@@ -104,6 +106,11 @@ export default (state = initState, action) => {
       return {
         ...state,
         contactMeta: action.meta,
+      }
+    case SET_USER_GROUP_META:
+      return {
+        ...state,
+        groupMeta: action.groupMeta,
       }
     default:
       return state;

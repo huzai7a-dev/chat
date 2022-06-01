@@ -15,9 +15,9 @@ export const withSocket = (app) => {
     socketMappings[socket.nsp.name.split("-")[1]] = socket.id;
     // ********************************* socket for calling *********************************
 
-    setInterval(() => {
-      socket.emit("online-users", Object.keys(socketMappings));
-    }, 5000)
+    // setInterval(() => {
+    //   socket.emit("online-users", Object.keys(socketMappings));
+    // }, 5000)
 
     socket.on("messaging", async (data) => {
       workspaces.to(socketMappings[data?.message_to])?.emit("messaging", data);

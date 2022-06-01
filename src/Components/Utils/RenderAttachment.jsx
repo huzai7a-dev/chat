@@ -3,13 +3,14 @@ import React from "react";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 const RenderAttachment = ({attachments,fileName,onOpenImage,options}) => {
+    const attachmentNames =  fileName?.split(",");
     return attachments.split(",").map((attachment, id) => {
       const DownloadButton = () => {
         return (
           <Button variant="outlined" size="small" color={"primary"} key={id}>
             <a
               href={`/api/bwccrm/storage/app/public/chat_attachments/${attachment}`}
-              download={attachment}
+              download={attachmentNames[id] || attachment}
               className="anchorText"
             >
               Download
@@ -29,7 +30,7 @@ const RenderAttachment = ({attachments,fileName,onOpenImage,options}) => {
           <div className="attachView" key={id}>
             <img
               onClick={(e) => {
-                onOpenImage(e);
+                onOpenImage(e, attachmentNames[id] || attachment);
               }}
               height="auto"
               width="150px"
@@ -64,12 +65,7 @@ const RenderAttachment = ({attachments,fileName,onOpenImage,options}) => {
           />
         );
       } else {
-        let name;
-        if (fileName?.split(",")[id]) {
-          name = fileName?.split(",")[id]
-        }else {
-          name = fileName?.split(".")[id]
-        }
+        const name = attachmentNames[id] || attachment;
         
         return (
           <div className="attachView" key={id}>

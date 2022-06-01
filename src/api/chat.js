@@ -1,5 +1,5 @@
 import { apiCall } from "../helper/api";
-import { setAllContacts, setAllgroups, setContactUsers, setTotalContacts, setUserGroups, setContactUsersMeta } from "../Redux/actions/chat";
+import { setAllgroups, setContactUsers, setTotalContacts, setUserGroups, setContactUsersMeta, setUserGroupsMeta } from "../Redux/actions/chat";
 
 export const getContactsUser = (params = {}) => (dispatch) => {
   params.path = "/api/bwccrm/getContactsUser";
@@ -23,14 +23,24 @@ const onSuccessGetContactsUser = (response) => (dispatch, getState) => {
 /****************************************************************************************************************/
 
 export const getUserGroups = (params = {}) => (dispatch) => {
-  params.path = "/api/bwccrm/getUserGroups";
+  params.path = "/api/bwccrm/testgetUserGroups";
   params.method = "POST";
   return dispatch(apiCall(params, onSuccessGetUserGroups));
 };
 
-const onSuccessGetUserGroups = (response) => (dispatch) => {
-  console.log("OnSuccessGetUserGroups", response);
-  dispatch(setUserGroups(response.data));
+const onSuccessGetUserGroups = (response) => (dispatch, getState) => {
+  const { data, ...meta } = response.data;
+
+  if (meta.current_page == 1) {
+    dispatch(setUserGroups(Object.values(data)));
+  } else {
+    let temp = [...(getState().chat.groups || [])];
+    temp = temp.concat(Object.values(data));
+    temp.filter((value, index, self) => self.findIndex(v => v.group_id == value.group_id) === index)
+    dispatch(setUserGroups(temp))
+  }
+  
+  dispatch(setUserGroupsMeta(meta));
 };
 
 /****************************************************************************************************************/

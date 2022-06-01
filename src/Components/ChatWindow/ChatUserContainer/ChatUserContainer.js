@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Typography, CircularProgress } from "@material-ui/core";
@@ -12,6 +12,7 @@ import { setSideBar } from "../../../Redux/actions/app";
 import { getSocket } from "../../../config/socket";
 import "./chatUserContainer.css";
 import ContactList from "./ContactList";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const ChatUserContainer = React.memo(({ tabValue }) => {
   const {
@@ -19,7 +20,8 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
     userSearch,
     searchText,
     active_group,
-    groups
+    groups,
+    meta,
   } = useSelector((store) => {
     return {
       auth_user: store.auth?.auth_user || {},
@@ -27,12 +29,13 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
       userSearch: store.app?.userSearch || [],
       searchText: store.app?.searchText || "",
       groups: store.chat.groups || [],
+      meta: store.chat.groupMeta || {},
     };
   });
 
   const history = useHistory();
   const dispatch = useDispatch();
-
+  const debounce = useRef();
   const [contactsLoaded, setcontactsLoaded] = useState(false)
   const [groupsLoaded, setGroupsLoaded] = useState(false)
   const getContactList = useCallback(async () => {
@@ -61,21 +64,42 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
     setGroupsLoaded(true)
   }, [auth_user?.elsemployees_empid, dispatch])
 
+  const fetchMoreContacts = useCallback(async () => {
+    if(debounce.current) return;
+    debounce.current = true;
+    try {
+      const params = {
+        params: {
+          page: meta.current_page + 1,
+        },
+        data: {
+          loginuser_id: auth_user?.elsemployees_empid,
+          user_id: auth_user?.elsemployees_empid,
+        },
+      }
+      await dispatch(getUserGroups(params));
+    } catch (e) {
+      console.log(e);
+    }
+    debounce.current = false;
+  }, [auth_user, dispatch, meta])
+
   useEffect(() => {
     getGroupList()
   }, [getGroupList])
 
-  function sortedGroup(a, b) {
-    if (
-      moment(b.groupmessagetime || b.created_at).isAfter(
-        a.groupmessagetime || a.created_at
-      )
-    ) {
-      return 1;
-    } else {
-      return -1;
-    }
-  }
+  // disabled due to pagination order
+  // function sortedGroup(a, b) {
+  //   if (
+  //     moment(b.groupmessagetime || b.created_at).isAfter(
+  //       a.groupmessagetime || a.created_at
+  //     )
+  //   ) {
+  //     return 1;
+  //   } else {
+  //     return -1;
+  //   }
+  // }
   const GroupList = React.memo(() => {
     const onClickGroup = (group) => {
       dispatch(setActiveGroup(group));
@@ -147,10 +171,17 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
           <CircularProgress />
         </div>
       );
+      
     return (
-      <div className="chatUserList">
+      <div id="chat-group-list" className="chatUserList">
+        <InfiniteScroll
+        dataLength={groups.length}
+        next={fetchMoreContacts}
+        hasMore={meta.current_page < meta.last_page}
+        scrollableTarget="chat-group-list"
+      >
         {groups?.length > 0 ? (
-          groups.sort(sortedGroup).map((group) => (
+          groups.map((group) => (
             <AppUser
               key={group?.group_id}
               userName={group?.group_name}
@@ -168,6 +199,7 @@ const ChatUserContainer = React.memo(({ tabValue }) => {
         ) : (
           <Typography>No Contacts</Typography>
         )}
+        </InfiniteScroll>
       </div>
     );
   });

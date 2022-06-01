@@ -31,6 +31,7 @@ function UserMessage({ chatgroup, ...props }) {
   const [openModel, setOpenModel] = useState(false);
   const [seenModal, showSeenModal] = useState(false);
   const [forwardModel, setForwardModel] = useState(false);
+  const [mediaName, setMediaName] = useState("");
   const attachments = chatgroup.groupmessage_attachment;
   const menuDiv = useRef();
   const tooltipWrapper = useRef();
@@ -67,8 +68,9 @@ function UserMessage({ chatgroup, ...props }) {
   const user = chatgroup.from_userid;
   const role = auth_user?.elsemployees_roleid;
   // function to open image/video
-  const openImage = (e) => {
+  const openImage = (e, name) => {
     setMedia(e.target.src);
+    setMediaName(name)
     setOpenModel(true);
   };
 
@@ -101,10 +103,11 @@ function UserMessage({ chatgroup, ...props }) {
 
   const downloadAttachment = (file) => {
     const attachList = file.split(",");
-    attachList.forEach((attachment) => {
+    const attachmentNames = props.sender?.groupmessage_originalname?.split(",") || [];
+    attachList.forEach((attachment, index) => {
       const anchor = document.createElement("a");
       anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
-      anchor.download = attachment;
+      anchor.download = attachmentNames[index] || attachment;
       anchor.click();
     });
   };
@@ -188,7 +191,7 @@ function UserMessage({ chatgroup, ...props }) {
             <RenderAttachment
               attachments={attachments}
               fileName={chatgroup.groupmessage_originalname}
-              onOpenImage={(e) => openImage(e)}
+              onOpenImage={openImage}
             />
             <div
               className="msgOption"
@@ -335,6 +338,7 @@ function UserMessage({ chatgroup, ...props }) {
         <ViewAttachment
           src={media}
           openModel={openModel}
+          name={mediaName}
           handClose={(state) => setOpenModel(state)}
         />
         <Modal
