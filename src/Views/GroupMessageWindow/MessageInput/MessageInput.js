@@ -422,9 +422,7 @@ function MessageInput({
                   {quote.groupmessage_body && (
                     <div>
                       <p className="qcMsg">
-                        {quote.attachment
-                          ? "Attachment"
-                          : quote.groupmessage_body}
+                        {quote.message_body ? quote.message_body : "Attachment"}
                       </p>
                       <p className="qcName">{quote.from_username}</p>
                       <IconButton

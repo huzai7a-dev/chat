@@ -46,7 +46,7 @@ function UserMessage({ chatgroup, ...props }) {
 
   useOutsideAlerter(menuDiv, onClickOutsideMenu);
   useOutsideAlerter(tooltipWrapper, onClickOutsideTooltip);
-  
+
   const forwardMessageParams = {
     data: {
       user_id: auth_user?.elsemployees_empid,
@@ -78,8 +78,7 @@ function UserMessage({ chatgroup, ...props }) {
     const quoteMsg = {
       from_username: chatgroup.from_username,
       message_id: chatgroup.groupmessage_id,
-      groupmessage_body:
-        chatgroup.groupmessage_attachment || chatgroup.groupmessage_body,
+      groupmessage_body: chatgroup.groupmessage_body || chatgroup.groupmessage_attachment,
       attachment: chatgroup.groupmessage_attachment,
     };
     dispatch(setQuote(quoteMsg));
@@ -193,49 +192,51 @@ function UserMessage({ chatgroup, ...props }) {
               fileName={chatgroup.groupmessage_originalname}
               onOpenImage={openImage}
             />
-            <div
-              className="msgOption"
-              ref={menuDiv}
-              style={{ position: "absolute", right: 0, top: "4%", display: option ?  "flex": "initial"}}
-              onClick={() => setOption(!option)}
-            >
-              <MoreVertIcon />
-              {option ? (
-                <div
-                  className="optionsContainer"
-                  style={{
-                    [chatgroup?.from_userid === loggedInUser
-                      ? "right"
-                      : "left"]: "100%",
-                  }}
-                >
-                  <div className="options">
-                    <p
-                      onClick={() => setForwardModel(true)}
-                    >
-                      Forward
-                    </p>
-                    {role == ADMIN ? (
+            {chatgroup.groupmessage_body ? (
+              <div
+                className="msgOption"
+                ref={menuDiv}
+                style={{ position: "absolute", right: 0, top: "4%", display: option ? "flex" : "initial" }}
+                onClick={() => setOption(!option)}
+              >
+                <MoreVertIcon />
+                {option ? (
+                  <div
+                    className="optionsContainer"
+                    style={{
+                      [chatgroup?.from_userid === loggedInUser
+                        ? "right"
+                        : "left"]: "100%",
+                    }}
+                  >
+                    <div className="options">
                       <p
-                        onClick={onDeleteMessage}
+                        onClick={() => setForwardModel(true)}
                       >
-                        Delete
+                        Forward
                       </p>
-                    ) : null}
-                    <p onClick={quoteData}>Quote</p>
-                    {chatgroup.groupmessage_attachment ? (
-                      <p
-                        onClick={() =>
-                          downloadAttachment(chatgroup.groupmessage_attachment)
-                        }
-                      >
-                        Download
-                      </p>
-                    ) : null}
+                      {role == ADMIN ? (
+                        <p
+                          onClick={onDeleteMessage}
+                        >
+                          Delete
+                        </p>
+                      ) : null}
+                      <p onClick={quoteData}>Quote</p>
+                      {chatgroup.groupmessage_attachment ? (
+                        <p
+                          onClick={() =>
+                            downloadAttachment(chatgroup.groupmessage_attachment)
+                          }
+                        >
+                          Download
+                        </p>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              ) : null}
-            </div>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         ) : null}
         {chatgroup.groupmessage_body ? (
@@ -318,19 +319,19 @@ function UserMessage({ chatgroup, ...props }) {
 
         <Box display="flex" style={{ float: "right" }} onClick={() => showSeenModal(e => !e)}>
           <Tooltip title={renderSeenTooltip} open={seenModal}>
-            <div ref={tooltipWrapper} style={{display:"flex", flexDirection: 'row'}}>
-            {seenData.map(seen => {
-              return seen.messageid == chatgroup.groupmessage_id &&
-                seen.userid != active_user?.elsemployees_empid ? (
-                <Avatar
-                  key={seen.userid}
-                  imgProps={{ title: seen.username }}
-                  style={{ height: "20px", width: "20px" }}
-                  src={`/bizzportal/public/img/${seen.userpicture}`}
-                />
+            <div ref={tooltipWrapper} style={{ display: "flex", flexDirection: 'row' }}>
+              {seenData.map(seen => {
+                return seen.messageid == chatgroup.groupmessage_id &&
+                  seen.userid != active_user?.elsemployees_empid ? (
+                  <Avatar
+                    key={seen.userid}
+                    imgProps={{ title: seen.username }}
+                    style={{ height: "20px", width: "20px" }}
+                    src={`/bizzportal/public/img/${seen.userpicture}`}
+                  />
 
-              ) : null;
-            })}
+                ) : null;
+              })}
             </div>
           </Tooltip>
         </Box>

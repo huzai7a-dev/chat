@@ -145,21 +145,23 @@ function UserMessage(props) {
               fileName={props.sender.message_originalname}
               onOpenImage={openImage}
             />
-            <div
-              className="msgOption"
-              ref={menuDiv}
-              style={{ position: "absolute", right: 0, top: "4%", display: option ?  "flex": "initial"}}
-              onClick={() => setOption(!option)}
-            >
-              <MoreVertIcon />
-              {option ? (
-                <MessageOptions
-                  setForwardModel={setForwardModel}
-                  sender={props.sender}
-                  setOption={setOption}
-                />
-              ) : null}
-            </div>
+            {!props.sender.message_body ? (
+              <div
+                className="msgOption"
+                ref={menuDiv}
+                style={{ position: "absolute", right: 0, top: "4%", display: option ?  "flex": "initial"}}
+                onClick={() => setOption(!option)}
+              >
+                <MoreVertIcon />
+                {option ? (
+                  <MessageOptions
+                    setForwardModel={setForwardModel}
+                    sender={props.sender}
+                    setOption={setOption}
+                  />
+                ) : null}
+              </div>
+            ): null}
           </div>
         ) : null}
 
@@ -284,8 +286,7 @@ const MessageOptions = React.memo((props) => {
   const quoteData = useCallback(() => {
     const quoteMsg = {
       from_username: props.sender.from_username,
-      message_body:
-        props.sender.message_attachment || props.sender.message_body,
+      message_body: props.sender.message_body || props.sender.message_attachment,
       message_id: props.sender.message_id,
       attachment: props.sender.message_attachment,
     };

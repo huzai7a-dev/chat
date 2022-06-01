@@ -409,7 +409,7 @@ function MessageInput({ inputProps, attachment, open, setAttachment }) {
                   {quote.message_body ? (
                     <div>
                       <p className="qcMsg">
-                        {quote.attachment ? "Attachment" : quote.message_body}
+                        {quote.message_body ? quote.message_body : "Attachment"}
                       </p>
                       <p className="qcName">{quote.from_username}</p>
                       <IconButton
