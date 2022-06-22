@@ -38,7 +38,9 @@
   background-color: var(--chat-white);
   padding-right: 15px !important;
 }
-
+.message_with_date_contaier:first-child .optionsContainer {
+  top: -50px;
+}
 @media only screen and (max-width: 600px) {
   .messageTextContainer {
     padding: 15px 20px;

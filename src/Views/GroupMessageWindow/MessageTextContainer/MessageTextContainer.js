@@ -189,7 +189,7 @@ const Messages = React.memo(() => {
         let tailMessage = groupedByMessage[0];
 
         return (
-          <div key={id}>
+          <div key={id} className="message_with_date_contaier">
             <div className="dividerContainer">
               <div
                 className="divider"

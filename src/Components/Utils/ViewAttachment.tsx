@@ -34,11 +34,12 @@ const iconWrapper: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: "space-around",
   zIndex:99,
+  background:"rgba(0,0,0,.5)"
 }
 
 const ViewAttachment = ({ src, openModel, handClose, name }: attachmentProps) => {
 
-  const downloadAttachment = (e) => {
+  const downloadAttachment = (e:React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     const anchor = document.createElement("a");
     anchor.href = src;

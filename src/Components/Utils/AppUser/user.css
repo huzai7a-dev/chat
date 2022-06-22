@@ -3,7 +3,7 @@
 }
 
 .chat__user:hover {
-    background-color: var(--chat-primary-light);
+    background-color: var(--chat-grey);
 }
 
 .chat__typingLoader {
