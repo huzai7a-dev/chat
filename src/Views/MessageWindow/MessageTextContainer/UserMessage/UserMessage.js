@@ -21,7 +21,7 @@ import { deleteMessage } from "../../../../api/admin";
 import { ADMIN } from "../../../../Role";
 import { getUserMessages } from "../../../../api/message";
 import { getContactsUser } from "../../../../api/chat";
-import { copyTextToClipboard } from '../../../../helper/util';
+import { copyTextToClipboard } from "../../../../helper/util";
 
 function UserMessage(props) {
   const { auth_user, active_user, isNightMode } = useSelector((store) => {
@@ -63,7 +63,7 @@ function UserMessage(props) {
   // function to open image/video
   const openImage = useCallback((e, name) => {
     setMedia(e.target.src);
-    setMediaName(name)
+    setMediaName(name);
     setOpenModel(true);
   }, []);
   // function to collect data for quote messages
@@ -139,7 +139,16 @@ function UserMessage(props) {
         ) : null}
 
         {props.sender?.message_attachment !== null ? (
-          <div className="sentAttachment" style={{...attachmentStyle, flexDirection: props.sender?.message_from !== loggedInUser ? "row" : "row-reverse"}}>
+          <div
+            className="sentAttachment"
+            style={{
+              ...attachmentStyle,
+              flexDirection:
+                props.sender?.message_from !== loggedInUser
+                  ? "row"
+                  : "row-reverse",
+            }}
+          >
             <RenderAttachment
               attachments={attachments}
               fileName={props.sender.message_originalname}
@@ -149,7 +158,12 @@ function UserMessage(props) {
               <div
                 className="msgOption"
                 ref={menuDiv}
-                style={{ position: "absolute", right: 0, top: "4%", display: option ?  "flex": "initial"}}
+                style={{
+                  position: "absolute",
+                  right: 0,
+                  top: "4%",
+                  display: option ? "flex" : "initial",
+                }}
                 onClick={() => setOption(!option)}
               >
                 <MoreVertIcon />
@@ -161,64 +175,71 @@ function UserMessage(props) {
                   />
                 ) : null}
               </div>
-            ): null}
+            ) : null}
           </div>
         ) : null}
 
-        {props.sender.message_body && props.sender.message_body !== "null" ? (
-          <div
-            className="recieverQoutMsg__container"
-            style={{
-              flexDirection:
-                props.sender?.message_from !== loggedInUser
-                  ? "row"
-                  : "row-reverse",
-            }}
-          >
-            <div>
-              {props.sender.message_quotebody ? (
-                <QuotedMessage sender={props.sender} />
-              ) : null}
-              <div
-                style={{
-                  background:
+        {/* {props.sender.message_body && props.sender.message_body !== "null" ? ( */}
+        <div
+          className="recieverQoutMsg__container"
+          style={{
+            flexDirection:
+              props.sender?.message_from !== loggedInUser
+                ? "row"
+                : "row-reverse",
+          }}
+        >
+          <div >
+            {props.sender.message_quotebody ? (
+              <QuotedMessage sender={props.sender} />
+            ) : null}
+            {props.sender.message_body && props.sender.message_body !== "null" && (
+              <>
+                <div
+                  style={{
+                    background:
+                      props.sender?.message_from !== loggedInUser
+                        ? SECONDARYLIGHT
+                        : messageToBackground,
+                    color:
+                      isNightMode && props.sender?.message_from == loggedInUser
+                        ? WHITE
+                        : "rgb(37, 36, 35)",
+                  }}
+                  className={
                     props.sender?.message_from !== loggedInUser
-                      ? SECONDARYLIGHT
-                      : messageToBackground,
-                  color:
-                    isNightMode && props.sender?.message_from == loggedInUser
-                      ? WHITE
-                      : "rgb(37, 36, 35)",
-                }}
-                className={
-                  props.sender?.message_from !== loggedInUser
-                    ? "senderMessage__text"
-                    : "recieverMessage__text"
-                }
-              >
-                {props.sender.message_body}
-              </div>
-            </div>
+                      ? "senderMessage__text"
+                      : "recieverMessage__text"
+                  }
+                >
+                  {props.sender.message_body}
+                </div>
 
-            <div
-              className="msgOption"
-              ref={menuDiv}
-              style={option ? { display: "flex" } : null}
-              onClick={() => {
-                setOption(!option);
-              }}
-            >
-              <MoreVertIcon />
-              {option ? (
-                <MessageOptions
-                  setForwardModel={setForwardModel}
-                  sender={props.sender}
-                  setOption={setOption}
-                />
-              ) : null}
-            </div>
+              </>
+            )}
+                
           </div>
-        ) : null}
+          {/* {props.sender.message_body && props.sender.message_body !== "null" &&  */}
+                  <div
+                    className="msgOption"
+                    ref={menuDiv}
+                    style={option ? { display: "flex" } : null}
+                    onClick={() => {
+                      setOption(!option);
+                    }}
+                  >
+                    <MoreVertIcon />
+                    {option ? (
+                      <MessageOptions
+                        setForwardModel={setForwardModel}
+                        sender={props.sender}
+                        setOption={setOption}
+                      />
+                    ) : null}
+                  </div>
+                {/* } */}
+        </div>
+        {/* ) : null} */}
         <div style={{ textAlign: "right" }}>
           <ReadStatus sender={props.sender} active_user={active_user} />
         </div>
@@ -263,30 +284,35 @@ const MessageOptions = React.memo((props) => {
         from_id: auth_user?.elsemployees_empid,
         to_id: active_user?.elsemployees_empid,
         user_id: auth_user?.elsemployees_empid,
-      }
-    }
+      },
+    };
     dispatch(getUserMessages(params));
-  }, [dispatch, auth_user, active_user])
+  }, [dispatch, auth_user, active_user]);
 
   const onDeleteMessage = useCallback(async () => {
     try {
       const params = {
         data: {
-          message_id: props.sender.message_id
-        }
+          message_id: props.sender.message_id,
+        },
       };
       await dispatch(deleteMessage(params));
       fetchMessages();
-      dispatch(getContactsUser({ data: { loginuser_id: auth_user?.elsemployees_empid, } }));
+      dispatch(
+        getContactsUser({
+          data: { loginuser_id: auth_user?.elsemployees_empid },
+        })
+      );
     } catch (e) {
       console.log(e);
     }
-  }, [fetchMessages, dispatch, props, auth_user])
+  }, [fetchMessages, dispatch, props, auth_user]);
 
   const quoteData = useCallback(() => {
     const quoteMsg = {
       from_username: props.sender.from_username,
-      message_body: props.sender.message_body || props.sender.message_attachment,
+      message_body:
+        props.sender.message_body || props.sender.message_attachment,
       message_id: props.sender.message_id,
       attachment: props.sender.message_attachment,
     };
@@ -294,17 +320,20 @@ const MessageOptions = React.memo((props) => {
     props.setOption(false);
   }, [dispatch, props]);
 
-  const downloadAttachment = useCallback((file) => {
-    const attachList = file.split(",");
-    const attachmentNames = props.sender?.message_originalname?.split(",")
-    attachList.forEach((attachment, index) => {
-      console.log(attachmentNames, index)
-      const anchor = document.createElement("a");
-      anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
-      anchor.download = attachmentNames[index] || attachment;
-      anchor.click();
-    });
-  }, [props.sender]);
+  const downloadAttachment = useCallback(
+    (file) => {
+      const attachList = file.split(",");
+      const attachmentNames = props.sender?.message_originalname?.split(",");
+      attachList.forEach((attachment, index) => {
+        console.log(attachmentNames, index);
+        const anchor = document.createElement("a");
+        anchor.href = `/api/bwccrm/storage/app/public/chat_attachments/${attachment}`;
+        anchor.download = attachmentNames[index] || attachment;
+        anchor.click();
+      });
+    },
+    [props.sender]
+  );
 
   return (
     <div
@@ -325,13 +354,7 @@ const MessageOptions = React.memo((props) => {
         <p onClick={() => copyTextToClipboard(props.sender.message_body)}>
           Copy
         </p>
-        {role == ADMIN ? (
-          <p
-            onClick={onDeleteMessage}
-          >
-            Delete
-          </p>
-        ) : null}
+        {role == ADMIN ? <p onClick={onDeleteMessage}>Delete</p> : null}
         <p onClick={quoteData}>Quote</p>
         {props.sender?.message_attachment ? (
           <p
@@ -379,13 +402,13 @@ const ReadStatus = (props) => {
   if (
     parseInt(props.sender?.seen) === 1 &&
     parseInt(props.sender?.message_to) ==
-    parseInt(props.active_user?.elsemployees_empid)
+      parseInt(props.active_user?.elsemployees_empid)
   ) {
     return <DoneAllIcon color="primary" fontSize="small" />;
   } else if (
     parseInt(props.sender?.seen) !== 1 &&
     parseInt(props.sender?.message_to) ==
-    parseInt(props.active_user?.elsemployees_empid)
+      parseInt(props.active_user?.elsemployees_empid)
   ) {
     return <CheckIcon fontSize="small" />;
   } else {
